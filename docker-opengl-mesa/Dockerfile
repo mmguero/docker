@@ -1,6 +1,15 @@
 FROM debian:testing-slim
+LABEL maintainer="tlacuache@gmail.com"
 
-RUN apt-get update
-RUN apt-get install -y x-window-system binutils mesa-utils kmod wget iproute2 curl
+RUN apt-get update && \
+    apt-get -y dist-upgrade && \
+    apt-get install -y \
+      binutils \
+      curl \
+      iproute2 \
+      kmod \
+      mesa-utils \
+      wget \
+      x-window-system
 
 CMD /bin/bash
