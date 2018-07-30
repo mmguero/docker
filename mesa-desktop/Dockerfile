@@ -21,13 +21,9 @@ RUN apt-get update && apt-get update && apt-get dist-upgrade -y && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN export uid=1000 gid=1000 && \
-    mkdir -p /home/user && \
-    echo "user:x:${uid}:${gid}:user,,,:/home/user:/bin/bash" >> /etc/passwd && \
-    echo "user:x:${uid}:" >> /etc/group && \
-    echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/user && \
-    chmod 0440 /etc/sudoers.d/user && \
-    chown ${uid}:${gid} -R /home/user
+RUN adduser --uid 1000 --disabled-password --gecos '' --shell /bin/bash user && \
+    usermod -a -G sudo user && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Define working directory.
 WORKDIR /data
