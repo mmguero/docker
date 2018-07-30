@@ -60,16 +60,12 @@ RUN mkdir -p /var/run/sshd && sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSep
 RUN sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
 RUN sed -i "s/#PasswordAuthentication/PasswordAuthentication/g" /etc/ssh/sshd_config
 
-# create home directories for dockerx user
-RUN export uid=1000 gid=1000 && \
-    mkdir -p /home/dockerx && \
-    echo "dockerx:x:${uid}:${gid}:Developer,,,:/home/dockerx:/bin/bash" >> /etc/passwd && \
-    echo "dockerx:x:${uid}:" >> /etc/group && \
-    echo "dockerx ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dockerx && \
-    chmod 0440 /etc/sudoers.d/dockerx && \
-    chown ${uid}:${gid} -R /home/dockerx && \
+# create home directories for dockerx user (password will be set on run)
+RUN adduser --uid 1000 --disabled-password --gecos '' --shell /bin/bash dockerx && \
+    usermod -a -G sudo dockerx && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     mkdir -p /home/dockerx/.ssh && \
-    chown ${uid}:${gid} -R /home/dockerx/.ssh && \
+    chown -R dockerx:dockerx /home/dockerx/.ssh && \
     chmod 0700 /home/dockerx/.ssh
 
 ADD set_root_pw.sh /set_root_pw.sh
