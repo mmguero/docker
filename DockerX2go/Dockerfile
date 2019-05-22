@@ -5,7 +5,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
   apt-get dist-upgrade -y && \
-  apt-get install -y software-properties-common && \
   dpkg-divert --local --rename --add /sbin/initctl && \
     ln -sf /bin/true /sbin/initctl && \
     ( bash -c 'apt-get -y install fuse || :' ) && \
@@ -14,8 +13,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN add-apt-repository ppa:x2go/stable && \
-    apt-get update -y && \
+RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
       cryptsetup \
       cryptsetup-bin \
@@ -46,7 +44,7 @@ RUN add-apt-repository ppa:x2go/stable && \
       vlc \
       wget \
       x2goserver \
-      x2golxdebindings \
+      x2goserver-fmbindings \
       x2goserver-extensions \
       x2goserver-xsession \
       xdg-utils && \
@@ -56,21 +54,24 @@ RUN add-apt-repository ppa:x2go/stable && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm -f /usr/share/lxde/wallpapers/*.jpg
 
-RUN mkdir -p /var/run/sshd && sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config && sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config
-RUN sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
-RUN sed -i "s/#PasswordAuthentication/PasswordAuthentication/g" /etc/ssh/sshd_config
+ADD set_root_pw.sh /set_root_pw.sh
+ADD run.sh /run.sh
 
+# configure ssh, etc.
 # create home directories for dockerx user (password will be set on run)
-RUN adduser --uid 1000 --disabled-password --gecos '' --shell /bin/bash dockerx && \
+
+RUN mkdir -p /var/run/sshd && \
+    sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config && \
+    sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config && \
+    sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
+    sed -i "s/#PasswordAuthentication/PasswordAuthentication/g" /etc/ssh/sshd_config && \
+    adduser --uid 1000 --disabled-password --gecos '' --shell /bin/bash dockerx && \
     usermod -a -G sudo dockerx && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     mkdir -p /home/dockerx/.ssh && \
     chown -R dockerx:dockerx /home/dockerx/.ssh && \
-    chmod 0700 /home/dockerx/.ssh
-
-ADD set_root_pw.sh /set_root_pw.sh
-ADD run.sh /run.sh
-RUN chmod +x /*.sh
+    chmod 0700 /home/dockerx/.ssh && \
+    chmod +x /*.sh
 
 EXPOSE 22
 

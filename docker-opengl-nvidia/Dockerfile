@@ -1,4 +1,4 @@
-FROM debian:testing-slim
+FROM debian:buster-slim
 LABEL maintainer="tlacuache@gmail.com"
 
 RUN apt-get update && \
