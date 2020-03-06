@@ -1,5 +1,4 @@
 FROM ubuntu:latest
-LABEL maintainer="tlacuache@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
 

@@ -1,5 +1,4 @@
 FROM debian:buster-slim
-LABEL maintainer="tlacuache@gmail.com"
 
 RUN apt-get update && \
     apt-get -y dist-upgrade && \
