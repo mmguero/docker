@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+
+  calibre:
+    image: calibre-web:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: calibre
+    expose:
+      - 8083
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - VIRTUAL_HOST=books.example.org
+      - VIRTUAL_PORT=8083
+      - LETSENCRYPT_HOST=books.example.org
+      - LETSENCRYPT_EMAIL=example@example.org
+    volumes:
+      - ./config:/config
+      - ./data:/books
+    networks:
+      - proxy
+    restart: unless-stopped
+
+volumes:
+  calibre:
+
+networks:
+  proxy:
+    external:
+      name: nginx-proxy
