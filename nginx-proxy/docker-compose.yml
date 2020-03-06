@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:latest
+    container_name: nginx-proxy
+    ports:
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - html:/usr/share/nginx/html:ro
+      - ./config/proxy_overrides.conf:/etc/nginx/conf.d/proxy_overrides.conf:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - proxy
+    restart: always
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:latest
+    container_name: nginx-proxy-le
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - html:/usr/share/nginx/html:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+
+volumes:
+  conf:
+  vhost:
+  dhparam:
+  certs:
+  html:
+
+networks:
+  proxy:
+    external:
+      name: nginx-proxy
