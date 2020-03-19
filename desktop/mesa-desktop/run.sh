@@ -1,1 +1,0 @@
-../docker-opengl-mesa/run.sh
