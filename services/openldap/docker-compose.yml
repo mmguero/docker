@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    environment:
+       - LDAP_LOG_LEVEL=256
+       - LDAP_ORGANISATION=example.org
+       - LDAP_DOMAIN=example.org
+       - LDAP_BASE_DN=
+       - LDAP_ADMIN_PASSWORD=password
+       - LDAP_CONFIG_PASSWORD=password
+       - LDAP_READONLY_USER=true
+       - LDAP_READONLY_USER_USERNAME=binddn
+       - LDAP_READONLY_USER_PASSWORD=password
+       - LDAP_RFC2307BIS_SCHEMA=false
+       - LDAP_BACKEND=mdb
+       - LDAP_TLS=true
+       - LDAP_TLS_CRT_FILENAME=ldap.crt
+       - LDAP_TLS_KEY_FILENAME=ldap.key
+       - LDAP_TLS_CA_CRT_FILENAME=ca.crt
+       - LDAP_TLS_ENFORCE=false
+       - LDAP_TLS_CIPHER_SUITE=SECURE256:-VERS-SSL3.0
+       - LDAP_TLS_PROTOCOL_MIN=3.1
+       - LDAP_TLS_VERIFY_CLIENT=never
+       - LDAP_REPLICATION=false
+       - KEEP_EXISTING_CONFIG=false
+       - LDAP_REMOVE_CONFIG_AFTER_SETUP=true
+       - LDAP_SSL_HELPER_PREFIX=ldap
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs
+    expose:
+      - 389
+      - 636
+    ports:
+      - "0.0.0.0:389:389"
+      - "0.0.0.0:636:636"
+    domainname: openldap
+    hostname: openldap
+    restart: unless-stopped
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    expose:
+      - 443
+    ports:
+      - "0.0.0.0:443:443"
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - PHPLDAPADMIN_HTTPS=true
+    depends_on:
+      - openldap
+    domainname: phpldapadmin
+    hostname: phpldapadmin
+    restart: unless-stopped
