@@ -1,0 +1,28 @@
+version: '3.7'
+
+volumes:
+  opt-splunk-etc:
+  opt-splunk-var:
+
+services:
+  splunkenterprise:
+    hostname: splunkenterprise
+    container_name: splunkenterprise
+    image: store/splunk/splunk:7.3
+    expose:
+      - 1514
+      - 8000
+      - 9997
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=123ABCdef!
+      - SPLUNK_LICENSE_URI=Free
+      - SPLUNK_ENABLE_LISTEN=9997
+      - SPLUNK_ADD=tcp 1514
+    volumes:
+      - opt-splunk-etc:/opt/splunk/etc
+      - opt-splunk-var:/opt/splunk/var
+    ports:
+      - 127.0.0.1:1514:1514
+      - 127.0.0.1:8002:8000
+      - 127.0.0.1:9997:9997
