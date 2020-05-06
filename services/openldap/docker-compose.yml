@@ -5,7 +5,7 @@ services:
     image: osixia/openldap:latest
     container_name: openldap
     environment:
-       - LDAP_LOG_LEVEL=256
+       - LDAP_LOG_LEVEL=32768
        - LDAP_ORGANISATION=example.org
        - LDAP_DOMAIN=example.org
        - LDAP_BASE_DN=
@@ -31,7 +31,7 @@ services:
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
-      - /container/service/slapd/assets/certs
+      - ./certs_ldap:/container/service/slapd/assets/certs:rw
     expose:
       - 389
       - 636
@@ -51,6 +51,9 @@ services:
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
       - PHPLDAPADMIN_HTTPS=true
+    volumes:
+      - ./certs_web:/container/service/phpldapadmin/assets/apache2/certs:rw
+      - ./certs_web:/container/service/ldap-client/assets/certs:rw
     depends_on:
       - openldap
     domainname: phpldapadmin

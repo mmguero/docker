@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+
+  vault:
+    image: vault:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vault
+    expose:
+      - 8200
+    ports:
+      - 127.0.0.1:8200:8200
+    volumes:
+      - ./config:/vault/config
+      - ./policies:/vault/policies
+      - ./data:/vault/data
+      - ./logs:/vault/logs
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+      - VAULT_API_ADDR=http://127.0.0.1:8200
+      - VAULT_ADDRESS=http://127.0.0.1:8200
+    command: server -config=/vault/config/vault-config.json
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
