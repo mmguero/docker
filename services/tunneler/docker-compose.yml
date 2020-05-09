@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  tunneler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tunneler:latest
+    container_name: tunneler
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - IPC_LOCK
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+      - NET_BIND_SERVICE
+    environment:
+      WORMHOLE_PORT : 4001
+      WORMHOLE_AUTOSTART : 'false'
+    ports:
+      - "0.0.0.0:4001:4001/tcp"
+    restart: unless-stopped
