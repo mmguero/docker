@@ -1,10 +1,13 @@
 FROM debian:buster-slim
 
+ENV DEBIAN_FRONTEND noninteractive
+
 ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
 
-RUN apt-get update && \
-    apt-get install --no-install-recommends -qy \
+RUN  apt-get update && \
+     apt-get install --no-install-recommends -qy \
       build-essential \
+      ca-certificates \
       curl \
       dnsutils \
       gcc \
