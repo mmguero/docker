@@ -41,7 +41,7 @@ ENV SPICY_DIR "/opt/spicy"
 ENV SPICY_BRANCH "master"
 ENV SRC_BASE_DIR "/usr/local/src"
 ENV ZEEK_DIR "/opt/zeek"
-ENV ZEEK_VERSION "3.0.6"
+ENV ZEEK_VERSION "3.1.3"
 
 # using clang instead of gcc because Spicy depends on it
 ENV LLVM_VERSION "9"
