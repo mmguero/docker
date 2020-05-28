@@ -1,12 +1,14 @@
 # Zeek and Spicy
 
+# use the handy-dandy zeek-docker.sh or manually as per these examples
+
 # Monitor a local network interface with Zeek:
 #
 #   docker run --rm \
 #     -v "$(pwd):/zeek-logs" \
 #     --network host \
 #     --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=IPC_LOCK \
-#     zeek:latest \
+#     mmguero/zeek:latest \
 #     zeekcap -i enp6s0 local
 
 # Analyze a PCAP file with Zeek:
@@ -14,7 +16,7 @@
 #   docker run --rm \
 #     -v "$(pwd):/zeek-logs" \
 #     -v "/path/containing/pcap:/data:ro" \
-#     zeek:latest \
+#     mmguero/zeek:latest \
 #     zeek -C -r /data/foobar.pcap local
 
 # Use a custom policy:
@@ -23,7 +25,7 @@
 #     -v "$(pwd):/zeek-logs" \
 #     -v "/path/containing/pcap:/data:ro" \
 #     -v "/path/containing/policy/local-example.zeek:/opt/zeek/share/zeek/site/local.zeek:ro" \
-#     zeek:latest \
+#     mmguero/zeek:latest \
 #     zeek -C -r /data/foobar.pcap local
 
 FROM debian:buster-slim AS build
