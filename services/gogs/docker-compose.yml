@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  gogs:
+    container_name: gogs
+    image: gogs/gogs:latest
+    volumes:
+      - ./data:/data
+    expose:
+      - 3000
+      - 10022
+    ports:
+      - "0.0.0.0:10022:22/tcp"
+      - "0.0.0.0:3000:3000/tcp"
+    environment:
+      - VIRTUAL_HOST=gogs.example.com
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=gogs.example.com
+      - LETSENCRYPT_EMAIL=user@example.com
+    networks:
+      - proxy
+    restart: unless-stopped
+
+networks:
+  proxy:
+    external:
+      name: nginx-proxy
