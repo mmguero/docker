@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: nextcloud-postgres
+    hostname: postgres
+    environment:
+      PUID: 1000
+      PGID: 1000
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: XXXXXXXXXXXXXXXX
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./db:/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
+
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    hostname: nextcloud
+    links:
+      - postgres
+    expose:
+      - 80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=XXXXXXXXXXXXXXXX
+      - POSTGRES_HOST=postgres
+      - NEXTCLOUD_ADMIN_USER=admin
+    volumes:
+      - ./data:/var/www/html
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:alpine
+    container_name: nextcloud_proxy
+    hostname: proxy
+    links:
+      - nextcloud
+    expose:
+      - 80
+      - 443
+    ports:
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./proxy/certs:/etc/nginx/certs:ro
+

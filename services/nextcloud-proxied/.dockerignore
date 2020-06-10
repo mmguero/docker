@@ -1,0 +1,6 @@
+**/*.crt
+**/*.key
+**/*.pem
+docker-compose*yml
+data
+db
