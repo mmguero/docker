@@ -17,7 +17,10 @@ services:
     restart: unless-stopped
 
   nextcloud:
-    image: nextcloud:latest
+    image: mmguero/nextcloud:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     container_name: nextcloud
     hostname: nextcloud
     links:

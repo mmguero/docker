@@ -1,0 +1,46 @@
+FROM y484v/calibre:latest as calibresource
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN cd /tmp && \
+    bash -c 'for FILE in $(dpkg -L calibre calibre-bin); do [[ -f "$FILE" ]] && echo "$FILE"; done | grep -Pv "(/usr/share/(man|icons))" | sort -u | tar -czvf calibre_files.tar.gz -C / -T -'
+
+FROM linuxserver/calibre-web as runtime
+
+LABEL maintainer "Seth Grover <seth.d.grover@gmail.com>"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+COPY --from=calibresource /tmp/calibre_files.tar.gz /tmp/calibre_files.tar.gz
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+      curl \
+      imagemagick \
+      libxslt1.1 \
+      libxslt1-dev \
+      libxml2-dev \
+      libxml2 \
+      libmagic1 \
+      python-pip \
+      python-setuptools \
+      python-wheel \
+      python2.7 \
+      libpython2.7 \
+      python3-pip \
+      python3-setuptools \
+      python3-wheel \
+      python2.7-dev \
+      python3-dev \
+      build-essential \
+      xvfb && \
+    pip2 install filemagic ebooklib && \
+    pip3 install Flask-SimpleLDAP python-ldap goodreads python-Levenshtein lxml Pillow rarfile && \
+    cd / && \
+    tar xvf /tmp/calibre_files.tar.gz && \
+    apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
+      libpython2.7-dev libpython3.6-dev build-essential libicu-dev libstdc++-7-dev && \
+    apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages autoremove && \
+    apt-get clean && \
+    rm -rf /tmp/* /var/lib/apt/lists/*
+

@@ -1,5 +1,7 @@
 FROM linuxserver/calibre-web
 
+LABEL maintainer "Seth Grover <seth.d.grover@gmail.com>"
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
