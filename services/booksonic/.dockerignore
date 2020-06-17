@@ -2,6 +2,7 @@
 **/*.key
 **/*.pem
 docker-compose*yml
-data
-db
-docker
+config
+audiobooks
+podcasts
+othermedia

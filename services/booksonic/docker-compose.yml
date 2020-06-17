@@ -32,4 +32,5 @@ services:
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./proxy/certs:/etc/nginx/certs:ro
+    restart: unless-stopped
 
