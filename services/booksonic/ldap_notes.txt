@@ -1,0 +1,18 @@
+Getting LDAP authentication to work with my own certificates on the openLDAP server
+TODO: automate this
+
+1. config
+    * ldaps://example.com:636/dc=example,dc=com
+    * (&(|(|(gidNumber=1000)(gidNumber=100)))(uid={0})(objectClass=posixAccount))
+    * cn=binddn,dc=example,dc=com / ********
+    * auto-create users
+
+2. copy certs to /usr/local/share/ca-certificates/ in container
+
+3. for file in /usr/local/share/ca-certificates/*.crt; do \
+     keytool -importcert -file "$file" -alias "$(basename "$file" | sed "s/\.crt//")" \
+     -keystore /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/security/cacerts \
+     -keypass changeit -storepass changeit; \
+    done;
+
+4. killall java and wait for booksonic to restart

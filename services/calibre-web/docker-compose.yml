@@ -27,9 +27,6 @@ services:
       - proxy
     restart: unless-stopped
 
-volumes:
-  calibre:
-
 networks:
   proxy:
     external:
