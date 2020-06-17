@@ -12,4 +12,4 @@ TODO: automate this
 
 3. docker-compose exec booksonic bash -c 'for file in /tmp/*.crt; do keytool -importcert -file "$file" -alias "($(basename "$file" | sed "s/\.crt//")" -keystore /usr/lib/jvm/java-8-openjdk-armhf/jre/lib/security/cacerts -keypass changeit -storepass changeit -noprompt; done;) && kill $(pidof java)'
 
-4. killall java and wait for booksonic to restart
+4. wait for booksonic to restart
