@@ -45,7 +45,7 @@ RUN apt-get update && \
     cd / && \
     tar xvf /tmp/calibre_files.tar.gz && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
-      libpython2.7-dev libpython3.6-dev build-essential libicu-dev libstdc++-7-dev pkg-config && \
+      libpython2.7-dev libpython3.6-dev build-essential libicu-dev libstdc++-7-dev pkg-config libllvm9 libgl1-mesa-dri && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages autoremove && \
     apt-get clean && \
     rm -rf /tmp/* /var/lib/apt/lists/*
