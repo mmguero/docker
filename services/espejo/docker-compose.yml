@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  apt-mirror:
+    build:
+      context: .
+      dockerfile: Dockerfiles/apt-mirror.Dockerfile
+    image: mmguero/espejo/apt-mirror:latest
+    restart: "no"
+    hostname: apt-mirror
+    volumes:
+      - ./apt-data:/mnt/mirror/debian:rw
+      - ./config/mirror.list:/etc/apt/mirror.list:ro
+  bandersnatch:
+    build:
+      context: .
+      dockerfile: Dockerfiles/bandersnatch.Dockerfile
+    image: mmguero/espejo/bandersnatch:latest
+    restart: "no"
+    hostname: bandersnatch
+    volumes:
+      - ./pypi-data:/mnt/mirror/pypi:rw
+      - ./config/bandersnatch.conf:/etc/bandersnatch.conf:ro
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfiles/nginx.Dockerfile
+    image: mmguero/espejo/nginx:latest
+    restart: "no"
+    hostname: nginx
+    depends_on:
+      - apt-mirror
+      - bandersnatch
+    ports:
+      - "8443:443"
+    volumes:
+      - ./apt-data:/mnt/mirror/debian:ro
+      - ./pypi-data:/mnt/mirror/pypi:ro
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro

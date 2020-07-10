@@ -1,0 +1,35 @@
+############# config ##################
+#
+set base_path    /mnt/mirror/debian
+#
+# set mirror_path  $base_path/mirror
+# set skel_path    $base_path/skel
+# set var_path     $base_path/var
+# set cleanscript $var_path/clean.sh
+# set defaultarch  <running host architecture>
+# set postmirror_script $var_path/postmirror.sh
+# set run_postmirror 0
+set nthreads     8
+set _tilde 0
+#
+############# end config ################
+
+# buster
+deb http://deb.debian.org/debian buster main contrib non-free
+deb http://security.debian.org/debian-security buster/updates main contrib non-free
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb http://deb.debian.org/debian buster-backports main contrib non-free
+
+# stretch
+deb http://deb.debian.org/debian stretch main contrib non-free
+deb http://security.debian.org/debian-security stretch/updates main contrib non-free
+deb http://deb.debian.org/debian stretch-updates main contrib non-free
+deb http://deb.debian.org/debian stretch-backports main contrib non-free
+
+# llvm - buster and stretch
+deb http://apt.llvm.org/buster/ llvm-toolchain-buster-9 main
+deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-9 main
+
+# docker - buster and stretch
+deb https://download.docker.com/linux/debian buster stable
+deb https://download.docker.com/linux/debian stretch stable
