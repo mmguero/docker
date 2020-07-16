@@ -1,24 +1,20 @@
 #!/bin/bash
 
 ENCODING="utf-8"
-VERBOSE_FLAG=""
-while getopts i:v opts; do
-   case ${opts} in
-      i) IN_FILE=${OPTARG} ;;
-      v) VERBOSE_FLAG="-vv"
-   esac
-done
 
+IN_FILE="$1"
 if [[ -z $IN_FILE ]] ; then
   echo "usage:"
-  echo "  capa.sh -i <IN_FILE> [-v]"
+  echo "  capa.sh <IN_FILE> [capa options]"
   exit 1
 elif [[ ! -f "$IN_FILE" ]]; then
   echo "usage:"
-  echo "  capa.sh -i <IN_FILE> [-v]"
+  echo "  capa.sh <IN_FILE> [capa options]"
   echo ""
   echo "$IN_FILE does not exist!"
   exit 1
+else
+  shift
 fi
 
 TEMP_DIR=$(mktemp -d -t capa.XXXXXXXXXX)
@@ -34,4 +30,4 @@ cp "$IN_FILE" "$TEMP_DIR/"
 
 docker run --rm -t \
   -v "$TEMP_DIR:/data:rw" \
-  capa:latest "/data/$IN_BASENAME" $VERBOSE_FLAG
+  capa:latest "/data/$IN_BASENAME" "$@"
