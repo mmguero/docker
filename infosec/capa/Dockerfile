@@ -34,4 +34,4 @@ RUN groupadd --gid ${DEFAULT_GID} ${PUSER} && \
 
 ADD ./docker/docker-uid-gid-setup.sh /usr/local/bin/
 
-ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/usr/bin/capa", "-vv" ]
+ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/usr/bin/capa" ]
