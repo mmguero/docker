@@ -12,16 +12,17 @@ services:
     ports:
       - "0.0.0.0:10022:22/tcp"
       - "0.0.0.0:3000:3000/tcp"
-    environment:
-      - VIRTUAL_HOST=gogs.example.com
-      - VIRTUAL_PORT=3000
-      - LETSENCRYPT_HOST=gogs.example.com
-      - LETSENCRYPT_EMAIL=user@example.com
     networks:
       - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gogs.rule=Host(`gogs.example.org`)"
+      - "traefik.http.routers.gogs.entrypoints=websecure"
+      - "traefik.http.routers.gogs.tls.certresolver=myresolver"
+      - "traefik.http.services.gogs.loadbalancer.server.port=3000"
     restart: unless-stopped
 
 networks:
   proxy:
     external:
-      name: nginx-proxy
+      name: traefik-proxy

@@ -16,10 +16,12 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Denver
-      - VIRTUAL_HOST=example.org
-      - VIRTUAL_PORT=8083
-      - LETSENCRYPT_HOST=example.org
-      - LETSENCRYPT_EMAIL=example@example.org
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.example.org`)"
+      - "traefik.http.routers.calibre.entrypoints=websecure"
+      - "traefik.http.routers.calibre.tls.certresolver=myresolver"
+      - "traefik.http.services.calibre.loadbalancer.server.port=8083"
     volumes:
       - ./config:/config
       - ./data:/books
@@ -30,4 +32,4 @@ services:
 networks:
   proxy:
     external:
-      name: nginx-proxy
+      name: traefik-proxy
