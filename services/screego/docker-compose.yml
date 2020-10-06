@@ -1,0 +1,76 @@
+version: "3.7"
+
+# screego/server https://github.com/screego/server https://screego.net
+
+services:
+  screego:
+    image: screego/server:1.0.1
+    restart: unless-stopped
+    networks:
+      - proxy
+    expose:
+      - 5050
+    ports:
+      - 0.0.0.0:3478:3478
+      - 0.0.0.0:3478:3478/udp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.screego.rule=Host(`screen.example.org`)"
+      - "traefik.http.routers.screego.entrypoints=websecure"
+      - "traefik.http.routers.screego.tls.certresolver=myresolver"
+      - "traefik.http.services.screego.loadbalancer.server.port=5050"
+    volumes:
+      # SCREEGO_USERS_FILE
+      - ./htpasswd:/etc/screego.passwd:ro
+    environment:
+      # The external ip of the server
+      SCREEGO_EXTERNAL_IP: "17.5.7.8"
+
+      # A secret which should be unique. Is used for cookie authentication.
+      SCREEGO_SECRET: "abcdefgHIJKLMN"
+
+      # The address the http server will listen on.
+      SCREEGO_SERVER_ADDRESS: "0.0.0.0:5050"
+
+      # The address the TURN server will listen on.
+      SCREEGO_TURN_ADDRESS: "0.0.0.0:3478"
+
+      # If reverse proxy headers should be trusted.
+      # Screego uses ip whitelisting for authentication
+      # of TURN connections. When behind a proxy the ip is always the proxy server.
+      # To still allow whitelisting this setting must be enabled and
+      # the `X-Real-Ip` header must be set by the reverse proxy.
+      SCREEGO_TRUST_PROXY_HEADERS: "true"
+
+      # Defines when a user login is required
+      # Possible values:
+      #   all: User login is always required
+      #   turn: User login is required for TURN connections
+      #   none: User login is never required
+      SCREEGO_AUTH_MODE: "all"
+
+      # Defines origins that will be allowed to access Screego (HTTP + WebSocket)
+      # Example Value: https://screego.net,https://sub.gotify.net
+      SCREEGO_CORS_ALLOWED_ORIGINS: "https://screen.example.org"
+
+      # Defines the location of the users file.
+      # File Format:
+      #   user1:bcrypt_password_hash
+      #   user2:bcrypt_password_hash
+      #
+      # Example:
+      #   user1:$2a$12$WEfYCnWGk0PDzbATLTNiTuoZ7e/43v6DM/h7arOnPU6qEtFG.kZQy
+      #
+      # The user password pair can be created via
+      #   screego hash --name "user1" --pass "your password"
+      #   or
+      #   htpasswd (e.g., htpasswd -cB htpasswd user1)
+      SCREEGO_USERS_FILE: "/etc/screego.passwd"
+
+      # The loglevel (one of: debug, info, warn, error)
+      SCREEGO_LOG_LEVEL: debug
+
+networks:
+  proxy:
+    external:
+      name: traefik-proxy
