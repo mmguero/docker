@@ -16,8 +16,16 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - 0.0.0.0:80:80
-      - 0.0.0.0:9443:443
+      # - 0.0.0.0:80:80
+      # - 0.0.0.0:443:443
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
     networks:
       - proxy
     volumes:
