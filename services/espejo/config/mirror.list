@@ -27,8 +27,8 @@ deb http://deb.debian.org/debian stretch-updates main contrib non-free
 deb http://deb.debian.org/debian stretch-backports main contrib non-free
 
 # llvm - buster and stretch
-deb http://apt.llvm.org/buster/ llvm-toolchain-buster-9 main
-deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-9 main
+deb http://apt.llvm.org/buster/ llvm-toolchain-buster-10 main
+deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-10 main
 
 # docker - buster and stretch
 deb https://download.docker.com/linux/debian buster stable
