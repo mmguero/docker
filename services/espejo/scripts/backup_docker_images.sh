@@ -30,8 +30,8 @@ else
 fi
 
 echo "This might take a few minutes..."
-DESTNAMEIMAGES="$RUN_PATH/apt-mirror_${CURRENT_REV_TAG}_images.tar.gz"
+DESTNAMEIMAGES="$RUN_PATH/espejo_${CURRENT_REV_TAG}_images.tar.gz"
 IMAGES=( $(grep image: $RUN_PATH/docker-compose.yml | awk '{print $2}') )
 docker save "${IMAGES[@]}" | gzip > "$DESTNAMEIMAGES"
-echo "Packaged apt-mirror docker images to \"$DESTNAMEIMAGES\""
+echo "Packaged espejo docker images to \"$DESTNAMEIMAGES\""
 echo ""

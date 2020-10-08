@@ -7,18 +7,6 @@ fi
 
 set -e
 
-if docker version >/dev/null 2>&1; then
-  DOCKER_BIN=docker
-elif grep -q Microsoft /proc/version && docker.exe version >/dev/null 2>&1; then
-  DOCKER_BIN=docker.exe
-fi
-
-if [ "$1" ]; then
-  CONFIG_FILE="$1"
-else
-  CONFIG_FILE="docker-compose.yml"
-fi
-
 # force-navigate to base directory (parent of scripts/ directory)
 [[ "$(uname -s)" = 'Darwin' ]] && REALPATH=grealpath || REALPATH=realpath
 [[ "$(uname -s)" = 'Darwin' ]] && DIRNAME=gdirname || DIRNAME=dirname
@@ -37,7 +25,7 @@ if [[ $CONFIRMATION =~ ^[Yy]$ ]]; then
   mkdir -p certs
   pushd ./certs >/dev/null 2>&1
   rm -f *.pem
-  /bin/bash ../scripts/gen_self_signed_certs.sh >/dev/null 2>&1
+  openssl req -subj '/CN=localhost' -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 3650 >/dev/null 2>&1
   popd >/dev/null 2>&1
 fi
 
