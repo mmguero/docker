@@ -47,7 +47,7 @@ services:
       #   all: User login is always required
       #   turn: User login is required for TURN connections
       #   none: User login is never required
-      SCREEGO_AUTH_MODE: "all"
+      SCREEGO_AUTH_MODE: "turn"
 
       # Defines origins that will be allowed to access Screego (HTTP + WebSocket)
       # Example Value: https://screego.net,https://sub.gotify.net

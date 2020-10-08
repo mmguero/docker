@@ -6,26 +6,18 @@ services:
     image: "traefik:v2.2"
     container_name: "traefik"
     command:
-      #- "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      #- "--log.level=DEBUG"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
-      # - 0.0.0.0:80:80
-      # - 0.0.0.0:443:443
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
     networks:
       - proxy
     volumes:
@@ -36,6 +28,8 @@ services:
   whoami:
     image: "containous/whoami"
     container_name: "whoami"
+    expose:
+      - "80"
     networks:
       - proxy
     labels:
