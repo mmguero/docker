@@ -20,6 +20,7 @@ services:
     hostname: bandersnatch
     volumes:
       - ./pypi-data:/mnt/mirror/pypi:rw
+      - ./pypi-status:/mnt/mirror/pypi-status:rw
       - ./config/bandersnatch.conf:/etc/bandersnatch.conf:ro
   nginx:
     build:
