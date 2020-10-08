@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfiles/apt-mirror.Dockerfile
-    image: mmguero/espejo/apt-mirror:latest
+    image: mmguero/espejo_apt-mirror:latest
     restart: "no"
     hostname: apt-mirror
     volumes:
@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfiles/bandersnatch.Dockerfile
-    image: mmguero/espejo/bandersnatch:latest
+    image: mmguero/espejo_bandersnatch:latest
     restart: "no"
     hostname: bandersnatch
     volumes:
@@ -25,7 +25,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfiles/nginx.Dockerfile
-    image: mmguero/espejo/nginx:latest
+    image: mmguero/espejo_nginx:latest
     restart: "no"
     hostname: nginx
     depends_on:
