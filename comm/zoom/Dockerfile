@@ -12,5 +12,7 @@ FROM jess/zoom-us:latest
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      pulseaudio-utils && \
+      procps pulseaudio-utils && \
   rm -rf /var/lib/apt/lists/*
+
+  ADD ./os-release /etc/os-release
