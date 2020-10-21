@@ -25,7 +25,6 @@ services:
       - SYS_ADMIN
       - NET_BIND_SERVICE
     environment:
-    environment:
       << : *process-variables
       WORMHOLE_PORT : 4001
       WORMHOLE_AUTOSTART : 'false'
