@@ -31,7 +31,7 @@ services:
       WORMHOLE_AUTOSTART : 'false'
       CROC_PORT_LOW : 9009
       CROC_PORT_HIGH : 9013
-      CROC_PASS : 'abcdefg'
+      CROC_PASS : ''
       CROC_AUTOSTART : 'false'
     ports:
       - "0.0.0.0:4001:4001/tcp"
