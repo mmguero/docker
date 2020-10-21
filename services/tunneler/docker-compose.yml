@@ -1,5 +1,10 @@
 version: '3.7'
 
+x-process-variables: &process-variables
+  # docker containers will run processes as unprivileged user with UID:GID
+  PUID : 1000
+  PGID : 1000
+
 services:
   tunneler:
     build:
@@ -11,6 +16,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    stdin_open: false
+    tty: true
     cap_add:
       - IPC_LOCK
       - NET_ADMIN
@@ -18,8 +25,15 @@ services:
       - SYS_ADMIN
       - NET_BIND_SERVICE
     environment:
+    environment:
+      << : *process-variables
       WORMHOLE_PORT : 4001
       WORMHOLE_AUTOSTART : 'false'
+      CROC_PORT_LOW : 9009
+      CROC_PORT_HIGH : 9013
+      CROC_PASS : 'abcdefg'
+      CROC_AUTOSTART : 'false'
     ports:
       - "0.0.0.0:4001:4001/tcp"
+      - "0.0.0.0:9009-9013:9009-9013/tcp"
     restart: unless-stopped

@@ -1,6 +1,15 @@
 FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV TERM xterm
+
+ARG DEFAULT_UID=1000
+ARG DEFAULT_GID=1000
+ENV DEFAULT_UID $DEFAULT_UID
+ENV DEFAULT_GID $DEFAULT_GID
+ENV PUSER "tunneler"
+ENV PGROUP "tunneler"
+ENV PUSER_PRIV_DROP true
 
 ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
 
@@ -13,6 +22,7 @@ RUN  apt-get update && \
       gcc \
       iproute2 \
       iputils-ping \
+      jq \
       libcap2-bin \
       net-tools \
       netcat-openbsd \
@@ -39,6 +49,8 @@ RUN  apt-get update && \
     cd /tmp && \
   pip3 install magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
+  curl -sSL -o /tmp/croc.deb "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
+    dpkg -i /tmp/croc.deb && \
   apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
       build-essential \
       gcc \
@@ -48,45 +60,56 @@ RUN  apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD supervisord.conf /etc/supervisord.conf
+ADD docker-uid-gid-setup.sh /usr/local/bin/
+ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
 
-ENV TUNNEL_USER=tunneler
-
-RUN groupadd --gid 1000 $TUNNEL_USER && \
-      useradd -M --uid 1000 --gid 1000 $TUNNEL_USER && \
-    sed -i "s/nobody/$TUNNEL_USER/g" /usr/local/share/udptunnel/* && \
-    mkdir -p /run && \
-    chown -R $TUNNEL_USER:$TUNNEL_USER /run && \
-    chown root:$TUNNEL_USER /bin/nc.openbsd && \
+RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
+      useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
+      usermod -a -G tty ${PUSER} && \
+    sed -i "s/nobody/$PUSER/g" /usr/local/share/udptunnel/* && \
+    chmod 775 /var/log/supervisor && \
+      chown root:$PGROUP /var/log/supervisor && \
+    chown root:$PGROUP /bin/nc.openbsd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /bin/nc.openbsd && \
-    chown root:$TUNNEL_USER /usr/bin/socat && \
+    chown root:$PGROUP /usr/bin/socat && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/socat && \
-    chown root:$TUNNEL_USER /usr/sbin/tcpd && \
+    chown root:$PGROUP /usr/sbin/tcpd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/sbin/tcpd && \
-    chown root:$TUNNEL_USER /usr/bin/openssl && \
+    chown root:$PGROUP /usr/bin/openssl && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/openssl && \
-    chown root:$TUNNEL_USER /usr/sbin/inetd && \
+    chown root:$PGROUP /usr/sbin/inetd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/sbin/inetd && \
-    chown root:$TUNNEL_USER /usr/bin/stunnel3 && \
+    chown root:$PGROUP /usr/bin/stunnel3 && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel3 && \
-    chown root:$TUNNEL_USER /usr/bin/stunnel4 && \
+    chown root:$PGROUP /usr/bin/stunnel4 && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel4 && \
-    chown root:$TUNNEL_USER /usr/bin/tcpcryptd && \
+    chown root:$PGROUP /usr/bin/tcpcryptd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/tcpcryptd && \
-    chown root:$TUNNEL_USER /usr/sbin/netsniff-ng && \
+    chown root:$PGROUP /usr/sbin/netsniff-ng && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng && \
-    chown root:$TUNNEL_USER /usr/local/sbin/udptunnel && \
+    chown root:$PGROUP /usr/local/sbin/udptunnel && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/local/sbin/udptunnel
 
 ENV PATH="/usr/local/sbin:/usr/sbin:${PATH}"
 
-USER tunneler
-
 WORKDIR "/tmp"
 
-ARG WORMHOLE_PORT=4001
 ARG WORMHOLE_AUTOSTART=false
 ENV WORMHOLE_AUTOSTART $WORMHOLE_AUTOSTART
+ARG WORMHOLE_PORT=4001
 ENV WORMHOLE_PORT $WORMHOLE_PORT
 EXPOSE $WORMHOLE_PORT
+
+ARG CROC_PORT_LOW=9009
+ARG CROC_PORT_HIGH=9013
+ENV CROC_PORT_LOW $CROC_PORT_LOW
+ENV CROC_PORT_HIGH $CROC_PORT_HIGH
+EXPOSE $CROC_PORT_LOW-$CROC_PORT_HIGH
+ARG CROC_AUTOSTART=false
+ENV CROC_AUTOSTART $CROC_AUTOSTART
+ARG CROC_PASS=
+ENV CROC_PASS $CROC_PASS
+
+ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf", "-n"]

@@ -34,19 +34,19 @@ FROM debian:buster-slim AS build
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV BISON_VERSION "3.6.2"
+ENV BISON_VERSION "3.7.2"
 ENV CCACHE_DIR "/var/spool/ccache"
 ENV CCACHE_COMPRESS 1
 ENV CMAKE_DIR "/opt/cmake"
-ENV CMAKE_VERSION "3.17.2"
+ENV CMAKE_VERSION "3.18.4"
 ENV SPICY_DIR "/opt/spicy"
 ENV SPICY_BRANCH "master"
 ENV SRC_BASE_DIR "/usr/local/src"
 ENV ZEEK_DIR "/opt/zeek"
-ENV ZEEK_VERSION "3.0.6"
+ENV ZEEK_VERSION "3.0.11"
 
-# using clang instead of gcc because Spicy depends on it
-ENV LLVM_VERSION "9"
+# using clang now instead of gcc because Spicy depends on it
+ENV LLVM_VERSION "10"
 ENV CC "clang-${LLVM_VERSION}"
 ENV CXX "clang++-${LLVM_VERSION}"
 ENV ASM "clang-${LLVM_VERSION}"
@@ -82,6 +82,7 @@ RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list 
         locales-all \
         make \
         ninja-build \
+        patch \
         python3 \
         python3-dev \
         python3-pip \
@@ -89,7 +90,7 @@ RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list 
         python3-wheel \
         swig \
         zlib1g-dev && \
-  pip3 install --no-cache-dir btest pre-commit && \
+  pip3 install --no-cache-dir zkg btest pre-commit && \
   # recent CMake
   mkdir -p "${CMAKE_DIR}" && \
     curl -sSL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" | tar xzf - -C "${CMAKE_DIR}" --strip-components 1 && \
@@ -124,7 +125,7 @@ FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV LLVM_VERSION "9"
+ENV LLVM_VERSION "10"
 ENV ZEEK_DIR "/opt/zeek"
 ENV SPICY_DIR "/opt/spicy"
 
@@ -142,21 +143,32 @@ RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list 
       echo "deb-src http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
     apt-get -q update && \
     apt-get install -q -y -t buster-backports --no-install-recommends \
+      binutils \
+      file \
+      git \
       libatomic1 \
       libcap2-bin \
-      libclang-cpp9 \
+      libclang-${LLVM_VERSION}-dev \
+      libclang-cpp${LLVM_VERSION} \
+      libclang-cpp${LLVM_VERSION}-dev \
       libclang1-${LLVM_VERSION} \
       libgoogle-perftools4 \
       libkrb5-3 \
       libmaxminddb0 \
       libpcap0.8 \
+      libpcap0.8-dev \
       libssl1.0 \
       libtcmalloc-minimal4 \
       libunwind8 \
       llvm-${LLVM_VERSION} \
       procps \
       psmisc \
-      python3-minimal && \
+      python \
+      python3 \
+      python3-pip \
+      python3-setuptools \
+      python3-wheel \
+      vim-tiny && \
     apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
