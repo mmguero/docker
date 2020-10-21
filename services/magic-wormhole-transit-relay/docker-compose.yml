@@ -1,9 +1,0 @@
-version: '3.7'
-
-services:
-  magic-wormhole-transit-relay:
-    container_name: magic-wormhole-transit-relay
-    image: magic-wormhole-transit-relay:latest
-    ports:
-      - "0.0.0.0:4001:4001/tcp"
-    restart: unless-stopped
