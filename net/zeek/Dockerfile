@@ -33,6 +33,7 @@ FROM debian:buster-slim AS build
 # build stage for Zeek and Spicy
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV TERM xterm
 
 ENV BISON_VERSION "3.7.2"
 ENV CCACHE_DIR "/var/spool/ccache"
@@ -124,6 +125,15 @@ RUN cd "${SRC_BASE_DIR}" && \
 FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV TERM xterm
+
+ARG DEFAULT_UID=1000
+ARG DEFAULT_GID=1000
+ENV DEFAULT_UID $DEFAULT_UID
+ENV DEFAULT_GID $DEFAULT_GID
+ENV PUSER "zeek"
+ENV PGROUP "zeek"
+ENV PUSER_PRIV_DROP true
 
 ENV LLVM_VERSION "10"
 ENV ZEEK_DIR "/opt/zeek"
@@ -174,23 +184,23 @@ RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list 
 
 # configure unprivileged user and runtime parameters
 
-ARG ZEEK_USER=zeek
-ENV ZEEK_USER $ZEEK_USER
-
 ARG ZEEK_LOGS_DIR=/zeek-logs
 ENV ZEEK_LOGS_DIR $ZEEK_LOGS_DIR
 
-RUN mkdir -p "${ZEEK_LOGS_DIR}" && \
-    chown 1000:1000 "${ZEEK_LOGS_DIR}" && \
-    groupadd --gid 1000 ${ZEEK_USER} && \
-    useradd -M --uid 1000 --gid 1000 --home /nonexistant ${ZEEK_USER} && \
-    # make a setcap'ed copy of zeek name "zeekcap" for listening on an interface
+ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+
+RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
+    groupadd --gid ${DEFAULT_GID} ${PUSER} && \
+    useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
+    mkdir -p "${ZEEK_LOGS_DIR}" && \
+    chown ${PUSER}:${PGROUP} "${ZEEK_LOGS_DIR}" && \
+    # make a setcap copy of zeek (zeekcap) for listening on an interface
     cp "${ZEEK_DIR}"/bin/zeek "${ZEEK_DIR}"/bin/zeekcap && \
-    chown root:$ZEEK_USER "${ZEEK_DIR}"/bin/zeekcap && \
+    chown root:${PGROUP} "${ZEEK_DIR}"/bin/zeekcap && \
     setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip' "${ZEEK_DIR}"/bin/zeekcap
 
 ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
 
-USER $ZEEK_USER
-
 WORKDIR "${ZEEK_LOGS_DIR}"
+
+ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]

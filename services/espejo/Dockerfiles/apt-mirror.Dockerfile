@@ -17,6 +17,7 @@ ENV SUPERCRONIC_SHA1SUM "a2e2d47078a8dafc5949491e5ea7267cc721d67c"
 
 ENV CRON "0 0 * * *"
 
+ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD config/apt-mirror_debian_bug_932112.patch /usr/local/src/
 
 RUN apt-get update -q && \
@@ -34,6 +35,7 @@ RUN apt-get update -q && \
     apt-get clean && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p /mnt/mirror/debian  && \
+  chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
   curl -fsSLO "$SUPERCRONIC_URL" && \
     echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - && \
     chmod +x "$SUPERCRONIC" && \
@@ -41,7 +43,6 @@ RUN apt-get update -q && \
     ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic && \
   bash -c 'echo -e "${CRON} apt-mirror" > /etc/crontab'
 
-ADD scripts/docker-uid-gid-setup.sh /usr/local/bin/
 ADD config/mirror.list /etc/apt/mirror.list
 ADD config/gpg-key-urls.list /usr/local/etc/gpg-key-urls.list
 

@@ -38,6 +38,8 @@ export DIRNAME
 export BASENAME
 export LOCAL_SCRIPT
 export LOCAL_ZEEK_ARGS
+export DEFAULT_UID=$(id -u)
+export DEFAULT_GID=$(id -g)
 
 # process each argument in parallel with xargs (up to $MAX_ZEEK_PROCS or 4 if unspecified)
 
@@ -89,6 +91,7 @@ printf "%s\0" "$@" | $XARGS -0 -n 1 -P ${MAX_ZEEK_PROCS:-4} -I XXX bash -c '
   MOUNT_ARGS+=( "$LOG_DIR":/zeek-logs )
 
   # run zeek in docker on the provided input
-  docker run --rm $NETWORK_MODE "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_DOCKER_IMAGE \
+  docker run --rm $NETWORK_MODE -e DEFAULT_UID=$DEFAULT_UID -e DEFAULT_GID=$DEFAULT_GID \
+    "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_DOCKER_IMAGE \
     $ZEEK_EXE -C $IN_FLAG $LOCAL_SCRIPT "${LOCAL_ZEEK_ARGS[@]}"
 '

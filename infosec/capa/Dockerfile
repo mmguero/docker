@@ -11,27 +11,38 @@ ENV PUSER_PRIV_DROP true
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
-ARG CAPA_VERSION="1.0.0"
-ARG CAPA_URL="https://github.com/fireeye/capa/releases/download/v${CAPA_VERSION}/capa-v${CAPA_VERSION}-linux.zip"
+ENV CAPA_URL "https://github.com/fireeye/capa"
+ENV CAPA_RULES_DIR "/opt/capa-rules"
 
 RUN apt-get update && \
     apt-get  -y -q install --no-install-recommends \
-      curl unzip ca-certificates && \
+      git \
+      python \
+      python-backports-shutil-get-terminal-size \
+      python-dev \
+      python-pkg-resources \
+      python-setuptools \
+      python-wheel \
+      python-pip && \
+    pip2 install flare-capa && \
     cd /tmp && \
-        curl -sSL -o ./capa.zip "${CAPA_URL}" && \
-        unzip ./capa.zip && \
-        mv "/tmp/capa-v${CAPA_VERSION}-linux" /usr/bin/ && \
-        chmod +x "/usr/bin/capa-v${CAPA_VERSION}-linux" && \
-        ln -s -r "/usr/bin/capa-v${CAPA_VERSION}-linux" /usr/bin/capa && \
-        rm -f ./capa.zip && \
-    apt-get -q -y --purge remove curl unzip ca-certificates && \
+      git clone --depth 1 --single-branch --branch "v$(/usr/local/bin/capa --version 2>&1 | awk '{print $2}')" "${CAPA_URL}" /tmp/capa && \
+      cd /tmp/capa && \
+      git submodule init rules && \
+      git submodule update --depth 1 rules && \
+      cd /tmp && \
+      rm -rf "${CAPA_RULES_DIR}" && \
+      mv /tmp/capa/rules "${CAPA_RULES_DIR}" && \
+      rm -rf "${CAPA_RULES_DIR}"/.git* /tmp/capa && \
+    apt-get -q -y --purge remove git ca-certificates git python-dev && \
     apt-get -q -y autoremove && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN groupadd --gid ${DEFAULT_GID} ${PUSER} && \
-      useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER}
+ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
-ADD ./docker/docker-uid-gid-setup.sh /usr/local/bin/
+RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
+    groupadd --gid ${DEFAULT_GID} ${PUSER} && \
+    useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER}
 
-ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/usr/bin/capa" ]
+ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/usr/local/bin/capa", "-r", "/opt/capa-rules" ]

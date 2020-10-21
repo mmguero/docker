@@ -3,14 +3,6 @@ FROM debian:buster-slim
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
-ARG DEFAULT_UID=1000
-ARG DEFAULT_GID=1000
-ENV DEFAULT_UID $DEFAULT_UID
-ENV DEFAULT_GID $DEFAULT_GID
-ENV PUSER "tunneler"
-ENV PGROUP "tunneler"
-ENV PUSER_PRIV_DROP true
-
 ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
 
 RUN  apt-get update && \
@@ -59,11 +51,20 @@ RUN  apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD supervisord.conf /etc/supervisord.conf
-ADD docker-uid-gid-setup.sh /usr/local/bin/
 ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
 
-RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
+ARG DEFAULT_UID=1000
+ARG DEFAULT_GID=1000
+ENV DEFAULT_UID $DEFAULT_UID
+ENV DEFAULT_GID $DEFAULT_GID
+ENV PUSER "tunneler"
+ENV PGROUP "tunneler"
+ENV PUSER_PRIV_DROP true
+
+RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
+    groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
       usermod -a -G tty ${PUSER} && \
     sed -i "s/nobody/$PUSER/g" /usr/local/share/udptunnel/* && \

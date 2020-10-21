@@ -17,6 +17,8 @@ ENV SUPERCRONIC_SHA1SUM "a2e2d47078a8dafc5949491e5ea7267cc721d67c"
 
 ENV CRON "0 0 * * *"
 
+ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+
 RUN apt-get update -q && \
     apt-get -y install -qq --no-install-recommends \
       build-essential \
@@ -31,6 +33,7 @@ RUN apt-get update -q && \
       software-properties-common \
       zlib1g \
       zlib1g-dev && \
+    chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     groupadd --gid ${DEFAULT_GID} ${PUSER} && \
       useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
     pip3 install keystoneauth1 python-swiftclient bandersnatch && \
@@ -47,7 +50,6 @@ RUN apt-get update -q && \
       ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic && \
     bash -c 'echo -e "${CRON} /usr/local/bin/bandersnatch mirror --force-check" > /etc/crontab'
 
-ADD scripts/docker-uid-gid-setup.sh /usr/local/bin/
 ADD config/bandersnatch.conf /etc/
 
 VOLUME ["/mnt/mirror/pypi"]
