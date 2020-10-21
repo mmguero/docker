@@ -16,7 +16,7 @@ ENV TEAMS_USER teams
 RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list && \
       echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
       apt-get -q update && \
-      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
+      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates libsecret-1-0 libsecret-tools && \
   bash -c "curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -" && \
     echo "deb https://packages.microsoft.com/repos/ms-teams stable main" >> /etc/apt/sources.list && \
   apt-get -q update && \
