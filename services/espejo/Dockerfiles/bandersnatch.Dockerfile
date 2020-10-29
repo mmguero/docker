@@ -15,6 +15,27 @@ ENV SUPERCRONIC_URL "https://github.com/aptible/supercronic/releases/download/v0
 ENV SUPERCRONIC "supercronic-linux-amd64"
 ENV SUPERCRONIC_SHA1SUM "a2e2d47078a8dafc5949491e5ea7267cc721d67c"
 
+ARG BASE_CONF_FILE="/etc/bandersnatch_base.conf"
+ARG BLACKLIST_PACKAGE_FILE="/etc/bandersnatch_blacklist_packages.conf"
+ARG BLACKLIST_REGEX_FILE="/etc/bandersnatch_blacklist_packages_regex.conf"
+ARG BLACKLIST_PLATFORMS="macos;windows;freebsd"
+ARG BLACKLIST_KEYWORDS=""
+# see https://pypi.org/classifiers/
+ARG BLACKLIST_CLASSIFIERS=""
+ARG WHITELIST_PACKAGE_FILE="/etc/bandersnatch_whitelist_packages.conf"
+ARG PYPI_PROJECT_DB=""
+ARG PYPI_REQ_THREADS=1
+
+ENV BASE_CONF_FILE $HOST_BASE_CONF_FILE
+ENV BLACKLIST_PACKAGE_FILE $BLACKLIST_PACKAGE_FILE
+ENV BLACKLIST_REGEX_FILE $BLACKLIST_REGEX_FILE
+ENV BLACKLIST_PLATFORMS $BLACKLIST_PLATFORMS
+ENV BLACKLIST_KEYWORDS $BLACKLIST_KEYWORDS
+ENV BLACKLIST_CLASSIFIERS $BLACKLIST_CLASSIFIERS
+ENV WHITELIST_PACKAGE_FILE $WHITELIST_PACKAGE_FILE
+ENV PYPI_PROJECT_DB $PYPI_PROJECT_DB
+ENV PYPI_REQ_THREADS $PYPI_REQ_THREADS
+
 ENV CRON "0 0 * * *"
 
 ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
@@ -27,16 +48,19 @@ RUN apt-get update -q && \
       libxml2-dev \
       libxslt1-dev \
       libxslt1.1 \
+      libzmq5 \
+      moreutils \
       procps \
       python3-dev \
       python3-pip \
       software-properties-common \
+      vim-tiny \
       zlib1g \
       zlib1g-dev && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     groupadd --gid ${DEFAULT_GID} ${PUSER} && \
-      useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
-    pip3 install keystoneauth1 python-swiftclient bandersnatch && \
+      useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PGROUP} && \
+    python3 -m pip install --no-cache-dir beautifulsoup4 install keystoneauth1 python-swiftclient bandersnatch pyzmq && \
     cd /tmp && \
     apt-get -q -y --purge remove build-essential libxslt1-dev libxml2-dev python3-dev zlib1g-dev && \
       apt-get -y autoremove -qq && \
@@ -48,9 +72,15 @@ RUN apt-get update -q && \
       chmod +x "$SUPERCRONIC" && \
       mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" && \
       ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic && \
-    bash -c 'echo -e "${CRON} /usr/local/bin/bandersnatch mirror --force-check" > /etc/crontab'
+    bash -c 'echo -e "${CRON} /usr/local/bin/bandersnatch.sh mirror --force-check" > /etc/crontab'
 
 ADD config/bandersnatch.conf /etc/
+ADD scripts/pypi_filter.py /usr/local/bin/
+ADD scripts/bandersnatch.sh /usr/local/bin/
+
+RUN chown ${PUSER}:${PGROUP} /etc/bandersnatch.conf && \
+    chmod 755 /usr/local/bin/pypi_filter.py && \
+    chmod 755 /usr/local/bin/bandersnatch.sh
 
 VOLUME ["/mnt/mirror/pypi"]
 

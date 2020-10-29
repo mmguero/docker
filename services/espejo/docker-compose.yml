@@ -18,10 +18,19 @@ services:
     image: mmguero/espejo_bandersnatch:latest
     restart: "no"
     hostname: bandersnatch
+    environment:
+      BLACKLIST_PLATFORMS: 'macos;windows;freebsd'
+      BLACKLIST_KEYWORDS : 'game'
+      BLACKLIST_CLASSIFIERS : 'Topic :: Scientific/Engineering :: Astronomy'
+      # PYPI_PROJECT_DB /etc/pypi_cache.db
+      PYPI_REQ_THREADS : 4
     volumes:
       - ./pypi-data:/mnt/mirror/pypi:rw
       - ./pypi-status:/mnt/mirror/pypi-status:rw
-      - ./config/bandersnatch.conf:/etc/bandersnatch.conf:ro
+      - ./config/bandersnatch.conf:/etc/bandersnatch_base.conf:ro
+      - ./config/bandersnatch_blacklist_packages.conf:/etc/bandersnatch_blacklist_packages.conf:ro
+      - ./config/bandersnatch_blacklist_packages_regex.conf:/etc/bandersnatch_blacklist_packages_regex.conf:ro
+      # - ./config/pypi_cache.db:/etc/pypi_cache.db:rw
   nginx:
     build:
       context: .
