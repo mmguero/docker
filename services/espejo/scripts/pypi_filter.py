@@ -217,9 +217,6 @@ def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassi
       classifiersStr = [x.lower() for x in filterClassifiers if not x.lower().startswith('r:')]
       classifiersRegEx = re.compile('|'.join([x[2:] for x in filterClassifiers if x.lower().startswith('r:')]), re.IGNORECASE) if (len(classifiersStr) < len(filterClassifiers))  else re.compile(r'\b\B')
 
-      pprint(classifiersStr)
-      pprint(classifiersRegEx)
-
       # initialize ZeroMQ context and socket(s) to send scan results
       context = zmq.Context()
 
