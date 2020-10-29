@@ -90,7 +90,7 @@ EOF
         fi
       done
     fi
-    (( ${#KEYWORDS[@]} -eq 0 )) && KEYWORDS_FLAG="--keywords"
+    (( ${#KEYWORDS[@]} -eq 0 )) && KEYWORDS_FLAG="--keyword"
 
     CLASSIFIERS=()
     CLASSIFIERS_FLAG=""
@@ -103,9 +103,9 @@ EOF
         fi
       done
     fi
-    (( ${#CLASSIFIERS[@]} -eq 0 )) && CLASSIFIERS_FLAG="--classifiers"
+    (( ${#CLASSIFIERS[@]} -eq 0 )) && CLASSIFIERS_FLAG="--classifier"
 
-    /usr/bin/env python3 "$PYPI_FILTER_SCRIPT" --db "$PYPI_DB" --threads $PYPI_THREADS $KEYWORDS_FLAG "${KEYWORDS[@]}" $CLASSIFIERS_FLAG "${CLASSIFIERS[@]}"
+    /usr/bin/env python3 "$PYPI_FILTER_SCRIPT" --db "$PYPI_DB" --thread $PYPI_THREADS $KEYWORDS_FLAG "${KEYWORDS[@]}" $CLASSIFIERS_FLAG "${CLASSIFIERS[@]}"
 
   fi # BLACKLIST_KEYWORDS or BLACKLIST_CLASSIFIERS
 

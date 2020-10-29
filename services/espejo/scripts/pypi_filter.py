@@ -22,6 +22,7 @@ from multiprocessing.pool import ThreadPool
 from sqlite3 import Error as SQLError
 from multiprocessing import RawValue
 from threading import Lock
+from pprint import pprint
 
 ###################################################################################################
 args = None
@@ -208,6 +209,17 @@ def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassi
 
       if debug: eprint(f"{scriptName}[{reqWorkerId}]:\t🙂\t{len(myProjects)} projects")
 
+      # tags/classifiers can be string matches (case insensitive) or, if they are prefixed with r:, regex matches (case insensitive)
+
+      tagsStr = [x.lower() for x in filterTags if not x.startswith('r:')]
+      tagsRegEx = re.compile('|'.join([x[2:] for x in filterTags if x.startswith('r:')]), re.IGNORECASE) if (len(tagsStr) < len(filterTags)) else re.compile(r'\b\B')
+
+      classifiersStr = [x.lower() for x in filterClassifiers if not x.lower().startswith('r:')]
+      classifiersRegEx = re.compile('|'.join([x[2:] for x in filterClassifiers if x.lower().startswith('r:')]), re.IGNORECASE) if (len(classifiersStr) < len(filterClassifiers))  else re.compile(r'\b\B')
+
+      pprint(classifiersStr)
+      pprint(classifiersRegEx)
+
       # initialize ZeroMQ context and socket(s) to send scan results
       context = zmq.Context()
 
@@ -227,14 +239,15 @@ def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassi
 
         totalProjCount.increment()
         tags, classifiers = get_tags(sqlConn, project)
-        tagsLen = len(tags) if (tags is not None) else 0
-        classifiersLen = len(classifiers) if (classifiers is not None) else 0
+        tagsLen = len(tags) if tags else 0
+        classifiersLen = len(classifiers) if classifiers else 0
         if debug:
           eprint(f"{scriptName}[{reqWorkerId}]:\t{'📎' if (tagsLen > 0) else '🅾'}\t{project} ➔ {','.join(tags) if (tagsLen > 0) else ''}")
           eprint(f"{scriptName}[{reqWorkerId}]:\t{'⛿' if (classifiersLen > 0) else '🅾'}\t{project} ➔ {','.join(classifiers) if (classifiersLen > 0) else ''}")
 
         # if the list of this project's tags contains any of the requested tags from the command line that's a hit
-        if ((tags is not None) and any(item in tags for item in filterTags)) or ((classifiers is not None) and any(item in classifiers for item in filterClassifiers)):
+        if (((tagsLen > 0)        and (((len(tagsStr) > 0)        and any(item in tags        for item in tagsStr))        or any(tagsRegEx.search(item)        for item in tags))) or
+            ((classifiersLen > 0) and (((len(classifiersStr) > 0) and any(item in classifiers for item in classifiersStr)) or any(classifiersRegEx.search(item) for item in classifiers)))):
           try:
             # Send results to sink
             matchSocket.send_string(project)
@@ -263,11 +276,11 @@ def main():
   parser = argparse.ArgumentParser(description=scriptName, add_help=False, usage='{} <arguments>'.format(scriptName))
   parser.add_argument('-v', '--verbose', dest='debug', type=str2bool, nargs='?', const=True, default=False, metavar='true|false', help="Verbose/debug output")
   parser.add_argument('--extra-verbose', dest='verboseDebug', help="Super verbose output", metavar='true|false', type=str2bool, nargs='?', const=True, default=False)
-  parser.add_argument('-k', '--keywords', dest='tags', action='store', nargs='+', default=[], metavar='<keywords>', help="List of keywords to match")
-  parser.add_argument('-c', '--classifiers', dest='classifiers', action='store', nargs='+', default=[], metavar='<classifiers>', help="List of classifiers to match")
-  parser.add_argument('-p', '--projects', dest='projects', action='store', nargs='*', metavar='<projects>', help="List of projects to examine")
-  parser.add_argument('-d', '--db', dest='dbFileSpec', metavar='<STR>', type=str, default=None, help='sqlite3 package tags cache database')
-  parser.add_argument('-t', '--threads', dest='threads', metavar='<INT>', type=int, default=1, help='Request threads')
+  parser.add_argument('-k', '--keyword', dest='tags', action='store', nargs='+', default=[], metavar='<keyword>', help="List of keywords ('exact' or 'r:regex(pr?)?') to case-insensitively match (OR'ed with classifiers)")
+  parser.add_argument('-c', '--classifier', dest='classifiers', action='store', nargs='+', default=[], metavar='<classifier>', help="List of classifiers ('exact' or 'r:regex(pr?)?') to case-insensitively match (OR'ed with keywords)")
+  parser.add_argument('-p', '--project', dest='projects', action='store', nargs='*', metavar='<project>', help="List of projects to examine")
+  parser.add_argument('-d', '--db', dest='dbFileSpec', metavar='<filespec>', type=str, default=None, help='sqlite3 package tags cache database')
+  parser.add_argument('-t', '--thread', dest='threads', metavar='<count>', type=int, default=1, help='Request threads')
   try:
     parser.error = parser.exit
     args = parser.parse_args()
@@ -331,7 +344,7 @@ def main():
       eprint(f"{scriptName}[0]:\t💾\t{TABLE_NAME} count: {cursor.execute(f'SELECT COUNT(*) FROM {TABLE_NAME}').fetchone()}")
 
     # start request threads to lookup the
-    reqThreads = ThreadPool(args.threads, reqWorker, ([args.threads, topicPort, projects, [x.lower() for x in args.tags], [x.lower() for x in args.classifiers], conn]))
+    reqThreads = ThreadPool(args.threads, reqWorker, ([args.threads, topicPort, projects, args.tags, args.classifiers, conn]))
 
     # wait, collect matching results and print them
     while (not shuttingDown) and (finishedWorkersCount.value() < args.threads):
