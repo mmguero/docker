@@ -156,7 +156,7 @@ def update_tags(conn, project, tags, classifiers):
 ###################################################################################################
 # check the database first and return the tags for a project. if it's not in there, request it from pypi.
 # TODO: have some sort of expiration on the database entries
-def get_tags(conn, project):
+def get_tags(conn, project, offline):
   try:
     cursor = conn.cursor()
     cursor.execute(f"SELECT {TAGS_FIELD}, {CLASSIFIERS_FIELD} FROM {TABLE_NAME} WHERE ({PROJECT_FIELD} = '{project}')")
@@ -165,11 +165,11 @@ def get_tags(conn, project):
     classifiers = list()
     if (results is not None) and  (len(results) > 0):
       for row in results:
-        if row[0] != 'NULL':
+        if row[0] and (row[0] != 'NULL'):
           tags.extend([x.lower() for x in list(flatten(json.loads(row[0])))])
-        if row[1] != 'NULL':
+        if row[1] and (row[1] != 'NULL'):
           classifiers.extend([x.lower() for x in list(flatten(json.loads(row[1])))])
-    else:
+    elif not offline:
       response = requests.get(f'https://pypi.python.org/pypi/{project}/json')
       if response.ok:
         pkgInfo = json.loads(response.text)
@@ -192,7 +192,7 @@ def get_tags(conn, project):
     eprint('"{}" raised for "{}"'.format(str(e), project))
 
 ###################################################################################################
-def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassifiers, sqlConn):
+def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassifiers, sqlConn, offline):
   global debug
   global verboseDebug
   global reqWorkersCount
@@ -235,7 +235,7 @@ def reqWorker(totalThreadCount, topicPort, allProjects, filterTags, filterClassi
           break
 
         totalProjCount.increment()
-        tags, classifiers = get_tags(sqlConn, project)
+        tags, classifiers = get_tags(sqlConn, project, offline)
         tagsLen = len(tags) if tags else 0
         classifiersLen = len(classifiers) if classifiers else 0
         if debug:
@@ -278,6 +278,7 @@ def main():
   parser.add_argument('-p', '--project', dest='projects', action='store', nargs='*', metavar='<project>', help="List of projects to examine")
   parser.add_argument('-d', '--db', dest='dbFileSpec', metavar='<filespec>', type=str, default=None, help='sqlite3 package tags cache database')
   parser.add_argument('-t', '--thread', dest='threads', metavar='<count>', type=int, default=1, help='Request threads')
+  parser.add_argument('-o', '--offline', dest='offline', type=str2bool, nargs='?', const=True, default=False, metavar='true|false', help="Offline only (use cache database)")
   try:
     parser.error = parser.exit
     args = parser.parse_args()
@@ -302,13 +303,13 @@ def main():
   # either get projects from command line or entire list from pypi.org
   if (args.projects is not None):
     projects = args.projects
+  elif args.offline:
+    # will populate in a sec...
+    projects = []
   else:
     response = requests.get("https://pypi.org/simple")
     soup = bs(response.text, "lxml")
     projects = [x for x in soup.text.split() if x]
-  projects = sorted(projects, key=str.casefold)
-  if debug:
-    eprint(f"{TABLE_NAME} ({len(projects)}): {projects}")
 
   # handle sigint and sigterm for graceful shutdown
   signal.signal(signal.SIGINT, shutdown_handler)
@@ -340,8 +341,19 @@ def main():
     if debug:
       eprint(f"{scriptName}[0]:\t💾\t{TABLE_NAME} count: {cursor.execute(f'SELECT COUNT(*) FROM {TABLE_NAME}').fetchone()}")
 
+    if args.offline and (not projects):
+      try:
+        projects = [x[0] for x in cursor.execute(f'SELECT {PROJECT_FIELD} FROM {TABLE_NAME}').fetchall()]
+      except Exception as e:
+        eprint('"{}" raised for offline SELECT'.format(str(e)))
+
+    projects = sorted(projects, key=str.casefold)
+    if debug:
+      eprint(f"{TABLE_NAME} ({len(projects)}): {projects}")
+
     # start request threads to lookup the
-    reqThreads = ThreadPool(args.threads, reqWorker, ([args.threads, topicPort, projects, args.tags, args.classifiers, conn]))
+    reqThreads = ThreadPool(args.threads if args.threads > 0 else 1, reqWorker,
+                            ([args.threads, topicPort, projects, args.tags, args.classifiers, conn, args.offline]))
 
     # wait, collect matching results and print them
     while (not shuttingDown) and (finishedWorkersCount.value() < args.threads):
