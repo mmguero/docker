@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-set -u
 set -o pipefail
 
 ENCODING="utf-8"
@@ -21,6 +20,8 @@ CONF_FILE="/etc/bandersnatch.conf"
 PYPI_FILTER_SCRIPT="/usr/local/bin/pypi_filter.py"
 PYPI_DB=${PYPI_PROJECT_DB:-"/tmp/pypi.db"}
 PYPI_THREADS=${PYPI_REQ_THREADS:-"1"}
+PYPI_NO_NET=${PYPI_OFFLINE:-"false"}
+KEEP_RELEASES=${LATEST_RELEASE:-"0"}
 
 # blacklist/whitelist is one or the other
 if ( [[ -n $WHITELIST_PACKAGE_FILE ]] && [[ -r "$WHITELIST_PACKAGE_FILE" ]] ) && ( ( [[ -n $BLACKLIST_PACKAGE_FILE ]] && [[ -r "$BLACKLIST_PACKAGE_FILE" ]] ) || ( [[ -n $BLACKLIST_REGEX_FILE ]] && [[ -r "$BLACKLIST_REGEX_FILE" ]] ) || [[ -n $BLACKLIST_KEYWORDS ]] || [[ -n $BLACKLIST_CLASSIFIERS ]] ); then
@@ -36,6 +37,14 @@ if [[ -n $BASE_CONF_FILE ]] &&  [[ "$BASE_CONF_FILE" != "$CONF_FILE" ]]; then
     echo "invalid bandersnatch base configuration file (\$BASE_CONF_FILE: \"$BASE_CONF_FILE\"" >&2
     exit 1
   fi
+fi
+
+############################################
+# append latest_release
+if (( $KEEP_RELEASES > 0 )); then
+  echo "[latest_release]" >> "$CONF_FILE"
+  echo "keep = $KEEP_RELEASES" >> "$CONF_FILE"
+  echo "" >> "$CONF_FILE"
 fi
 
 ############################################
@@ -90,7 +99,7 @@ EOF
         fi
       done
     fi
-    (( ${#KEYWORDS[@]} -eq 0 )) && KEYWORDS_FLAG="--keyword"
+    (( ${#KEYWORDS[@]} > 0 )) && KEYWORDS_FLAG="--keyword"
 
     CLASSIFIERS=()
     CLASSIFIERS_FLAG=""
@@ -103,15 +112,15 @@ EOF
         fi
       done
     fi
-    (( ${#CLASSIFIERS[@]} -eq 0 )) && CLASSIFIERS_FLAG="--classifier"
+    (( ${#CLASSIFIERS[@]} > 0 )) && CLASSIFIERS_FLAG="--classifier"
 
-    /usr/bin/env python3 "$PYPI_FILTER_SCRIPT" --db "$PYPI_DB" --thread $PYPI_THREADS $KEYWORDS_FLAG "${KEYWORDS[@]}" $CLASSIFIERS_FLAG "${CLASSIFIERS[@]}"
+    /usr/bin/env python3 "$PYPI_FILTER_SCRIPT" --db "$PYPI_DB" --offline $PYPI_NO_NET --thread $PYPI_THREADS $KEYWORDS_FLAG "${KEYWORDS[@]}" $CLASSIFIERS_FLAG "${CLASSIFIERS[@]}" >> "$TEMP_BLACKIST_FILE"
 
   fi # BLACKLIST_KEYWORDS or BLACKLIST_CLASSIFIERS
 
-  sort -u "$TEMP_BLACKIST_FILE" | "$TEMP_BLACKIST_FILE"
+  sort -u "$TEMP_BLACKIST_FILE" | sponge "$TEMP_BLACKIST_FILE"
   sed -i '/^$/d' "$TEMP_BLACKIST_FILE"
-  TEMP_BLACKIST_FILE_LINES=$(wc -l "$TEMP_BLACKIST_FILE")
+  TEMP_BLACKIST_FILE_LINES=$(wc -l "$TEMP_BLACKIST_FILE" | awk '{print $1}')
   if (( $TEMP_BLACKIST_FILE_LINES > 0 )); then
     cat << EOF >> "$CONF_FILE"
 

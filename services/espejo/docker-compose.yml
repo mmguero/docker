@@ -24,6 +24,9 @@ services:
     hostname: bandersnatch
     environment:
 
+      # https://bandersnatch.readthedocs.io/en/latest/filtering_configuration.html#keep-only-latest-releases
+      LATEST_RELEASE: 0
+
       # semicolon-separated list of platforms to not mirror the corresponding files: windows;macos;freebsd;linux
       # https://bandersnatch.readthedocs.io/en/latest/filtering_configuration.html#platform-specific-binaries-filtering
       BLACKLIST_PLATFORMS: 'macos;windows;freebsd'
@@ -39,9 +42,13 @@ services:
       # https://pypi.org/classifiers/
       BLACKLIST_CLASSIFIERS : ''
 
-      # populating the PyPi cache database takes a LONG time and a LOT of HTTPS requests to PyPi. It uses ./scripts/pypi_filter.py.
-      # you can generate the .db file locally, define PYPI_PROJECT_DB and volume mount it mount it below to save time
-      # PYPI_PROJECT_DB /etc/pypi_cache.db
+      # populating the PyPi cache database (pypi_filter.py) takes a LONG time and a LOT of HTTPS requests to PyPi
+      # so this cache is used to make future runs less painful
+      PYPI_PROJECT_DB : '/pypidb/pypi_cache.db'
+
+      # if using PYPI_PROJECT_DB as described above, you can set this to 'true' to force use of the cache database
+      # only, i.e., avoid all requests to pypi.org
+      PYPI_OFFLINE : 'false'
 
       # number of threads for pypi_filter.py
       PYPI_REQ_THREADS : 2
@@ -69,7 +76,7 @@ services:
       # https://bandersnatch.readthedocs.io/en/latest/filtering_configuration.html#packages
 
       # should match PYPI_PROJECT_DB above if used
-      # - ./config/pypi_cache.db:/etc/pypi_cache.db:rw
+      - ./config/pypi_cache.db:/pypidb/pypi_cache.db:rw
 
   nginx:
     build:

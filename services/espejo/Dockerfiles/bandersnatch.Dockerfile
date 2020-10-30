@@ -9,12 +9,14 @@ ENV DEFAULT_UID $DEFAULT_UID
 ENV DEFAULT_GID $DEFAULT_GID
 ENV PUSER "bandersnatch"
 ENV PGROUP "bandersnatch"
+ENV PUSER_CHOWN "/pypidb"
 ENV PUSER_PRIV_DROP true
 
 ENV SUPERCRONIC_URL "https://github.com/aptible/supercronic/releases/download/v0.1.11/supercronic-linux-amd64"
 ENV SUPERCRONIC "supercronic-linux-amd64"
 ENV SUPERCRONIC_SHA1SUM "a2e2d47078a8dafc5949491e5ea7267cc721d67c"
 
+ARG LATEST_RELEASE="0"
 ARG BASE_CONF_FILE="/etc/bandersnatch_base.conf"
 ARG BLACKLIST_PACKAGE_FILE="/etc/bandersnatch_blacklist_packages.conf"
 ARG BLACKLIST_REGEX_FILE="/etc/bandersnatch_blacklist_packages_regex.conf"
@@ -23,9 +25,11 @@ ARG BLACKLIST_KEYWORDS=""
 # see https://pypi.org/classifiers/
 ARG BLACKLIST_CLASSIFIERS=""
 ARG WHITELIST_PACKAGE_FILE="/etc/bandersnatch_whitelist_packages.conf"
-ARG PYPI_PROJECT_DB=""
+ARG PYPI_PROJECT_DB="/pypidb/pypi_cache.db"
+ARG PYPI_OFFLINE=false
 ARG PYPI_REQ_THREADS=1
 
+ENV LATEST_RELEASE $LATEST_RELEASE
 ENV BASE_CONF_FILE $HOST_BASE_CONF_FILE
 ENV BLACKLIST_PACKAGE_FILE $BLACKLIST_PACKAGE_FILE
 ENV BLACKLIST_REGEX_FILE $BLACKLIST_REGEX_FILE
@@ -34,6 +38,7 @@ ENV BLACKLIST_KEYWORDS $BLACKLIST_KEYWORDS
 ENV BLACKLIST_CLASSIFIERS $BLACKLIST_CLASSIFIERS
 ENV WHITELIST_PACKAGE_FILE $WHITELIST_PACKAGE_FILE
 ENV PYPI_PROJECT_DB $PYPI_PROJECT_DB
+ENV PYPI_OFFLINE $PYPI_OFFLINE
 ENV PYPI_REQ_THREADS $PYPI_REQ_THREADS
 
 ENV CRON "0 0 * * *"
@@ -78,11 +83,14 @@ ADD config/bandersnatch.conf /etc/
 ADD scripts/pypi_filter.py /usr/local/bin/
 ADD scripts/bandersnatch.sh /usr/local/bin/
 
-RUN chown ${PUSER}:${PGROUP} /etc/bandersnatch.conf && \
+RUN mkdir /pypidb && \
+    chown ${PUSER}:${PGROUP} /pypidb && \
+    chown ${PUSER}:${PGROUP} /etc/bandersnatch.conf && \
     chmod 755 /usr/local/bin/pypi_filter.py && \
     chmod 755 /usr/local/bin/bandersnatch.sh
 
 VOLUME ["/mnt/mirror/pypi"]
+VOLUME ["/pypidb"]
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
