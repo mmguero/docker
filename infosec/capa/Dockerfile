@@ -19,6 +19,7 @@ RUN apt-get update && \
       git \
       python \
       python-backports-shutil-get-terminal-size \
+      python-backports.functools-lru-cache \
       python-dev \
       python-pkg-resources \
       python-setuptools \
