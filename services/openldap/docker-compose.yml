@@ -19,6 +19,7 @@ services:
        - LDAP_TLS=true
        - LDAP_TLS_CRT_FILENAME=ldap.crt
        - LDAP_TLS_KEY_FILENAME=ldap.key
+       # the CA file should contain the whole CA chain (e.g., intermediate + root)
        - LDAP_TLS_CA_CRT_FILENAME=ca.crt
        - LDAP_TLS_ENFORCE=false
        - LDAP_TLS_CIPHER_SUITE=SECURE256:-VERS-SSL3.0
@@ -51,6 +52,12 @@ services:
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
       - PHPLDAPADMIN_HTTPS=true
+      - PHPLDAPADMIN_HTTPS_CRT_FILENAME=ldap.crt
+      - PHPLDAPADMIN_HTTPS_KEY_FILENAME=ldap.key
+      - PHPLDAPADMIN_HTTPS_CA_CRT_FILENAME=ca.crt
+      - PHPLDAPADMIN_LDAP_CLIENT_TLS_CRT_FILENAME=ldap.crt
+      - PHPLDAPADMIN_LDAP_CLIENT_TLS_KEY_FILENAME=ldap.key
+      - PHPLDAPADMIN_LDAP_CLIENT_TLS_CA_CRT_FILENAME=ca.crt
     volumes:
       - ./certs_web:/container/service/phpldapadmin/assets/apache2/certs:rw
       - ./certs_web:/container/service/ldap-client/assets/certs:rw
