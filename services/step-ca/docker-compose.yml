@@ -1,5 +1,7 @@
 version: '3.7'
 
+# https://smallstep.com/docs/tutorials/docker-tls-certificate-authority
+
 services:
   ca:
     image: smallstep/step-ca:latest
