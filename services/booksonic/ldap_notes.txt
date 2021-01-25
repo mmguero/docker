@@ -1,5 +1,6 @@
 Getting LDAP authentication to work with my own certificates on the openLDAP server
-TODO: automate this
+
+(see ldap_setup.sh)
 
 1. config
     * ldaps://example.com:636/dc=example,dc=com

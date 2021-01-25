@@ -3,33 +3,33 @@ version: '3'
 services:
 
   calibre:
-    image: calibre-web:latest
+    image: mmguero/calibre-web:arm32v7
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.arm32v7
     container_name: calibre
     expose:
       - 8083
-    ports:
-      - 0.0.0.0:8083:8083
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=America/Denver
+    volumes:
+      - ./config:/config:rw
+      - ./data:/books:rw
+    restart: unless-stopped
+    networks:
+      - proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.calibre.rule=Host(`calibre.example.org`)"
       - "traefik.http.routers.calibre.entrypoints=websecure"
       - "traefik.http.routers.calibre.tls.certresolver=myresolver"
       - "traefik.http.services.calibre.loadbalancer.server.port=8083"
-    volumes:
-      - ./config:/config
-      - ./data:/books
-    networks:
-      - proxy
-    restart: unless-stopped
 
 networks:
   proxy:
     external:
       name: traefik-proxy
+
+

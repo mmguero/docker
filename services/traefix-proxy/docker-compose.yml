@@ -3,33 +3,34 @@ version: "3.3"
 services:
 
   traefik:
-    image: "traefik:v2.2"
+    image: "traefik:latest"
     container_name: "traefik"
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://ca.example.org:9000/acme/acme/directory"
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      #- "--log.level=DEBUG"
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     ports:
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
     networks:
       - proxy
     volumes:
-      - "./letsencrypt:/letsencrypt"
+      - "./letsencrypt:/letsencrypt:rw"
+      - "./certs:/etc/ssl/certs:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
 
   whoami:
-    image: "containous/whoami"
+    image: "containous/whoami:latest"
     container_name: "whoami"
-    expose:
-      - "80"
     networks:
       - proxy
     labels:
@@ -43,3 +44,4 @@ networks:
   proxy:
     external:
       name: traefik-proxy
+

@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  bitwarden:
+    image: bitwardenrs/server:testing
+    container_name: bitwarden
+    hostname: bitwarden
+    environment:
+      WEBSOCKET_ENABLED: 'false' # Required to use websockets
+      SIGNUPS_ALLOWED: 'true'    # set to false to disable signups
+      PUID: 1000
+      PGID: 100
+      TZ: 'America/Denver'
+    volumes:
+      - ./data:/data
+    env_file:
+     - .env
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bitwarden.rule=Host(`bitwarden.example.org`)"
+      - "traefik.http.routers.bitwarden.entrypoints=websecure"
+      - "traefik.http.routers.bitwarden.tls.certresolver=myresolver"
+
+networks:
+  proxy:
+    external:
+      name: traefik-proxy
+

@@ -18,6 +18,8 @@ services:
       - ./podcasts:/podcasts
       - ./othermedia:/othermedia
     restart: unless-stopped
+    networks:
+      - proxy
 
   proxy:
     image: nginx:alpine
@@ -26,11 +28,20 @@ services:
     links:
       - booksonic
     expose:
-      - 443
-    ports:
-      - 0.0.0.0:4043:443
+      - 80
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./proxy/certs:/etc/nginx/certs:ro
+    networks:
+      - proxy
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.booksonic.rule=Host(`booksonic.example.org`)"
+      - "traefik.http.routers.booksonic.entrypoints=websecure"
+      - "traefik.http.routers.booksonic.tls.certresolver=myresolver"
+
+networks:
+  proxy:
+    external:
+      name: traefik-proxy
 
