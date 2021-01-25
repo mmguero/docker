@@ -21,9 +21,11 @@ services:
 
   nextcloud:
     image: mmguero/nextcloud:latest
+    #image: mmguero/nextcloud:arm32v7
     build:
       context: .
       dockerfile: docker/Dockerfile
+      #dockerfile: docker/Dockerfile.arm32v7
     container_name: nextcloud
     hostname: nextcloud
     links:

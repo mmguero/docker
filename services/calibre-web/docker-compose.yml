@@ -4,9 +4,11 @@ services:
 
   calibre:
     image: mmguero/calibre-web
+    #image: mmguero/calibre-web:arm32v7
     build:
       context: .
       dockerfile: docker/Dockerfile
+      #dockerfile: docker/Dockerfile.arm32v7
     container_name: calibre
     expose:
       - 8083
