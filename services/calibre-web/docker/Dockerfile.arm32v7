@@ -24,28 +24,36 @@ RUN apt-get update && \
       libxml2-dev \
       libxml2 \
       libmagic1 \
-      python-pip \
-      python-setuptools \
-      python-wheel \
-      python2.7 \
-      libpython2.7 \
+      python3 \
       python3-pip \
       python3-setuptools \
       python3-wheel \
-      python2.7-dev \
       python3-dev \
-      python-pyqt5 \
-      python-pyqt5.qtsvg \
-      python-pyqt5.qtwebkit \
+      python3-pyqt5 \
+      python3-pyqt5.qtsvg \
+      python3-pyqt5.qtwebkit \
       build-essential \
       pkg-config \
-      xvfb && \
-    pip2 install filemagic ebooklib python-dateutil pytz cssutils Pillow html5_parser && \
-    pip3 install Flask-SimpleLDAP python-ldap goodreads python-Levenshtein lxml Pillow rarfile && \
+      xvfb \
+      xdg-utils && \
+    pip3 install \
+      cssutils \
+      ebooklib \
+      filemagic \
+      Flask-SimpleLDAP \
+      goodreads \
+      html5_parser \
+      lxml \
+      Pillow \
+      python-dateutil \
+      python-ldap \
+      python-Levenshtein \
+      pytz \
+      rarfile && \
     cd / && \
     tar xvf /tmp/calibre_files.tar.gz && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
-      libpython2.7-dev libpython3.6-dev build-essential libicu-dev libstdc++-7-dev pkg-config libllvm9 libgl1-mesa-dri && \
+      libpython3*-dev build-essential libicu-dev libstdc++-7-dev pkg-config libllvm9 libgl1-mesa-dri && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages autoremove && \
     apt-get clean && \
     rm -rf /tmp/* /var/lib/apt/lists/*
