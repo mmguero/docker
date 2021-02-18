@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+  smtp4dev:
+    image: rnwood/smtp4dev:latest
+    hostname: smtp4dev
+    container_name: smtp4dev
+    restart: unless-stopped
+    expose:
+      - 80
+      - 25
+      - 143
+    volumes:
+        - smtp4dev-data:/smtp4dev
+    environment:
+      - ServerOptions__TlsMode=None
+
+  stunnel-smtp:
+    image: mmguero/stunnel:latest
+    build:
+      context: .
+      dockerfile: docker/stunnel.Dockerfile
+    hostname: stunnel-smtp
+    container_name: stunnel-smtp
+    restart: unless-stopped
+    ports:
+      - "3025:3025"
+    volumes:
+      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
+    environment:
+      CLIENT : "no"
+      SERVICE : "smtp"
+      ACCEPT : "0.0.0.0:3025"
+      CONNECT : "smtp4dev:25"
+    depends_on:
+      - smtp4dev
+
+  stunnel-imap:
+    image: mmguero/stunnel:latest
+    build:
+      context: .
+      dockerfile: docker/stunnel.Dockerfile
+    hostname: stunnel-imap
+    container_name: stunnel-imap
+    restart: unless-stopped
+    ports:
+      - "3143:3143"
+    volumes:
+      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
+    environment:
+      CLIENT : "no"
+      SERVICE : "imap"
+      ACCEPT : "0.0.0.0:3143"
+      CONNECT : "smtp4dev:143"
+    depends_on:
+      - smtp4dev
+
+  stunnel-http:
+    image: mmguero/stunnel:latest
+    build:
+      context: .
+      dockerfile: docker/stunnel.Dockerfile
+    hostname: stunnel-http
+    container_name: stunnel-http
+    restart: unless-stopped
+    ports:
+      - "3443:3443"
+    volumes:
+      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
+    environment:
+      CLIENT : "no"
+      SERVICE : "http"
+      ACCEPT : "0.0.0.0:3443"
+      CONNECT : "smtp4dev:80"
+    depends_on:
+      - smtp4dev
+
+volumes:
+  smtp4dev-data:
