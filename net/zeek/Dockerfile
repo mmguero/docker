@@ -136,6 +136,8 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
       file \
       git \
       libatomic1 \
+      libcap2 \
+      libcap2-bin \
       libgoogle-perftools4 \
       libkrb5-3 \
       libmaxminddb0 \
