@@ -18,5 +18,6 @@ services:
       - ./php/php-fpm-settings.conf:/etc/php7/php-fpm.d/server.conf:ro
       - ./webcontent/index.php:/var/www/html/index.php:ro
       - ./webcontent/favicon.ico:/var/www/html/favicon.ico:ro
+      - ./index.html:/var/www/html/story/index.html:ro
     ports:
       - "8080:8080"
