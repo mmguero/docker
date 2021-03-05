@@ -1,4 +1,10 @@
 version: '3'
+
+# todo
+# X-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
+# X-WebKit-CSP: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
+# Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
+
 services:
   web:
     image: mmguero/nginx-securimage:latest
@@ -11,5 +17,6 @@ services:
       - ./php/php.ini:/etc/php7/conf.d/settings.ini:ro
       - ./php/php-fpm-settings.conf:/etc/php7/php-fpm.d/server.conf:ro
       - ./webcontent/index.php:/var/www/html/index.php:ro
+      - ./webcontent/favicon.ico:/var/www/html/favicon.ico:ro
     ports:
       - "8080:8080"
