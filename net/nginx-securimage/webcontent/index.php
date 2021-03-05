@@ -13,7 +13,7 @@ session_start();
 <html>
 <head>
 
-  <title>The Parri Ward</title>
+  <title>ACME</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
