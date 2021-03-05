@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    image: mmguero/nginx-securimage:latest
+    container_name: nginx-securimage
+    build:
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    volumes:
+      - ./nginx/server.conf:/etc/nginx/conf.d/server.conf:ro
+      - ./php/php.ini:/etc/php7/conf.d/settings.ini:ro
+      - ./php/php-fpm-settings.conf:/etc/php7/php-fpm.d/server.conf:ro
+      - ./webcontent/index.php:/var/www/html/index.php:ro
+    ports:
+      - "8080:8080"
