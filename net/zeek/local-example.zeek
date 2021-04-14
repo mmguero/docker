@@ -44,6 +44,9 @@ redef ignore_checksums = T;
 @load policy/protocols/modbus/track-memmap
 @load policy/protocols/modbus/known-masters-slaves
 @load policy/protocols/mqtt
-# @load frameworks/files/detect-MHR
 
-@load policy/misc/loaded-scripts
+# @load frameworks/files/detect-MHR
+# @load policy/misc/loaded-scripts
+
+@load ./login.zeek
+@load ./packages/packages.zeek

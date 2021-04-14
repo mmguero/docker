@@ -35,16 +35,6 @@ FROM debian:buster-slim AS build
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
-ENV CCACHE_DIR "/var/spool/ccache"
-ENV CCACHE_COMPRESS 1
-ENV SPICY_DIR "/opt/spicy"
-ENV SPICY_BRANCH "master"
-ENV SRC_BASE_DIR "/usr/local/src"
-ENV ZEEK_DIR "/opt/zeek"
-ENV ZEEK_VERSION "3.0.12"
-
-ENV PATH "${ZEEK_DIR}/bin:${CMAKE_DIR}/bin:${PATH}"
-
 # configure system for build
 RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
     echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list && \
@@ -73,33 +63,55 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
         patch \
         swig \
         zlib1g-dev && \
-  apt-get install -q -y -t testing --no-install-recommends \
-    bison \
-    build-essential \
-    cmake \
-    python3 \
-    python3-dev \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel && \
-  pip3 install --no-cache-dir zkg btest pre-commit
+    apt-get install -q -y -t testing --no-install-recommends \
+      bison \
+      build-essential \
+      cmake \
+      python3 \
+      python3-dev \
+      python3-pip \
+      python3-setuptools \
+      python3-wheel && \
+    pip3 install --no-cache-dir btest pre-commit GitPython semantic-version
+
+ENV CCACHE_DIR "/var/spool/ccache"
+ENV CCACHE_COMPRESS 1
+ENV SPICY_DIR "/opt/spicy"
+ENV SRC_BASE_DIR "/usr/local/src"
+ENV ZEEK_DIR "/opt/zeek"
+ENV ZEEK_VERSION "4.0.0"
+ENV SPICY_VERSION "1.0.0"
+
+ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
 
 # Build Zeek and Spicy
 RUN cd "${SRC_BASE_DIR}" && \
-    curl -sSL "https://old.zeek.org/downloads/zeek-${ZEEK_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
+    curl -sSL "https://github.com/zeek/zeek/releases/download/v${ZEEK_VERSION}/zeek-${ZEEK_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
     cd "./zeek-${ZEEK_VERSION}" && \
     ./configure --prefix="${ZEEK_DIR}" --generator=Ninja --ccache --enable-perftools && \
     cd build && \
     ninja && \
     ninja install && \
-    zkg autoconfig && \
-  cd "${SRC_BASE_DIR}" && \
-    git -c core.askpass=true clone --branch "${SPICY_BRANCH}" --recursive "https://github.com/zeek/spicy" spicy && \
+    zkg autoconfig --force
+
+RUN cd "${SRC_BASE_DIR}" && \
+    git -c core.askpass=true clone --single-branch --recurse-submodules --shallow-submodules --no-tags --branch "v${SPICY_VERSION}" "https://github.com/zeek/spicy" spicy && \
     cd ./spicy && \
+    echo "hash=$(git rev-parse --short HEAD)" > VERSION && \
+    echo "branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD)" >> VERSION && \
+    echo "git_version=${SPICY_VERSION}" >> VERSION && \
+    ( find . -type d -name '.git' -exec rm -rf "{}" \; || true ) && \
     ./configure --generator=Ninja --prefix="${SPICY_DIR}" --with-zeek="${ZEEK_DIR}" --enable-ccache && \
     ninja -C build install && \
     bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
-    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep 'ELF 64-bit' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
+    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep 'ELF 64-bit' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded" && \
+    mkdir -p "${ZEEK_DIR}"/share/zeek/site/packages && \
+    touch "${ZEEK_DIR}"/share/zeek/site/packages/packages.zeek
+
+RUN zkg install --force --skiptests zeek/spicy-plugin && \
+    bash -c "find ${ZEEK_DIR}/var/lib/zkg -type d -name build -exec rm -rf '{}' \; 2>/dev/null || true" && \
+    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
+    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep -Pi 'ELF 64-bit.*not stripped' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
 
 # runtime stage
 
@@ -146,11 +158,9 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
       libssl1.0 \
       libtcmalloc-minimal4 \
       libunwind8 \
-      libzmq5 \
       procps \
       psmisc \
       python \
-      supervisor \
       vim-tiny && \
     apt-get install -q -y -t testing --no-install-recommends \
       bison \
@@ -160,9 +170,9 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
       python3-pip \
       python3-setuptools \
       python3-wheel && \
-    pip3 install --no-cache-dir pyzmq && \
+    pip3 install --no-cache-dir btest pre-commit GitPython semantic-version && \
     bash -c "( find /opt/zeek/ -type l ! -exec test -r {} \; -print | xargs -r -l rm -vf ) || true" && \
-    apt-get -q -y --purge remove libssl-dev && \
+    apt-get -q -y --purge remove libssl-dev python2 && \
       apt-get -q -y autoremove && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -172,7 +182,10 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
 ARG ZEEK_LOGS_DIR=/zeek-logs
 ENV ZEEK_LOGS_DIR $ZEEK_LOGS_DIR
 
+ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
+
 ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD login.zeek "${ZEEK_DIR}"/share/zeek/site/
 
 RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     groupadd --gid ${DEFAULT_GID} ${PUSER} && \
@@ -183,8 +196,6 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     cp "${ZEEK_DIR}"/bin/zeek "${ZEEK_DIR}"/bin/zeekcap && \
     chown root:${PGROUP} "${ZEEK_DIR}"/bin/zeekcap && \
     setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip' "${ZEEK_DIR}"/bin/zeekcap
-
-ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
 
 WORKDIR "${ZEEK_LOGS_DIR}"
 
