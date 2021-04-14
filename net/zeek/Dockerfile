@@ -100,18 +100,17 @@ RUN cd "${SRC_BASE_DIR}" && \
     echo "hash=$(git rev-parse --short HEAD)" > VERSION && \
     echo "branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD)" >> VERSION && \
     echo "git_version=${SPICY_VERSION}" >> VERSION && \
-    ( find . -type d -name '.git' -exec rm -rf "{}" \; || true ) && \
+    ( find . -type d -name '.git' -exec rm -rvf "{}" \; || true ) && \
     ./configure --generator=Ninja --prefix="${SPICY_DIR}" --with-zeek="${ZEEK_DIR}" --enable-ccache && \
-    ninja -C build install && \
-    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
-    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep 'ELF 64-bit' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded" && \
-    mkdir -p "${ZEEK_DIR}"/share/zeek/site/packages && \
-    touch "${ZEEK_DIR}"/share/zeek/site/packages/packages.zeek
+    ninja -C build install
 
 RUN zkg install --force --skiptests zeek/spicy-plugin && \
-    bash -c "find ${ZEEK_DIR}/var/lib/zkg -type d -name build -exec rm -rf '{}' \; 2>/dev/null || true" && \
-    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
-    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep -Pi 'ELF 64-bit.*not stripped' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
+    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rvf '{}' \; 2>/dev/null || true" && \
+    bash -c "find ${ZEEK_DIR}/var/lib/zkg -type d -name build -exec rm -rvf '{}' \; 2>/dev/null || true" && \
+    bash -c "find ${ZEEK_DIR}/var/lib/zkg/clones -type d -name .git -exec rm -rvf '{}' \; 2>/dev/null || true" && \
+    rm -rf "${ZEEK_DIR}"/var/lib/zkg/scratch && \
+    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep -Pi 'ELF 64-bit.*not stripped' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
+
 
 # runtime stage
 
