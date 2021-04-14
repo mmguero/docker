@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG GOLANG_VERSION=1.15.6
+ARG GOLANG_VERSION=1.16.3
 ARG MINIKEYVALUE_URL="https://github.com/geohot/minikeyvalue"
 
 ARG DEFAULT_UID=1000
