@@ -49,4 +49,4 @@ redef ignore_checksums = T;
 # @load policy/misc/loaded-scripts
 
 @load ./login.zeek
-@load ./packages/packages.zeek
+@load packages

@@ -28,160 +28,118 @@
 #     mmguero/zeek:latest \
 #     zeek -C -r /data/foobar.pcap local
 
-FROM debian:buster-slim AS build
-
-# build stage for Zeek and Spicy
-
-ENV DEBIAN_FRONTEND noninteractive
-ENV TERM xterm
-
-# configure system for build
-RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
-    echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list && \
-    echo "Package: bison,build-essential,cmake,python3,python3-dev,python3-pip,python3-setuptools,python3-wheel\\nPin: release a=testing\\nPin-Priority: 800\\n\\nPackage: *\\nPin: release a=stable\\nPin-Priority: 700\\n\\nPackage: *\\nPin: release a=buster-backports\\nPin-Priority: 650\\n\\n\\nPackage: *\\nPin: release a=testing\\nPin-Priority: 600\\n" > /etc/apt/preferences.d/pin && \
-    echo 'APT::Default-Release "buster";' >> /etc/apt/apt.conf && \
-      apt-get -q update && \
-      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
-    apt-get -q update && \
-    apt-get install -q -y -t buster-backports --no-install-recommends \
-        binutils \
-        ccache \
-        file \
-        flex \
-        git \
-        google-perftools \
-        jq \
-        libfl-dev \
-        libgoogle-perftools-dev \
-        libkrb5-dev \
-        libmaxminddb-dev \
-        libpcap0.8-dev \
-        libssl-dev \
-        locales-all \
-        make \
-        ninja-build \
-        patch \
-        swig \
-        zlib1g-dev && \
-    apt-get install -q -y -t testing --no-install-recommends \
-      bison \
-      build-essential \
-      cmake \
-      python3 \
-      python3-dev \
-      python3-pip \
-      python3-setuptools \
-      python3-wheel && \
-    pip3 install --no-cache-dir btest pre-commit GitPython semantic-version
-
-ENV CCACHE_DIR "/var/spool/ccache"
-ENV CCACHE_COMPRESS 1
-ENV SPICY_DIR "/opt/spicy"
-ENV SRC_BASE_DIR "/usr/local/src"
-ENV ZEEK_DIR "/opt/zeek"
-ENV ZEEK_VERSION "4.0.0"
-ENV SPICY_VERSION "1.0.0"
-
-ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
-
-# Build Zeek and Spicy
-RUN cd "${SRC_BASE_DIR}" && \
-    curl -sSL "https://github.com/zeek/zeek/releases/download/v${ZEEK_VERSION}/zeek-${ZEEK_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
-    cd "./zeek-${ZEEK_VERSION}" && \
-    ./configure --prefix="${ZEEK_DIR}" --generator=Ninja --ccache --enable-perftools && \
-    cd build && \
-    ninja && \
-    ninja install && \
-    zkg autoconfig --force
-
-RUN cd "${SRC_BASE_DIR}" && \
-    git -c core.askpass=true clone --single-branch --recurse-submodules --shallow-submodules --no-tags --branch "v${SPICY_VERSION}" "https://github.com/zeek/spicy" spicy && \
-    cd ./spicy && \
-    echo "hash=$(git rev-parse --short HEAD)" > VERSION && \
-    echo "branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD)" >> VERSION && \
-    echo "git_version=${SPICY_VERSION}" >> VERSION && \
-    ( find . -type d -name '.git' -exec rm -rvf "{}" \; || true ) && \
-    ./configure --generator=Ninja --prefix="${SPICY_DIR}" --with-zeek="${ZEEK_DIR}" --enable-ccache && \
-    ninja -C build install
-
-RUN zkg install --force --skiptests zeek/spicy-plugin && \
-    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rvf '{}' \; 2>/dev/null || true" && \
-    bash -c "find ${ZEEK_DIR}/var/lib/zkg -type d -name build -exec rm -rvf '{}' \; 2>/dev/null || true" && \
-    bash -c "find ${ZEEK_DIR}/var/lib/zkg/clones -type d -name .git -exec rm -rvf '{}' \; 2>/dev/null || true" && \
-    rm -rf "${ZEEK_DIR}"/var/lib/zkg/scratch && \
-    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep -Pi 'ELF 64-bit.*not stripped' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
-
-
-# runtime stage
-
 FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
+# for download and install
+ARG ZEEK_LTS=1
+ARG ZEEK_VERSION=4.0.0-0
+ARG SPICY_VERSION=1.0.0
+
+ENV ZEEK_LTS $ZEEK_LTS
+ENV ZEEK_VERSION $ZEEK_VERSION
+ENV SPICY_VERSION $SPICY_VERSION
+
+# for build
+ENV LLVM_VERSION "11"
+ENV CC "clang-${LLVM_VERSION}"
+ENV CXX "clang++-${LLVM_VERSION}"
+ENV ASM "clang-${LLVM_VERSION}"
+ENV CCACHE_DIR "/var/spool/ccache"
+ENV CCACHE_COMPRESS 1
+
+# put Zeek and Spicy in PATH
+ENV ZEEK_DIR "/opt/zeek"
+ENV SPICY_DIR "/opt/spicy"
+ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
+
+RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
+    apt-get -q update && \
+    apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
+    ( curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - ) && \
+    echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
+    echo "deb-src http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
+    apt-get -q update && \
+    apt-get install -q -y -t buster-backports --no-install-recommends \
+      bison \
+      ccache \
+      clang-${LLVM_VERSION} \
+      cmake \
+      file \
+      flex \
+      git \
+      jq \
+      libcap2-bin \
+      libclang-${LLVM_VERSION}-dev \
+      libfl-dev \
+      libmaxminddb-dev \
+      libmaxminddb0 \
+      libpcap-dev \
+      libpcap0.8 \
+      libssl-dev \
+      llvm-${LLVM_VERSION}-dev \
+      locales-all \
+      less \
+      make \
+      moreutils \
+      ninja-build \
+      procps \
+      psmisc \
+      python3 \
+      python3-git \
+      python3-pip \
+      python3-semantic-version \
+      python3-setuptools \
+      python3-wheel \
+      vim-tiny \
+      zlib1g-dev && \
+    mkdir -p /tmp/zeek-packages && \
+      cd /tmp/zeek-packages && \
+      if [ -n "${ZEEK_LTS}" ]; then ZEEK_LTS="-lts"; fi && export ZEEK_LTS && \
+      curl -sSL --remote-name-all \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/libbroker${ZEEK_LTS}-dev_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}-core-dev_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}-core_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}-libcaf-dev_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}-btest_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeek${ZEEK_LTS}-zkg_${ZEEK_VERSION}_amd64.deb" \
+        "https://download.zeek.org/binary-packages/Debian_10/amd64/zeekctl${ZEEK_LTS}_${ZEEK_VERSION}_amd64.deb" && \
+      dpkg -i ./*.deb && \
+    mkdir -p /tmp/spicy-packages && \
+      cd /tmp/spicy-packages && \
+    curl -sSL --remote-name-all \
+      "https://github.com/zeek/spicy/releases/download/v${SPICY_VERSION}/spicy_linux_debian10.deb" && \
+      dpkg -i ./*.deb && \
+    cd /tmp && \
+    mkdir -p "${CCACHE_DIR}" && \
+    zkg autoconfig --force && \
+    echo "@load packages" >> "${ZEEK_DIR}"/share/zeek/site/local.zeek && \
+    zkg install --force --skiptests zeek/spicy-plugin && \
+    ( find "${ZEEK_DIR}"/lib -type d -name CMakeFiles -exec rm -rf "{}" \; 2>/dev/null || true ) && \
+    ( find "${ZEEK_DIR}"/var/lib/zkg -type d -name build -exec rm -rf "{}" \; 2>/dev/null || true ) && \
+    ( find "${ZEEK_DIR}"/var/lib/zkg/clones -type d -name .git -execdir bash -c "pwd; du -sh; git pull --depth=1 --ff-only; git reflog expire --expire=all --all; git tag -l | xargs -r git tag -d; git gc --prune=all; du -sh" \; ) && \
+    rm -rf "${ZEEK_DIR}"/var/lib/zkg/scratch && \
+    ( find "${ZEEK_DIR}/" "${SPICY_DIR}/" -type f -exec file "{}" \; | grep -Pi "ELF 64-bit.*not stripped" | sed 's/:.*//' | xargs -l -r strip --strip-unneeded ) && \
+    cd /usr/lib/locale && \
+      ( ls | grep -Piv "^(en|en_US|en_US\.utf-?8|C\.utf-?8)$" | xargs -l -r rm -rf ) && \
+    cd /tmp && \
+    apt-get clean && \
+      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/*/*
+
+# configure unprivileged user and runtime parameters
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
 ENV DEFAULT_UID $DEFAULT_UID
 ENV DEFAULT_GID $DEFAULT_GID
-ENV PUSER "zeek"
-ENV PGROUP "zeek"
+ENV PUSER "zeekcap"
+ENV PGROUP "zeekcap"
 ENV PUSER_PRIV_DROP true
-
-ENV ZEEK_DIR "/opt/zeek"
-ENV SPICY_DIR "/opt/spicy"
-
-# artifacts from build stage
-COPY --from=build ${ZEEK_DIR} ${ZEEK_DIR}
-COPY --from=build ${SPICY_DIR} ${SPICY_DIR}
-
-# install runtime dependencies
-RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
-    echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list && \
-    echo "Package: bison,build-essential,cmake,python3,python3-dev,python3-pip,python3-setuptools,python3-wheel\\nPin: release a=testing\\nPin-Priority: 800\\n\\nPackage: *\\nPin: release a=stable\\nPin-Priority: 700\\n\\nPackage: *\\nPin: release a=buster-backports\\nPin-Priority: 650\\n\\n\\nPackage: *\\nPin: release a=testing\\nPin-Priority: 600\\n" > /etc/apt/preferences.d/pin && \
-    echo 'APT::Default-Release "buster";' >> /etc/apt/apt.conf && \
-      apt-get -q update && \
-      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
-    apt-get -q update && \
-    apt-get install -q -y -t buster-backports --no-install-recommends \
-      binutils \
-      file \
-      git \
-      libatomic1 \
-      libcap2 \
-      libcap2-bin \
-      libgoogle-perftools4 \
-      libkrb5-3 \
-      libmaxminddb0 \
-      libpcap0.8 \
-      libpcap0.8-dev \
-      libssl1.0 \
-      libtcmalloc-minimal4 \
-      libunwind8 \
-      procps \
-      psmisc \
-      python \
-      vim-tiny && \
-    apt-get install -q -y -t testing --no-install-recommends \
-      bison \
-      build-essential \
-      cmake \
-      python3 \
-      python3-pip \
-      python3-setuptools \
-      python3-wheel && \
-    pip3 install --no-cache-dir btest pre-commit GitPython semantic-version && \
-    bash -c "( find /opt/zeek/ -type l ! -exec test -r {} \; -print | xargs -r -l rm -vf ) || true" && \
-    apt-get -q -y --purge remove libssl-dev python2 && \
-      apt-get -q -y autoremove && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# configure unprivileged user and runtime parameters
 
 ARG ZEEK_LOGS_DIR=/zeek-logs
 ENV ZEEK_LOGS_DIR $ZEEK_LOGS_DIR
-
-ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
 
 ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD login.zeek "${ZEEK_DIR}"/share/zeek/site/
