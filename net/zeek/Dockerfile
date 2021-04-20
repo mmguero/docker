@@ -57,7 +57,19 @@ ENV PATH "${ZEEK_DIR}/bin:${SPICY_DIR}/bin:${PATH}"
 
 RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
     apt-get -q update && \
-    apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
+    apt-get install -q -y --no-install-recommends \
+      ca-certificates \
+      curl \
+      file \
+      git \
+      gnupg2 \
+      jq \
+      less \
+      libcap2-bin \
+      moreutils \
+      procps \
+      psmisc \
+      vim-tiny && \
     ( curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - ) && \
     echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
     echo "deb-src http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
@@ -67,11 +79,7 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
       ccache \
       clang-${LLVM_VERSION} \
       cmake \
-      file \
       flex \
-      git \
-      jq \
-      libcap2-bin \
       libclang-${LLVM_VERSION}-dev \
       libfl-dev \
       libmaxminddb-dev \
@@ -81,19 +89,14 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
       libssl-dev \
       llvm-${LLVM_VERSION}-dev \
       locales-all \
-      less \
       make \
-      moreutils \
       ninja-build \
-      procps \
-      psmisc \
       python3 \
       python3-git \
       python3-pip \
       python3-semantic-version \
       python3-setuptools \
       python3-wheel \
-      vim-tiny \
       zlib1g-dev && \
     mkdir -p /tmp/zeek-packages && \
       cd /tmp/zeek-packages && \
