@@ -1,0 +1,10 @@
+**/*.key
+**/*.pem
+**/*.crt
+**/.git*
+**/auth.env
+**/.ldap_config_defaults
+**/htpasswd
+docker-compose*yml
+Dockerfile
+nginx/nginx_ldap.conf
