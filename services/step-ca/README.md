@@ -1,13 +1,14 @@
 # setup
 
-* put provisioner password in secrets.txt, chmod 600
+* put what will be the intermediate password in secrets.txt, chmod 600
 * `docker run --rm -it -v $(pwd)/step:/home/step smallstep/step-ca sh`
-    - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk`
+    - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/path/to/password1.txt --provisioner-password-file=/path/to/password2.txt`
     - make note of provisioner fingerprint xxxxxxxxxx
     - make note of the cert authority configuration to to add it to the `authorized_keys` on the clients
 * `docker-compose up -d`
 * `docker-compose exec -u 0 ca sh`
     - `step ca provisioner add acme --type ACME`
+* use `step crypto change-pass` to change password for intermediate, ssh_host and ssh_user keys so that it's different from the root CA password (which you had in password1.txt)
 
 # bootstrapping clients
 
