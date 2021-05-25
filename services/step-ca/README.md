@@ -10,6 +10,33 @@
     - `step ca provisioner add acme --type ACME`
 * use `step crypto change-pass` to change password for intermediate, ssh_host and ssh_user keys so that it's different from the root CA password (which you had in password1.txt)
 
+## OIDC/OAuth
+
+(from [DIY Single Sign-On for SSH](https://smallstep.com/blog/diy-single-sign-on-for-ssh/))
+
+**Create a Google OAuth Credential** - You’ll need a [Google OAuth 2.0 Credential](https://console.cloud.google.com/apis/credentials/oauthclient) for this project. This takes 2 minutes.
+
+* Create a [Google Cloud Console Project](https://console.cloud.google.com/projectcreate) if you don’t have one
+  * Create the project in the GSuite Organization that you will use for single sign on (if you're using GSuite).
+* [Configure the OAuth 2.0 consent screen](https://console.developers.google.com/apis/credentials/consent) for an Internal project
+  * Note: as I'm not using GSuite, I wasn't able to do *Internal* but *External* worked ok.
+* Create an [OAuth 2.0 credential](https://console.developers.google.com/apis/credentials/oauthclient)
+  * For *Application Type*, choose *Desktop app*
+
+Jot down the Client ID and Client Secret; you’ll need them for the next step!
+
+```
+  step ca provisioner add google \
+    --type=oidc --ssh \
+    --client-id=123456789009-casdfa97asdfcasdf8jklj89090fasd1.apps.googleusercontent.com \
+    --client-secret=asdfFACSDsadf304JSDAcsl4 \
+    --configuration-endpoint https://accounts.google.com/.well-known/openid-configuration \
+    --admin=example@gmail.com \
+    --domain=gmail.com
+```
+
+You only need to specify `admin` if you want the account your authenticating to Google with to be able to provision keys for other principals. If you're using gsuite and have another domain, obviously use that.
+
 # bootstrapping clients
 
 * `step ca bootstrap --ca-url https://step.example.org:9000 --fingerprint xxxxxxxxxx --install`
