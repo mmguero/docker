@@ -3,7 +3,7 @@
 * put what will be the intermediate password in secrets.txt, chmod 600
 * `docker run --rm -it -v $(pwd)/step:/home/step smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/path/to/password1.txt --provisioner-password-file=/path/to/password2.txt`
-    - make note of provisioner fingerprint xxxxxxxxxx
+    - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
     - make note of the cert authority configuration to to add it to the `authorized_keys` on the clients
 * `docker-compose up -d`
 * `docker-compose exec -u 0 ca sh`
@@ -144,8 +144,8 @@ step ssh renew --force \
 
 # links
 
-https://smallstep.com/blog/build-a-tiny-ca-with-raspberry-pi-yubikey/
-https://smallstep.com/docs/tutorials/docker-tls-certificate-authority
-https://smallstep.com/blog/use-ssh-certificates/
-https://smallstep.com/blog/diy-single-sign-on-for-ssh/
-https://www.whatsdoom.com/posts/2020/02/29/ssh-certificates-with-step-ca/
+* https://smallstep.com/blog/build-a-tiny-ca-with-raspberry-pi-yubikey/
+* https://smallstep.com/docs/tutorials/docker-tls-certificate-authority
+* https://smallstep.com/blog/use-ssh-certificates/
+* https://smallstep.com/blog/diy-single-sign-on-for-ssh/
+* https://www.whatsdoom.com/posts/2020/02/29/ssh-certificates-with-step-ca/
