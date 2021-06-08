@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -u
 set -o pipefail
@@ -8,7 +8,7 @@ ENCODING="utf-8"
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-export ZEEK_DOCKER_IMAGE=mmguero/zeek:latest
+export ZEEK_IMAGE=${ZEEK_DOCKER_IMAGE:-mmguero/zeek:latest}
 
 # Not sure how this would actually work on macOS yet since Docker is in a VM, but
 # let's assume somehow it magically would at least for plumbing's sake.
@@ -99,6 +99,6 @@ printf "%s\0" "$@" | $XARGS -0 -n 1 -P ${MAX_ZEEK_PROCS:-4} -I XXX bash -c '
 
   # run zeek in docker on the provided input
   docker run --rm $NETWORK_MODE -e DEFAULT_UID=$DEFAULT_UID -e DEFAULT_GID=$DEFAULT_GID \
-    "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_DOCKER_IMAGE \
+    "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_IMAGE \
     $ZEEK_EXE -C $IN_FLAG $LOCAL_SCRIPT "${ZEEK_PARAMS[@]}"
 '

@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ENCODING="utf-8"
 
 IN_FILE="$1"
 if [[ -z $IN_FILE ]] ; then
   echo "usage:"
-  echo "  capa.sh <IN_FILE> [capa options]"
+  echo "  capa-docker.sh <IN_FILE> [capa options]"
   exit 1
 elif [[ ! -f "$IN_FILE" ]]; then
   echo "usage:"
-  echo "  capa.sh <IN_FILE> [capa options]"
+  echo "  capa-docker.sh <IN_FILE> [capa options]"
   echo ""
   echo "$IN_FILE does not exist!"
   exit 1
