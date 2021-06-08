@@ -1,4 +1,4 @@
-name: ci
+name: capa-build-push
 
 on:
   push:

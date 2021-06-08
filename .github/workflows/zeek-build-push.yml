@@ -1,4 +1,4 @@
-name: ci
+name: zeek-build-push
 
 on:
   push:

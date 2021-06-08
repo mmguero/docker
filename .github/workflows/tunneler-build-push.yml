@@ -1,4 +1,4 @@
-name: ci
+name: tunneler-build-push
 
 on:
   push:
