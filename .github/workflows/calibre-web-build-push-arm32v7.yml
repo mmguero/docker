@@ -1,4 +1,4 @@
-name: calibre-web-build-push
+name: calibre-web-build-push-arm32v7
 
 on:
   push:
