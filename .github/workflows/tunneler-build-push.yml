@@ -30,4 +30,4 @@ jobs:
         with:
           context: ./services/tunneler
           push: true
-          tags: mmguero/zeek:latest
+          tags: mmguero/tunneler:latest
