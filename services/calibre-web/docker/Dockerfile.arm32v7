@@ -1,6 +1,6 @@
 FROM linuxserver/calibre-web:arm32v7-latest
 
-LABEL maintainer "Seth Grover <seth.d.grover@gmail.com>"
+LABEL maintainer "mmguero <tlacuache@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
