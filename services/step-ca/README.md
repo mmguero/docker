@@ -4,7 +4,6 @@
 * `docker run --rm -it -v $(pwd)/step:/home/step smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/path/to/password1.txt --provisioner-password-file=/path/to/password2.txt`
     - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
-    - make note of the cert authority configuration to to add it to the `authorized_keys` on the clients
 * `docker-compose up -d`
 * `docker-compose exec -u 0 ca sh`
     - `step ca provisioner add acme --type ACME`
@@ -93,7 +92,7 @@ networks:
 
 # ssh
 
-* copy `./step/certs/ssh_user_ca_key.pub` from step-ca server to `/etc/ssh_user_ca_key.pub` on network endpoints
+* copy `./step/certs/ssh_user_ca_key.pub` from step-ca server to `/etc/ssh/ssh_user_ca_key.pub` on network endpoints
 * on network endpoints as root
 
 ```
@@ -101,13 +100,13 @@ $ step ssh certificate --insecure --no-password \
     --ca-url=https://step.example.org:9000/ \
     --root=/usr/local/share/ca-certificates/mypki_Root_CA_###########.crt \
     --provisioner=myjwk --host endpoint.example.org \
-    /etc/ssh_host_ecdsa_key
+    /etc/ssh/ssh_host_ecdsa_key
 
 $ step ssh certificate --host --sign \
     --ca-url=https://step.example.org:9000/ \
     --root=/usr/local/share/ca-certificates/mypki_Root_CA_###########.crt \
     --provisioner=myjwk endpoint.example.org \
-    /etc/ssh_host_ecdsa_key.pub
+    /etc/ssh/ssh_host_ecdsa_key.pub
 ```
 
 * edit `/etc/ssh/sshd_config` and append:
@@ -140,7 +139,7 @@ step ssh renew --force \
 
 * on clients
     - to provision key: `step ssh certificate --provisioner=myjqk --principal=user --principal=username user@endpoint.exmple.org ~/.ssh/id_ecdsa`
-    - add cert authority configuration to the `authorized_keys`
+    - add cert authority configuration to the `known_hosts` by concatenating `@cert-authority * ` and the contents of `./step/certs/ssh_host_ca_key.pub` from the CA server
 
 # links
 
