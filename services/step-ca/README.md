@@ -114,7 +114,7 @@ $ step ssh certificate --host --sign \
 ```
 # SSH CA Configuration
 # The path to the CA public key for authenticating user certificates
-TrustedUserCAKeys /etc/ssh/ssh_user_key.pub
+TrustedUserCAKeys /etc/ssh/ssh_user_ca_key.pub
 # Path to the private key and certificate
 HostKey /etc/ssh/ssh_host_ecdsa_key
 HostCertificate /etc/ssh/ssh_host_ecdsa_key-cert.pub
