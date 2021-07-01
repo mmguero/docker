@@ -1,0 +1,72 @@
+version: '3.7'
+
+# before first run:
+# - copy .env.template to .env and set POSTGRES_ environment variables
+# - mkdir -p ./data/mattermost ./data/postgres
+# - copy config.json.template to config.json and set SiteUrl and DataSource
+
+# to use with traefik, comment ports: section of mattermost-server and
+# uncomment labels and external traefik-proxy network
+
+x-process-variables: &process-variables
+  # docker containers will run processes as unprivileged user with UID:GID
+  PUID : 1000
+  PGID : 1000
+
+services:
+
+  mattermost-postgres:
+    container_name: mattermost-postgres
+    build:
+      context: .
+      dockerfile: docker/postgres.Dockerfile
+    image: mmguero/postgres:13-alpine
+    environment:
+      << : *process-variables
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /mattermost/postgres
+    volumes:
+       - ./data/postgres:/mattermost/postgres:rw
+    expose:
+      - 5432
+    networks:
+      - mattermost
+    restart: unless-stopped
+
+  mattermost-server:
+    container_name: mattermost-server
+    build:
+      context: .
+      dockerfile: docker/mattermost.Dockerfile
+    image: mmguero/mattermost-server:latest
+    environment:
+      << : *process-variables
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/mattermost:/opt/mattermost/data:rw
+      - ./config.json:/opt/mattermost/config/config.json:rw
+    networks:
+      - mattermost
+    expose:
+      - 8065
+    ports:
+      - "127.0.0.1:8065:8065"
+    restart: unless-stopped
+    depends_on:
+      - mattermost-postgres
+    ulimits:
+      nofile: 49152
+    #labels:
+    #  - "traefik.enable=true"
+    #  - "traefik.http.routers.mattermost.rule=Host(`mattermost.example.org`)"
+    #  - "traefik.http.routers.mattermost.entrypoints=websecure"
+    #  - "traefik.http.routers.mattermost.tls.certresolver=myresolver"
+    #  - "traefik.http.services.mattermost.loadbalancer.server.port=8065"
+
+networks:
+  mattermost:
+    #external:
+    #  name: traefik-proxy
