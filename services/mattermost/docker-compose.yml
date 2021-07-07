@@ -2,7 +2,7 @@ version: '3.7'
 
 # before first run:
 # - copy .env.template to .env and set POSTGRES_ environment variables
-# - mkdir -p ./data/mattermost ./data/postgres
+# - mkdir -p ./data/mattermost/{client_plugins,data,export,import,plugins} ./data/postgres
 # - copy config.json.template to config.json and set SiteUrl and DataSource
 
 # to use with traefik, comment ports: section of mattermost-server and
@@ -46,7 +46,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./data/mattermost:/opt/mattermost/data:rw
+      - ./data/mattermost/data:/opt/mattermost/data:rw
+      - ./data/mattermost/plugins:/opt/mattermost/plugins:rw
+      - ./data/mattermost/export:/opt/mattermost/export:rw
+      - ./data/mattermost/import:/opt/mattermost/import:rw
+      - ./data/mattermost/client_plugins:/opt/mattermost/client_plugins:rw
       - ./config.json:/opt/mattermost/config/config.json:rw
     networks:
       - mattermost

@@ -40,7 +40,7 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
   usermod -a -G tty ${PUSER} && \
   chown -R $PUSER:$PGROUP /opt/mattermost
 
-VOLUME /opt/mattermost/data
+VOLUME ["/opt/mattermost/data", "/opt/mattermost/plugins", "/opt/mattermost/export", "/opt/mattermost/import", "/opt/mattermost/client_plugins"]
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
