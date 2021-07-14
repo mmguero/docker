@@ -35,7 +35,7 @@ ENV TERM xterm
 
 # for download and install
 ARG ZEEK_LTS=1
-ARG ZEEK_VERSION=4.0.2-0
+ARG ZEEK_VERSION=4.0.3-0
 ARG SPICY_VERSION=1.1.0
 
 ENV ZEEK_LTS $ZEEK_LTS
@@ -121,6 +121,7 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/so
     zkg autoconfig --force && \
     echo "@load packages" >> "${ZEEK_DIR}"/share/zeek/site/local.zeek && \
     zkg install --force --skiptests zeek/spicy-plugin && \
+    zkg install --force --skiptests https://github.com/mmguero-dev/spicy-analyzers && \
     ( find "${ZEEK_DIR}"/lib -type d -name CMakeFiles -exec rm -rf "{}" \; 2>/dev/null || true ) && \
     ( find "${ZEEK_DIR}"/var/lib/zkg -type d -name build -exec rm -rf "{}" \; 2>/dev/null || true ) && \
     ( find "${ZEEK_DIR}"/var/lib/zkg/clones -type d -name .git -execdir bash -c "pwd; du -sh; git pull --depth=1 --ff-only; git reflog expire --expire=all --all; git tag -l | xargs -r git tag -d; git gc --prune=all; du -sh" \; ) && \
@@ -149,6 +150,22 @@ ENV PUSER_PRIV_DROP true
 
 ARG ZEEK_LOGS_DIR=/zeek-logs
 ENV ZEEK_LOGS_DIR $ZEEK_LOGS_DIR
+
+ENV ZEEK_DISABLE_HASH_ALL_FILES ""
+ENV ZEEK_DISABLE_LOG_PASSWORDS ""
+ENV ZEEK_DISABLE_SSL_VALIDATE_CERTS ""
+ENV ZEEK_DISABLE_TRACK_ALL_ASSETS ""
+ENV ZEEK_DISABLE_SPICY_DHCP "true"
+ENV ZEEK_DISABLE_SPICY_DNS "true"
+ENV ZEEK_DISABLE_SPICY_FACEFISH ""
+ENV ZEEK_DISABLE_SPICY_HTTP "true"
+ENV ZEEK_DISABLE_SPICY_IPSEC ""
+ENV ZEEK_DISABLE_SPICY_LDAP ""
+ENV ZEEK_DISABLE_SPICY_OPENVPN ""
+ENV ZEEK_DISABLE_SPICY_STUN ""
+ENV ZEEK_DISABLE_SPICY_TAILSCALE ""
+ENV ZEEK_DISABLE_SPICY_TFTP ""
+ENV ZEEK_DISABLE_SPICY_WIREGUARD ""
 
 ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD login.zeek "${ZEEK_DIR}"/share/zeek/site/

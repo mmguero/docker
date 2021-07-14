@@ -1,13 +1,27 @@
 ##! Zeek local site policy. Customize as appropriate.
 ##!
-##! See https://docs.zeek.org/en/stable/script-reference/scripts.html
+##! See https://github.com/zeek/zeekctl
+##!     https://docs.zeek.org/en/stable/script-reference/scripts.html
 ##!     https://github.com/zeek/zeek/blob/master/scripts/site/local.zeek
 
-redef ignore_checksums = T;
+global disable_hash_all_files = (getenv("ZEEK_DISABLE_HASH_ALL_FILES") == "") ? F : T;
+global disable_log_passwords = (getenv("ZEEK_DISABLE_LOG_PASSWORDS") == "") ? F : T;
+global disable_ssl_validate_certs = (getenv("ZEEK_DISABLE_SSL_VALIDATE_CERTS") == "") ? F : T;
+global disable_track_all_assets = (getenv("ZEEK_DISABLE_TRACK_ALL_ASSETS") == "") ? F : T;
 
-# redef HTTP::default_capture_password = T;
-# redef FTP::default_capture_password = T;
-# redef SOCKS::default_capture_password = T;
+global disable_spicy_dhcp = (getenv("ZEEK_DISABLE_SPICY_DHCP") == "") ? F : T;
+global disable_spicy_dns = (getenv("ZEEK_DISABLE_SPICY_DNS") == "") ? F : T;
+global disable_spicy_facefish = (getenv("ZEEK_DISABLE_SPICY_FACEFISH") == "") ? F : T;
+global disable_spicy_http = (getenv("ZEEK_DISABLE_SPICY_HTTP") == "") ? F : T;
+global disable_spicy_ipsec = (getenv("ZEEK_DISABLE_SPICY_IPSEC") == "") ? F : T;
+global disable_spicy_ldap = (getenv("ZEEK_DISABLE_SPICY_LDAP") == "") ? F : T;
+global disable_spicy_openvpn = (getenv("ZEEK_DISABLE_SPICY_OPENVPN") == "") ? F : T;
+global disable_spicy_stun = (getenv("ZEEK_DISABLE_SPICY_STUN") == "") ? F : T;
+global disable_spicy_tailscale = (getenv("ZEEK_DISABLE_SPICY_TAILSCALE") == "") ? F : T;
+global disable_spicy_tftp = (getenv("ZEEK_DISABLE_SPICY_TFTP") == "") ? F : T;
+global disable_spicy_wireguard = (getenv("ZEEK_DISABLE_SPICY_WIREGUARD") == "") ? F : T;
+
+redef ignore_checksums = T;
 
 @load tuning/defaults
 @load misc/scan
@@ -36,9 +50,15 @@ redef ignore_checksums = T;
 @load protocols/ssh/software
 @load protocols/ssl/known-certs
 @load protocols/ssl/log-hostcerts-only
-@load protocols/ssl/validate-certs
-@load tuning/track-all-assets.zeek
-@load frameworks/files/hash-all-files
+@if (!disable_ssl_validate_certs)
+  @load protocols/ssl/validate-certs
+@endif
+@if (!disable_track_all_assets)
+  @load tuning/track-all-assets.zeek
+@endif
+@if (!disable_hash_all_files)
+  @load frameworks/files/hash-all-files
+@endif
 @load policy/protocols/conn/vlan-logging
 @load policy/protocols/conn/mac-logging
 @load policy/protocols/modbus/track-memmap
@@ -49,4 +69,59 @@ redef ignore_checksums = T;
 # @load policy/misc/loaded-scripts
 
 @load ./login.zeek
+
 @load packages
+
+event zeek_init() &priority=-5 {
+  if (disable_spicy_dhcp) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_DHCP);
+  }
+  if (disable_spicy_dns) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_DNS);
+  }
+  if (disable_spicy_facefish) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_FACEFISH_ROOTKIT);
+  }
+  if (disable_spicy_http) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_HTTP);
+  }
+  if (disable_spicy_ipsec) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_IPSEC_TCP);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_IPSEC_UDP);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_IPSEC_IKE_UDP);
+  }
+  if (disable_spicy_ldap) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_LDAP_TCP);
+  }
+  if (disable_spicy_openvpn) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_TCP);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_TCP_HMAC_MD5);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_TCP_HMAC_SHA1);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_TCP_HMAC_SHA256);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_TCP_HMAC_SHA512);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_UDP);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_UDP_HMAC_MD5);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_UDP_HMAC_SHA1);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_UDP_HMAC_SHA256);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_OPENVPN_UDP_HMAC_SHA512);
+  }
+  if (disable_spicy_stun) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_STUN);
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_STUN_TCP);
+  }
+  if (disable_spicy_tailscale) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_TAILSCALE);
+  }
+  if (disable_spicy_tftp) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_TFTP);
+  }
+  if (disable_spicy_wireguard) {
+    Spicy::disable_protocol_analyzer(Analyzer::ANALYZER_SPICY_WIREGUARD);
+  }
+}
+
+@if (!disable_log_passwords)
+  redef HTTP::default_capture_password = T;
+  redef FTP::default_capture_password = T;
+  redef SOCKS::default_capture_password = T;
+@endif

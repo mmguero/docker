@@ -8,8 +8,6 @@ ENCODING="utf-8"
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-export ZEEK_IMAGE=${ZEEK_DOCKER_IMAGE:-mmguero/zeek:latest}
-
 # Not sure how this would actually work on macOS yet since Docker is in a VM, but
 # let's assume somehow it magically would at least for plumbing's sake.
 [[ "$(uname -s)" = 'Darwin' ]] && REALPATH=grealpath || REALPATH=realpath
@@ -38,12 +36,22 @@ for FILE in *.zeek; do
 done
 popd >/dev/null 2>&1
 
+# pass through local environment variables beginning with ZEEK_
+LOCAL_ZEEK_ENV_ARGS=()
+while IFS='=' read -r ZEEK_ENV_VAR value ; do
+  if [[ $ZEEK_ENV_VAR == 'ZEEK_'* ]]; then
+    LOCAL_ZEEK_ENV_ARGS+=( "$ZEEK_ENV_VAR=${!ZEEK_ENV_VAR}" )
+  fi
+done < <(env)
+export ZEEK_IMAGE=${ZEEK_DOCKER_IMAGE:-mmguero/zeek:latest}
+
 export REALPATH
 export DIRNAME
 export BASENAME
 export SCRIPT_PATH
 export LOCAL_SCRIPT
 export LOCAL_ZEEK_ARGV="$(join_by ':' "${LOCAL_ZEEK_SCRIPTS[@]}")"
+export LOCAL_ZEEK_ENV_ARGV="$(join_by ':' "${LOCAL_ZEEK_ENV_ARGS[@]}")"
 export DEFAULT_UID=$(id -u)
 export DEFAULT_GID=$(id -g)
 
@@ -54,6 +62,7 @@ printf "%s\0" "$@" | $XARGS -0 -n 1 -P ${MAX_ZEEK_PROCS:-4} -I XXX bash -c '
   ZEEK_EXE=
   IN_MOUNT=
   NETWORK_MODE=
+  ENV_ARGS=()
   MOUNT_ARGS=()
   CAP_ARGS=()
 
@@ -91,6 +100,13 @@ printf "%s\0" "$@" | $XARGS -0 -n 1 -P ${MAX_ZEEK_PROCS:-4} -I XXX bash -c '
     MOUNT_ARGS+=( "$SCRIPT_PATH/$ZEEK_PARAM:/opt/zeek/share/zeek/site/$ZEEK_PARAM:ro" )
   done
 
+  # pass in external ZEEK_ environment variables
+  IFS=":" read -r -a ZEEK_ENVS <<< "$LOCAL_ZEEK_ENV_ARGV"
+  for ZEEK_ENV in "${ZEEK_ENVS[@]}"; do
+    ENV_ARGS+=( -e )
+    ENV_ARGS+=( $ZEEK_ENV )
+  done
+
   # each instance of zeek will write to its own log directory
   LOG_DIR="$(pwd)/$($BASENAME "XXX")"_logs
   mkdir -p "$LOG_DIR"
@@ -98,7 +114,8 @@ printf "%s\0" "$@" | $XARGS -0 -n 1 -P ${MAX_ZEEK_PROCS:-4} -I XXX bash -c '
   MOUNT_ARGS+=( "$LOG_DIR":/zeek-logs )
 
   # run zeek in docker on the provided input
-  docker run --rm $NETWORK_MODE -e DEFAULT_UID=$DEFAULT_UID -e DEFAULT_GID=$DEFAULT_GID \
-    "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_IMAGE \
+  docker run --rm $NETWORK_MODE \
+    -e DEFAULT_UID=$DEFAULT_UID -e DEFAULT_GID=$DEFAULT_GID \
+    "${ENV_ARGS[@]}" "${CAP_ARGS[@]}" "${MOUNT_ARGS[@]}" $ZEEK_IMAGE \
     $ZEEK_EXE -C $IN_FLAG $LOCAL_SCRIPT "${ZEEK_PARAMS[@]}"
 '
