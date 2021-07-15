@@ -17,9 +17,6 @@ services:
 
   stunnel-smtp:
     image: mmguero/stunnel:latest
-    build:
-      context: .
-      dockerfile: docker/stunnel.Dockerfile
     hostname: stunnel-smtp
     container_name: stunnel-smtp
     restart: unless-stopped
@@ -38,9 +35,6 @@ services:
 
   stunnel-imap:
     image: mmguero/stunnel:latest
-    build:
-      context: .
-      dockerfile: docker/stunnel.Dockerfile
     hostname: stunnel-imap
     container_name: stunnel-imap
     restart: unless-stopped
@@ -59,9 +53,6 @@ services:
 
   stunnel-http:
     image: mmguero/stunnel:latest
-    build:
-      context: .
-      dockerfile: docker/stunnel.Dockerfile
     hostname: stunnel-http
     container_name: stunnel-http
     restart: unless-stopped

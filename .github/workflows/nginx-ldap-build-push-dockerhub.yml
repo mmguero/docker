@@ -1,4 +1,4 @@
-name: calibre-web-build-push-dockerhub
+name: nginx-ldap-build-push-dockerhub
 
 on:
   push:
@@ -28,7 +28,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./services/calibre-web
-          file: ./services/calibre-web/docker/Dockerfile
+          context: ./net/nginx-ldap
           push: true
-          tags: mmguero/calibre-web:latest
+          tags: mmguero/nginx-ldap:latest

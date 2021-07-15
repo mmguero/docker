@@ -1,4 +1,4 @@
-name: calibre-web-build-push-dockerhub
+name: nextcloud-build-push-arm32v7-dockerhub
 
 on:
   push:
@@ -28,7 +28,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./services/calibre-web
-          file: ./services/calibre-web/docker/Dockerfile
+          context: ./services/nextcloud
+          file: ./services/nextcloud/docker/Dockerfile.arm32v7
+          platforms: linux/arm/v7
           push: true
-          tags: mmguero/calibre-web:latest
+          tags: mmguero/nextcloud:arm32v7
