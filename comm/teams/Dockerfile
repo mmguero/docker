@@ -9,6 +9,13 @@
 
 FROM debian:buster-slim
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/comm/teams'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.title='mmguero/teams'
+LABEL org.opencontainers.image.description='Dockerized Microsoft Teams (X11)'
+
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV TEAMS_USER teams

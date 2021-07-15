@@ -8,6 +8,13 @@
 
 FROM alpine:3.13 as stunnel_build
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/net/nginx-ldap'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.title='mmguero/nginx-ldap'
+LABEL org.opencontainers.image.description='Dockerized NGINX with LDAP Authentication'
+
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=300
 ENV DEFAULT_UID $DEFAULT_UID
@@ -84,7 +91,7 @@ ENV NGINX_AUTH_LDAP_BRANCH=master
 
 ADD http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz /nginx.tar.gz
 ADD https://codeload.github.com/mmguero-dev/nginx-auth-ldap/tar.gz/$NGINX_AUTH_LDAP_BRANCH /nginx-auth-ldap.tar.gz
-ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
 COPY --from=stunnel_build /apkbuild/packages/community/x86_64/stunnel-*.apk /tmp/
 

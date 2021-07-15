@@ -1,5 +1,12 @@
 FROM alpine:latest
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/db/minikeyvalue'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.title='mmguero/minikeyvalue'
+LABEL org.opencontainers.image.description='Dockerized minikeyvalue Key Value Store'
+
 ARG GOLANG_VERSION=1.16.3
 ARG MINIKEYVALUE_URL="https://github.com/geohot/minikeyvalue"
 
@@ -56,7 +63,7 @@ RUN apk --no-cache add \
   apk del .build-deps && \
   go version
 
-ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 COPY supervisord.conf /etc/supervisord.conf
 
 RUN mkdir -p ${GOPATH}/src ${GOPATH}/bin /var/www/html /var/lib/nginx /var/log/nginx /run/nginx && \

@@ -1,5 +1,12 @@
 FROM debian:buster-slim
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/services/mattermost'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.title='mmguero/mattermost-server'
+LABEL org.opencontainers.image.description='Dockerized Mattermost Server'
+
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
@@ -24,7 +31,7 @@ RUN tar -xzf /mattermost-${MATTERMOST_VERSION}-linux-amd64.tar.gz && \
 
 COPY config.json.template /opt/mattermost/config/config.json
 
-ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000

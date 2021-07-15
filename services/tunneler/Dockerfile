@@ -1,5 +1,12 @@
 FROM debian:buster-slim
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/services/tunneler'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.title='mmguero/tunneler'
+LABEL org.opencontainers.image.description='Dockerized Tunneling Services'
+
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
@@ -51,7 +58,7 @@ RUN  apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD https://raw.githubusercontent.com/mmguero-personal/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD supervisord.conf /etc/supervisord.conf
 ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
 
