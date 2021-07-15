@@ -43,7 +43,7 @@ while IFS='=' read -r ZEEK_ENV_VAR value ; do
     LOCAL_ZEEK_ENV_ARGS+=( "$ZEEK_ENV_VAR=${!ZEEK_ENV_VAR}" )
   fi
 done < <(env)
-export ZEEK_IMAGE=${ZEEK_DOCKER_IMAGE:-mmguero/zeek:latest}
+export ZEEK_IMAGE=${ZEEK_DOCKER_IMAGE:-ghcr.io/mmguero/zeek:latest}
 
 export REALPATH
 export DIRNAME

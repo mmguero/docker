@@ -30,4 +30,4 @@ cp "$IN_FILE" "$TEMP_DIR/"
 
 docker run --rm -t \
   -v "$TEMP_DIR:/data:rw" \
-  mmguero/capa:latest "/data/$IN_BASENAME" "$@"
+  ghcr.io/mmguero/capa:latest "/data/$IN_BASENAME" "$@"
