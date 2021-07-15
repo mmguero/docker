@@ -32,7 +32,7 @@ FROM debian:buster-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/net/zeek'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/net/zeek'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/zeek'
 LABEL org.opencontainers.image.description='Dockerized Zeek and Spicy'

@@ -11,7 +11,7 @@ FROM debian:buster-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/comm/signal'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/comm/signal'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/signal'
 LABEL org.opencontainers.image.description='Dockerized Signal (X11)'

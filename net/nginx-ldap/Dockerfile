@@ -10,7 +10,7 @@ FROM alpine:3.13 as stunnel_build
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/net/nginx-ldap'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/net/nginx-ldap'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/nginx-ldap'
 LABEL org.opencontainers.image.description='Dockerized NGINX with LDAP Authentication'

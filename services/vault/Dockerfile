@@ -3,7 +3,7 @@ FROM alpine:3.11
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/services/vault'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/services/vault'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/vault'
 LABEL org.opencontainers.image.description='Dockerized Hashicorp Vault'

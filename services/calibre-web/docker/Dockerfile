@@ -2,7 +2,7 @@ FROM linuxserver/calibre-web
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/services/calibre-web'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/services/calibre-web'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/calibre-web'
 LABEL org.opencontainers.image.description='Dockerized Calibre-Web E-Book Server'

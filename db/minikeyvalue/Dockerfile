@@ -2,7 +2,7 @@ FROM alpine:latest
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/db/minikeyvalue'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/db/minikeyvalue'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/minikeyvalue'
 LABEL org.opencontainers.image.description='Dockerized minikeyvalue Key Value Store'

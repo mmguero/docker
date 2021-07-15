@@ -2,7 +2,7 @@ FROM trafex/alpine-nginx-php7:latest
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/net/nginx-securimage'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/net/nginx-securimage'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='mmguero/nginx-securimage'
 LABEL org.opencontainers.image.description='Dockerized NGINX with Securimage PHP Captcha'
