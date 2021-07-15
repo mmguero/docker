@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: docker/postgres.Dockerfile
-    image: mmguero/postgres:13-alpine
+    image: ghcr.io/mmguero/postgres:13-alpine
     environment:
       << : *process-variables
       POSTGRES_USER: ${POSTGRES_USER}
@@ -40,7 +40,7 @@ services:
     build:
       context: .
       dockerfile: docker/mattermost.Dockerfile
-    image: mmguero/mattermost-server:latest
+    image: ghcr.io/mmguero/mattermost-server:latest
     environment:
       << : *process-variables
       POSTGRES_USER: ${POSTGRES_USER}

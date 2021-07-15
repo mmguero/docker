@@ -3,8 +3,8 @@ version: '3'
 services:
 
   calibre:
-    image: mmguero/calibre-web
-    #image: mmguero/calibre-web:arm32v7
+    image: ghcr.io/mmguero/calibre-web
+    #image: ghcr.io/mmguero/calibre-web:arm32v7
     build:
       context: .
       dockerfile: docker/Dockerfile

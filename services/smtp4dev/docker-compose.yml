@@ -16,7 +16,7 @@ services:
       - ServerOptions__TlsMode=None
 
   stunnel-smtp:
-    image: mmguero/stunnel:latest
+    image: ghcr.io/mmguero/stunnel:latest
     hostname: stunnel-smtp
     container_name: stunnel-smtp
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
       - smtp4dev
 
   stunnel-imap:
-    image: mmguero/stunnel:latest
+    image: ghcr.io/mmguero/stunnel:latest
     hostname: stunnel-imap
     container_name: stunnel-imap
     restart: unless-stopped
@@ -52,7 +52,7 @@ services:
       - smtp4dev
 
   stunnel-http:
-    image: mmguero/stunnel:latest
+    image: ghcr.io/mmguero/stunnel:latest
     hostname: stunnel-http
     container_name: stunnel-http
     restart: unless-stopped

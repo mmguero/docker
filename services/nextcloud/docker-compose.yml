@@ -20,8 +20,8 @@ services:
       - proxy
 
   nextcloud:
-    image: mmguero/nextcloud:latest
-    #image: mmguero/nextcloud:arm32v7
+    image: ghcr.io/mmguero/nextcloud:latest
+    #image: ghcr.io/mmguero/nextcloud:arm32v7
     build:
       context: .
       dockerfile: docker/Dockerfile
