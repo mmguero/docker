@@ -1,4 +1,4 @@
-name: zeek-build-push
+name: capa-build-push-dockerhub
 
 on:
   push:
@@ -28,6 +28,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./net/zeek
+          context: ./infosec/capa
           push: true
-          tags: mmguero/zeek:latest
+          tags: mmguero/capa:latest

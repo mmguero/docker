@@ -1,4 +1,4 @@
-name: capa-build-push
+name: mattermost-build-push-dockerhub
 
 on:
   push:
@@ -25,9 +25,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build and push mattermost
         uses: docker/build-push-action@v2
         with:
-          context: ./infosec/capa
+          context: ./services/mattermost
+          file: ./services/mattermost/docker/mattermost.Dockerfile
           push: true
-          tags: mmguero/capa:latest
+          tags: mmguero/mattermost-server:latest
+      -
+        name: Build and push postgres
+        uses: docker/build-push-action@v2
+        with:
+          context: ./services/mattermost
+          file: ./services/mattermost/docker/postgres.Dockerfile
+          push: true
+          tags: mmguero/postgres:13-alpine

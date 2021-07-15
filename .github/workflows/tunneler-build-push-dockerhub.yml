@@ -1,4 +1,4 @@
-name: tunneler-build-push
+name: tunneler-build-push-dockerhub
 
 on:
   push:
