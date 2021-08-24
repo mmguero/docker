@@ -6,3 +6,7 @@
 	path = net/nginx-ldap
 	url = https://github.com/mmguero/nginx-ldap
 	branch = main
+[submodule "infosec/zeek"]
+	path = infosec/zeek
+	url = https://github.com/mmguero/zeek-docker
+	branch = main
