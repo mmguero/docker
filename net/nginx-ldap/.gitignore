@@ -1,5 +1,0 @@
-auth.env
-/nginx/certs
-/nginx/ca-trust
-/nginx/htpasswd
-/nginx/nginx_ldap.conf
