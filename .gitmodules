@@ -5,4 +5,4 @@
 [submodule "net/nginx-ldap"]
 	path = net/nginx-ldap
 	url = https://github.com/mmguero/nginx-ldap
-	branch = master
+	branch = main
