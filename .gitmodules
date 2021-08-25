@@ -1,7 +1,7 @@
 [submodule "services/espejo"]
 	path = services/espejo
 	url = https://github.com/mmguero/espejo
-	branch = master
+	branch = main
 [submodule "net/nginx-ldap"]
 	path = net/nginx-ldap
 	url = https://github.com/mmguero/nginx-ldap
