@@ -30,6 +30,7 @@ services:
       WORMHOLE_AUTOSTART : 'false'
       CROC_PORT_LOW : 9009
       CROC_PORT_HIGH : 9013
+      CROC_PORT_NON_SEQUENTIAL : 'false'
       CROC_PASS : ''
       CROC_AUTOSTART : 'false'
     ports:

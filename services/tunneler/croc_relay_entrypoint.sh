@@ -2,7 +2,9 @@
 
 set -e
 
-if [ -n "$CROC_PORT_LOW" ] && [ -n "$CROC_PORT_HIGH" ]; then
+if [ "$CROC_PORT_NON_SEQUENTIAL" == "true" ]; then
+  PORTS="$CROC_PORT_LOW,$CROC_PORT_HIGH"
+elif [ -n "$CROC_PORT_LOW" ] && [ -n "$CROC_PORT_HIGH" ]; then
   PORTS="$(seq -s , "$CROC_PORT_LOW" "$CROC_PORT_HIGH")"
 else
   PORTS="$(seq -s , 9009 9013)"
