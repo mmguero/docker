@@ -29,19 +29,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       tilix \
       unzip && \
     for CATEGORY in apps multimedia net; do \
-      for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot"); do \
-        if [ "$PACKAGE" != "brasero" ] && \
-           [ "$PACKAGE" != "cdparanoia" ] && \
-           [ "$PACKAGE" != "bridge-utils" ] && \
-           [ "$PACKAGE" != "epiphany-browser" ] && \
-           [ "$PACKAGE" != "libdvd-pkg" ] && \
-           [ "$PACKAGE" != "motion" ] && \
-           [ "$PACKAGE" != "openvpn" ] && \
-           [ "$PACKAGE" != "tshark" ] && \
-           [ "$PACKAGE" != "wireguard" ] && \
-           [ "$PACKAGE" != "wireshark" ]; then \
-          env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
-        fi; \
+      for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot" | grep -Pvi "abiword|audac(ious|ity)|brasero|bridge-utils|gimp|gnumeric|handbrake|libdvd-pkg|motion|open(jdk|vpn)|pidgin|purple|(t|wire)shark|wireguard"); do \
+        env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
       done; \
     done && \
     curl -sSL -o /tmp/install_pip_pkgs.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0169-pip-installs.hook.chroot" && \
@@ -55,6 +44,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       rm -f /etc/skel/.bashrc.d/05_docker.bashrc \
             /etc/skel/.bashrc.d/07_keyring.bashrc \
             /etc/skel/.bashrc.d/08_vms.bashrc && \
+    env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-11-jre-headless && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
