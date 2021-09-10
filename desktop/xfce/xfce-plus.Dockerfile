@@ -28,7 +28,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       python3-setuptools \
       python3-wheel \
       tilix \
-      unzip && \
+      unzip \
+      xz-utils && \
     for CATEGORY in apps multimedia net; do \
       for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot" | grep -Pvi "abiword|audac(ious|ity)|brasero|bridge-utils|gimp|gnumeric|handbrake|libdvd-pkg|motion|open(jdk|vpn)|pidgin|purple|(t|wire)shark|wireguard"); do \
         env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
