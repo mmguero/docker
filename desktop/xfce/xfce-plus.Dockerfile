@@ -15,12 +15,19 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     echo "deb http://deb.debian.org/debian bullseye-backports main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -q update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
-      bash bzip2 curl dconf-cli file git jq moreutils ca-certificates python3-pip python3-wheel python3-setuptools && \
-    echo "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0168-firefox-install.hook.chroot" && \
-    curl -sSL -o /tmp/install_firefox.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0168-firefox-install.hook.chroot" && \
-      bash /tmp/install_firefox.sh && \
-    curl -sSL -o /tmp/install_pip_pkgs.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0169-pip-installs.hook.chroot" && \
-      bash /tmp/install_pip_pkgs.sh && \
+      bash \
+      bzip2 \
+      ca-certificates \
+      curl \
+      file \
+      git \
+      jq \
+      moreutils \
+      python3-pip \
+      python3-setuptools \
+      python3-wheel \
+      tilix \
+      unzip && \
     for CATEGORY in apps multimedia net; do \
       for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot"); do \
         if [ "$PACKAGE" != "brasero" ] && \
@@ -37,6 +44,10 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         fi; \
       done; \
     done && \
+    curl -sSL -o /tmp/install_pip_pkgs.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0169-pip-installs.hook.chroot" && \
+      bash /tmp/install_pip_pkgs.sh && \
+    curl -sSL -o /tmp/install_firefox.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0168-firefox-install.hook.chroot" && \
+      bash /tmp/install_firefox.sh && \
     curl -sSL -o /tmp/install_custom_bins.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0911-custom-binaries.hook.chroot" && \
       bash /tmp/install_custom_bins.sh && \
     curl -sSL -o /tmp/setup_skel.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0998-skel-setup.hook.chroot" && \
