@@ -41,9 +41,10 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       bash /tmp/install_custom_bins.sh && \
     curl -sSL -o /tmp/setup_skel.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0998-skel-setup.hook.chroot" && \
       bash /tmp/setup_skel.sh && \
-      rm -f /etc/skel/.bashrc.d/05_docker.bashrc \
+      rm -rf /etc/skel/.bashrc.d/05_docker.bashrc \
             /etc/skel/.bashrc.d/07_keyring.bashrc \
-            /etc/skel/.bashrc.d/08_vms.bashrc && \
+            /etc/skel/.bashrc.d/08_vms.bashrc \
+            /etc/skel/.config/mmguero.docker && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-11-jre-headless && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
