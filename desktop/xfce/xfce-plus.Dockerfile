@@ -22,6 +22,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       file \
       git \
       jq \
+      libdbus-glib-1-2 \
       moreutils \
       python3-pip \
       python3-setuptools \
