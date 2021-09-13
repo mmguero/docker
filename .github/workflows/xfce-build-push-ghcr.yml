@@ -52,11 +52,11 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/xfce:latest
       -
-        name: Sleep for 30 seconds again
+        name: Sleep for 30 more seconds
         run: sleep 30s
         shell: bash
       -
-        name: Build and push plus image
+        name: Build and push ext image
         uses: docker/build-push-action@v2
         with:
           context: ./desktop/xfce
