@@ -74,6 +74,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       rm -rf /etc/skel/.bashrc.d/07_keyring.bashrc \
              /etc/skel/.config/mmguero.docker && \
     git clone https://github.com/asdf-vm/asdf.git /etc/skel/.asdf && \
+    curl -sSL -o /tmp/localepurge.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0992-localepurge.hook.chroot" && \
+      bash /tmp/localepurge.sh && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-11-jre-headless && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
