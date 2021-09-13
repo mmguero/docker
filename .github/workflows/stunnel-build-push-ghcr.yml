@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'master'
+    paths:
+      - 'net/stunnel/**'
   workflow_dispatch:
 
 jobs:

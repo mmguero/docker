@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'master'
+    paths:
+      - 'comm/signal/**'
   workflow_dispatch:
 
 jobs:
