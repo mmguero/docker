@@ -21,6 +21,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       curl \
       file \
       git \
+      gnome-themes-extra \
       jq \
       libdbus-glib-1-2 \
       moreutils \
