@@ -1,4 +1,4 @@
-FROM x11docker/xfce:latest
+FROM ghcr.io/mmguero/xfce-base:latest
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
