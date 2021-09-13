@@ -74,7 +74,7 @@ RUN apt-get update && apt-mark hold iptables && \
       mesa-utils-extra && \
     sed -i 's%<property name="ThemeName" type="string" value="Xfce"/>%<property name="ThemeName" type="string" value="Raleigh"/>%' /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml && \
     # disable xfwm4 compositing if X extension COMPOSITE is missing and no config file exists \
-    RUN Configfile="~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml" && \
+    Configfile="~/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml" && \
     echo "#! /bin/bash\n\
     xdpyinfo | grep -q -i COMPOSITE || {\n\
       echo 'x11docker/xfce: X extension COMPOSITE is missing.\n\
