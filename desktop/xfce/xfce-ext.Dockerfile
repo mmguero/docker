@@ -19,16 +19,39 @@ RUN cd /tmp && \
     python3 -m pip install docker-compose && \
   apt-get -q update && \
   env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
+    automake \
+    autotools-dev \
+    bison \
     build-essential \
+    curl \
     dnsmasq-base \
     ebtables \
     gir1.2-spiceclientgtk-3.0 \
+    libbz2-dev \
+    libffi-dev \
+    libfreetype6-dev \
+    libfribidi-dev \
     libguestfs-tools \
+    libharfbuzz-dev \
+    libjpeg-dev \
+    liblcms2-dev \
+    liblzma-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    libopenjp2-7-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libtiff5-dev \
     libvirt-clients \
     libvirt-dev \
     libvirt0 \
+    libwebp-dev \
     libxml2-dev \
+    libxmlsec1-dev \
     libxslt-dev \
+    llvm \
+    make \
     openssh-client \
     openssh-sftp-server \
     qemu \
@@ -40,6 +63,8 @@ RUN cd /tmp && \
     ruby-libvirt \
     virt-manager \
     virtinst \
+    wget \
+    xz-utils \
     zlib1g-dev && \
   curl -o /tmp/vagrant.deb "https://releases.hashicorp.com$(curl -fsL "https://releases.hashicorp.com$(curl -fsL "https://releases.hashicorp.com/vagrant" | grep 'href="/vagrant/' | head -n 1 | grep -o '".*"' | tr -d '"' )" | grep "x86_64\.deb" | head -n 1 | grep -o 'href=".*"' | sed 's/href=//' | tr -d '"')" && \
     env DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/vagrant.deb && \
@@ -63,4 +88,4 @@ RUN mkdir -p /etc/skel/.vagrant.d/; \
     for dir in boxes data tmp; \
     do \
       touch /etc/skel/.vagrant.d/.remove; \
-    done;
+    done

@@ -49,6 +49,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       bash /tmp/setup_skel.sh && \
       rm -rf /etc/skel/.bashrc.d/07_keyring.bashrc \
              /etc/skel/.config/mmguero.docker && \
+    git clone https://github.com/asdf-vm/asdf.git /etc/skel/.asdf && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-11-jre-headless && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
