@@ -16,29 +16,53 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     apt-get -q update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
       bash \
+      bc \
       bzip2 \
       ca-certificates \
+      cpio \
       curl \
+      diffutils \
+      dirmngr \
       file \
+      findutils \
+      fonts-hack-ttf \
       git \
+      gnupg2 \
       gnome-themes-extra \
       jq \
+      keepassxc \
+      less \
       libdbus-glib-1-2 \
+      libsecret-1-0 \
+      libsecret-1-dev \
+      libsecret-tools \
       moreutils \
+      patchutils \
+      pigz \
+      procps \
+      psmisc \
+      pv \
       python3-pip \
       python3-setuptools \
       python3-wheel \
+      rar \
+      rename \
+      testdisk \
       tilix \
+      unrar \
       unzip \
       vim-tiny \
+      xxdiff \
       xz-utils && \
     for CATEGORY in apps multimedia net; do \
       for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot" | grep -Pvi "abiword|audac(ious|ity)|brasero|bridge-utils|cdparanoia|cheese|gimp|gnumeric|handbrake|libdvd-pkg|motion|open(jdk|vpn)|pidgin|purple|(t|wire)shark|wireguard"); do \
         env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
       done; \
     done && \
-    curl -o /tmp/sublime.deb -sSL "$(curl -sSL "https://www.sublimetext.com/3"|grep "sublime-text_build-3.*$(dpkg --print-architecture).deb\"" | sed 's/[[:space:]]*<a href="//' | sed 's/">.*//')" && \
+    curl -sSL -o /tmp/sublime.deb "$(curl -sSL "https://www.sublimetext.com/3"|grep "sublime-text_build-3.*$(dpkg --print-architecture).deb\"" | sed 's/[[:space:]]*<a href="//' | sed 's/">.*//')" && \
       env DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/sublime.deb && \
+    curl -sSL -o "/tmp/veracrypt-console-Debian-10.deb" "$(curl -sSL https://www.veracrypt.fr/en/Downloads.html | grep -Pio "https://.+?veracrypt-console.+?Debian-10-$(dpkg --print-architecture).deb" | sed "s/&#43;/+/" | head -n 1)" && \
+      env DEBIAN_FRONTEND=noninteractive dpkg -i "/tmp/veracrypt-console-Debian-10.deb" && \
     curl -sSL -o /tmp/install_pip_pkgs.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0169-pip-installs.hook.chroot" && \
       bash /tmp/install_pip_pkgs.sh && \
     curl -sSL -o /tmp/install_firefox.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0168-firefox-install.hook.chroot" && \
