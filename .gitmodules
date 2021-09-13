@@ -1,12 +1,12 @@
 [submodule "services/espejo"]
-	path = services/espejo
+	path = espejo
 	url = https://github.com/mmguero/espejo
 	branch = main
 [submodule "net/nginx-ldap"]
-	path = net/nginx-ldap
+	path = nginx-ldap
 	url = https://github.com/mmguero/nginx-ldap
 	branch = main
 [submodule "infosec/zeek"]
-	path = infosec/zeek
+	path = zeek
 	url = https://github.com/mmguero/zeek-docker
 	branch = main

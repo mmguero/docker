@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'services/tunneler/**'
+      - 'tunneler/**'
   workflow_dispatch:
 
 jobs:
@@ -35,6 +35,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./services/tunneler
+          context: ./tunneler
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/tunneler:latest

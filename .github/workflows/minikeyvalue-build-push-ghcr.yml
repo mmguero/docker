@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'db/minikeyvalue/**'
+      - 'minikeyvalue/**'
   workflow_dispatch:
 
 jobs:
@@ -35,6 +35,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./db/minikeyvalue
+          context: ./minikeyvalue
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/minikeyvalue:latest

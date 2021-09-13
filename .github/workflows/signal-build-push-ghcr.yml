@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'comm/signal/**'
+      - 'signal/**'
   workflow_dispatch:
 
 jobs:
@@ -35,6 +35,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./comm/signal
+          context: ./signal
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/signal:latest

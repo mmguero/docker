@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'services/calibre-web/**'
+      - 'calibre-web/**'
   workflow_dispatch:
 
 jobs:
@@ -35,8 +35,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./services/calibre-web
-          file: ./services/calibre-web/docker/Dockerfile.arm32v7
+          context: ./calibre-web
+          file: ./calibre-web/docker/Dockerfile.arm32v7
           platforms: linux/arm/v7
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/calibre-web:arm32v7
