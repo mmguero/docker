@@ -32,10 +32,22 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
+        name: Build and push base image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./desktop/xfce
+          file: ./desktop/xfce/xfce-base.Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/xfce-base:latest
+      -
+        name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      -
         name: Build and push plus image
         uses: docker/build-push-action@v2
         with:
           context: ./desktop/xfce
-          file: ./desktop/xfce/xfce.Dockerfile
+          file: ./desktop/xfce/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/xfce:latest
