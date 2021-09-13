@@ -17,6 +17,8 @@ RUN cd /tmp && \
     cp -v /tmp/docker_static/docker /usr/local/bin/docker && \
     chmod 755 /usr/local/bin/docker && \
     python3 -m pip install docker-compose && \
+    curl -o /usr/local/bin/podman-compose https://raw.githubusercontent.com/containers/podman-compose/devel/podman_compose.py && \
+    chmod 755 /usr/local/bin/podman-compose && \
   apt-get -q update && \
   env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
     automake \
@@ -54,6 +56,7 @@ RUN cd /tmp && \
     make \
     openssh-client \
     openssh-sftp-server \
+    podman \
     qemu \
     qemu-system \
     qemu-utils \
