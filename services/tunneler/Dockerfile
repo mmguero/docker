@@ -58,8 +58,8 @@ RUN  apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD supervisord.conf /etc/supervisord.conf
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
 
 ARG DEFAULT_UID=1000
