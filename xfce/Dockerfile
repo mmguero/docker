@@ -12,7 +12,6 @@ LABEL org.opencontainers.image.description='Dockerized XFCE with my own special 
 ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/bullseye/config"
 
 RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
-    echo "deb http://deb.debian.org/debian bullseye-backports main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -q update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
       bash \
