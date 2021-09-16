@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  transmission-openvpn:
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./download:/data:rw
+      - ./default.ovpn:/etc/openvpn/custom/default.ovpn:rw
+    environment:
+      - OPENVPN_PROVIDER=custom
+      - OPENVPN_USERNAME=
+      - OPENVPN_PASSWORD=
+      - LOCAL_NETWORK=192.168.0.0/16
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - '127.0.0.1:9091:9091'
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    image: haugene/transmission-openvpn
