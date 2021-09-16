@@ -37,8 +37,6 @@ docker run -d --rm \
   -v "$DOWNLOAD_DIR:/home/firefox/Downloads" \
   -v $XDG_RUNTIME_DIR/bus:$XDG_RUNTIME_DIR/bus:ro \
   -v $XDG_RUNTIME_DIR/pulse:$XDG_RUNTIME_DIR/pulse:ro \
-  -v /etc/alsa:/etc/alsa:ro \
-  -v /usr/share/alsa:/usr/share/alsa:ro \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \
