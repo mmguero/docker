@@ -23,7 +23,7 @@ LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
 #      mkdir -p "$DOWNLOAD_DIR" \
 #               "$HOME"/.config/pulse \
 #               "$HOME"/.mozilla/firefox \
-#               "$HOME"/.cache/mozilla/firefox \
+#               "$HOME"/.cache/mozilla/firefox
 #      export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 #
 #      docker run --rm \
