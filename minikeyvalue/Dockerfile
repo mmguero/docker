@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/minikeyvalue'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='mmguero/minikeyvalue'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/minikeyvalue'
 LABEL org.opencontainers.image.description='Dockerized minikeyvalue Key Value Store'
 
 ARG GOLANG_VERSION=1.16.3

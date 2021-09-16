@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/firefox'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='mmguero/firefox'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/firefox'
 LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
 
 #    function firefoxd() {

@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/tunneler'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='mmguero/tunneler'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/tunneler'
 LABEL org.opencontainers.image.description='Dockerized Tunneling Services'
 
 ENV DEBIAN_FRONTEND noninteractive

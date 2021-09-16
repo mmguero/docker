@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/nextcloud'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='mmguero/nextcloud'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/nextcloud'
 LABEL org.opencontainers.image.description='Dockerized Nextcloud'
 
 RUN apt-get update && \
