@@ -84,6 +84,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       fonts-noto-color-emoji \
       hicolor-icon-theme \
       libasound2 \
+      libasound2-plugins \
       libdbus-glib-1-2 \
       libgl1-mesa-dri \
       libgl1-mesa-glx \
