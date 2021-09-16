@@ -21,12 +21,16 @@ LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
 #      DOWNLOAD_DIR="$(type xdg-user-dir >/dev/null 2>&1 && xdg-user-dir DOWNLOAD || echo "$HOME/Downloads")"
 #
 #      mkdir -p "$DOWNLOAD_DIR" \
-#               "$HOME"/.config/pulse
+#               "$HOME"/.config/pulse \
+#               "$HOME"/.mozilla/firefox \
+#               "$HOME"/.cache/mozilla/firefox \
 #      export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 #
-#      docker run \
+#      docker run --rm \
 #        --net host \
 #        -v "$HOME/.config/pulse:/home/firefox/.config/pulse" \
+#        -v "$HOME/.mozilla/firefox:/home/firefox/.mozilla/firefox" \
+#        -v "$HOME/.cache/mozilla/firefox:/home/firefox/.cache/mozilla/firefox" \
 #        -v "$DOWNLOAD_DIR:/home/firefox/Downloads" \
 #        -v $XDG_RUNTIME_DIR/bus:$XDG_RUNTIME_DIR/bus:ro \
 #        -v $XDG_RUNTIME_DIR/pulse:$XDG_RUNTIME_DIR/pulse:ro \
