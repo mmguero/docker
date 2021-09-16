@@ -75,7 +75,6 @@ ADD entrypoint.sh /usr/local/bin/firefox.sh
 RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
-      apulse \
       bzip2 \
       ca-certificates \
       curl \
@@ -83,12 +82,11 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       fonts-noto \
       fonts-noto-color-emoji \
       hicolor-icon-theme \
-      libasound2 \
       libdbus-glib-1-2 \
       libgl1-mesa-dri \
       libgl1-mesa-glx \
       libgtk-3-0 \
-      libpulse0 && \
+      pulseaudio-utils && \
     mkdir -p /opt/firefox && \
       cd /opt && \
       curl -ksSL "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjvf - -C ./firefox --strip-components 1 && \
@@ -102,6 +100,10 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       groupadd --gid ${DEFAULT_GID} ${PUSER} && \
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
       usermod -a -G audio ${PUSER} && \
+      mkdir -p /etc/pulse/ && \
+      touch /etc/pulse/client.conf && \
+      chown root:audio /etc/pulse/client.conf && \
+      chmod 664 /etc/pulse/client.conf && \
       mkdir -p /home/${PUSER}/.config/pulse \
                /home/${PUSER}/.mozilla/firefox \
                /home/${PUSER}/.cache/mozilla/firefox \

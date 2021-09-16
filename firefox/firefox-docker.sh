@@ -24,14 +24,12 @@ GPU_DEVICES=$( \
 DOWNLOAD_DIR="$(type xdg-user-dir >/dev/null 2>&1 && xdg-user-dir DOWNLOAD || echo "$HOME/Downloads")"
 
 mkdir -p "$DOWNLOAD_DIR" \
-         "$HOME"/.config/pulse \
          "$HOME"/.mozilla/firefox \
          "$HOME"/.cache/mozilla/firefox
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
 docker run -d --rm \
   --net host \
-  -v "$HOME/.config/pulse:/home/firefox/.config/pulse" \
   -v "$HOME/.mozilla/firefox:/home/firefox/.mozilla/firefox" \
   -v "$HOME/.cache/mozilla/firefox:/home/firefox/.cache/mozilla/firefox" \
   -v "$DOWNLOAD_DIR:/home/firefox/Downloads" \
@@ -52,7 +50,6 @@ docker run -d --rm \
   -e PUID=$(id -u) \
   -e PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native \
   --device /dev/input \
-  --device /dev/snd \
   $GPU_DEVICES \
   --group-add $(getent group audio | cut -d: -f3) \
   --name firefox \

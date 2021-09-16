@@ -26,7 +26,6 @@ GPU_DEVICES=$( \
 DOWNLOAD_DIR="$(type xdg-user-dir >/dev/null 2>&1 && xdg-user-dir DOWNLOAD || echo "$HOME/Downloads")"
 
 mkdir -p "$DOWNLOAD_DIR" \
-         "$HOME"/.config/pulse \
          "$HOME"/.config/chromium
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
@@ -37,7 +36,6 @@ docker run -d --rm \
   --security-opt apparmor:unconfined \
   --net host \
   --device /dev/input \
-  --device /dev/snd \
   --group-add $(getent group audio | cut -d: -f3) \
   $GPU_DEVICES \
   -v "$DOWNLOAD_DIR:/downloads" \
@@ -46,9 +44,9 @@ docker run -d --rm \
   -e PGID=$(id -g) \
   -e DISPLAY=unix$DISPLAY \
   -e LANG=${LANG:-en_US.UTF-8} \
+  -e PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native \
   -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
   -v /dev/shm:/dev/shm \
-  -v "$HOME/.config/pulse:/home/ubuntu/.config/pulse:ro" \
   -v /etc/machine-id:/etc/machine-id:ro \
   -v $XDG_RUNTIME_DIR/pulse:$XDG_RUNTIME_DIR/pulse:ro \
   -v $XDG_RUNTIME_DIR/bus:$XDG_RUNTIME_DIR/bus:ro \
