@@ -56,4 +56,5 @@ docker run -d --rm \
   -v /run/dbus:/run/dbus:ro \
   -v /run/udev/data:/run/udev/data:ro \
   -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
   andrewmackrodt/chromium-x11

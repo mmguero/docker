@@ -39,6 +39,7 @@ docker run -d --rm \
   -v $XDG_RUNTIME_DIR/pulse:$XDG_RUNTIME_DIR/pulse:ro \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
+  -v /etc/timezone:/etc/timezone:ro \
   -v /etc/machine-id:/etc/machine-id:ro \
   -v /run/dbus:/run/dbus:ro \
   -v /run/udev/data:/run/udev/data:ro \
