@@ -81,7 +81,6 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       curl \
       ffmpeg \
       fonts-noto \
-      fonts-noto-cjk \
       fonts-noto-color-emoji \
       hicolor-icon-theme \
       libasound2 \
@@ -102,7 +101,12 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh /usr/local/bin/firefox.sh && \
       groupadd --gid ${DEFAULT_GID} ${PUSER} && \
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
-      usermod -a -G audio ${PUSER}
+      usermod -a -G audio ${PUSER} && \
+      mkdir -p /home/${PUSER}/.config/pulse \
+               /home/${PUSER}/.mozilla/firefox \
+               /home/${PUSER}/.cache/mozilla/firefox \
+               /home/${PUSER}/Downloads && \
+      chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER}
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
