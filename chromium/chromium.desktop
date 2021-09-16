@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=Chromium
+Comment=Web Browser
+GenericName=Web Browser
+X-GNOME-FullName=Chromium Web Browser
+Exec=/home/tlacuache/.local/bin/chromium-docker.sh %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=web-browser.png
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;
+StartupWMClass=Chromium
+StartupNotify=true
