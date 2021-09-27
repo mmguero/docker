@@ -7,8 +7,6 @@ LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='ghcr.io/mmguero/calibre-web'
 LABEL org.opencontainers.image.description='Dockerized Calibre-Web E-Book Server'
 
-LABEL maintainer "mmguero <tlacuache@gmail.com>"
-
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
