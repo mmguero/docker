@@ -24,7 +24,7 @@ if [[ -n "$1" ]]; then
   fi
 fi
 
-docker run --rm \
+docker run -d --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \

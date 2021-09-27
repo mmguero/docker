@@ -20,7 +20,7 @@
   # TODO: unlike one of my other docker projects that uses pulse (firefox),
   # this audacity bogarts the sound card so only one thing can use it at once
 
-  docker run --rm \
+  docker run -d --rm \
     --net host \
     -v "$HOME/.audacity-data:/home/audacity/.audacity-data" \
     -v "$HOME/.audacity-file:/home/audacity/.audacity-file" \
