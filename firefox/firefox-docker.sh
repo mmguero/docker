@@ -42,6 +42,7 @@ else
     -v $XDG_RUNTIME_DIR/bus:$XDG_RUNTIME_DIR/bus:ro \
     -v $XDG_RUNTIME_DIR/pulse:$XDG_RUNTIME_DIR/pulse:ro \
     -v /dev/shm:/dev/shm \
+    -v /tmp:/tmp \
     -v /etc/localtime:/etc/localtime:ro \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/machine-id:/etc/machine-id:ro \
@@ -55,6 +56,7 @@ else
     -e PGID=$(id -g) \
     -e PUID=$(id -u) \
     -e PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native \
+    -e TZ="$(head -n 1 /etc/timezone)" \
     --device /dev/input \
     $GPU_DEVICES \
     --group-add $(getent group audio | cut -d: -f3) \
