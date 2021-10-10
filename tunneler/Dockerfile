@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -14,15 +14,27 @@ ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.t
 
 RUN  apt-get update && \
      apt-get install --no-install-recommends -qy \
+      autoconf \
+      automake \
+      autotools-dev \
       build-essential \
       ca-certificates \
       curl \
       dnsutils \
       gcc \
       iproute2 \
+      iptables \
       iputils-ping \
       jq \
+      libcap-dev \
       libcap2-bin \
+      libnetfilter-conntrack-dev \
+      libnetfilter-queue-dev \
+      libnfnetlink-dev \
+      libpcap-dev \
+      libssl-dev \
+      libtool \
+      libtool-bin \
       net-tools \
       netcat-openbsd \
       netsniff-ng \
@@ -35,7 +47,6 @@ RUN  apt-get update && \
       python3-twisted \
       socat \
       stunnel4 \
-      tcpcryptd \
       tcpd && \
   cd /tmp && \
     mkdir -p ./udptunnel && \
@@ -45,14 +56,32 @@ RUN  apt-get update && \
     make install && \
     mkdir -p /usr/local/share/udptunnel/ && \
     cp -r ./examples/* /usr/local/share/udptunnel/ && \
-    cd /tmp && \
+  cd /tmp && \
+    mkdir -p ./tcpcrypt && \
+    curl -sSL "https://github.com/scslab/tcpcrypt/archive/refs/tags/v0.5.tar.gz" | tar xzvf - -C ./tcpcrypt --strip-components 1 && \
+    cd ./tcpcrypt && \
+    ./bootstrap.sh && \
+    ./configure --prefix=/usr && \
+    make && \
+    make install && \
   pip3 install magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
   curl -sSL -o /tmp/croc.deb "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
     dpkg -i /tmp/croc.deb && \
   apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
+      autoconf \
+      automake \
+      autotools-dev \
       build-essential \
       gcc \
+      libc6-dev \
+      libcap-dev \
+      libcrypt-dev \
+      libgcc-10-dev \
+      libnsl-dev \
+      libssl-dev \
+      libtirpc-dev \
+      linux-libc-dev \
       pkg-config && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages autoremove && \
     apt-get clean && \

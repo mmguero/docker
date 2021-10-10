@@ -7,7 +7,7 @@
 # -v /dev/shm:/dev/shm \
 # teams
 
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -20,14 +20,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV TEAMS_USER teams
 
-RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list && \
-      echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
+RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+      echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
       apt-get -q update && \
       apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates libsecret-1-0 libsecret-tools && \
   bash -c "curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -" && \
     echo "deb https://packages.microsoft.com/repos/ms-teams stable main" >> /etc/apt/sources.list && \
   apt-get -q update && \
-  apt-get install -q -y -t buster-backports --no-install-recommends teams && \
+  apt-get install -q -y -t bullseye-backports --no-install-recommends teams && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
