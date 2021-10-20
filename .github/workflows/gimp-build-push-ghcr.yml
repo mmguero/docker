@@ -7,6 +7,7 @@ on:
     paths:
       - 'gimp/**'
   workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   docker:
