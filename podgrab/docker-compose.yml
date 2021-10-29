@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  podgrab:
+    image: akhilrex/podgrab:latest
+    container_name: podgrab
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    user: "1000:1000"
+    environment:
+      - CHECK_FREQUENCY=180
+    volumes:
+      - ./config:/config
+      - ./data:/assets
+    networks:
+      - podgrab
+    expose:
+      - 8080
+    ports:
+      - "127.0.0.1:8080:8080"
+    #labels:
+    #  - "traefik.enable=true"
+    #  - "traefik.http.routers.podgrab.rule=Host(`podgrab.example.org`)"
+    #  - "traefik.http.routers.podgrab.entrypoints=websecure"
+    #  - "traefik.http.routers.podgrab.tls.certresolver=myresolver"
+    #  - "traefik.http.services.podgrab.loadbalancer.server.port=8080"
+
+networks:
+  podgrab:
+    #external:
+    #  name: traefik-proxy
