@@ -10,3 +10,7 @@
 	path = zeek
 	url = https://github.com/mmguero/zeek-docker
 	branch = main
+[submodule "qemu-live-iso"]
+	path = qemu-live-iso
+	url = https://github.com/mmguero/docker-qemu-live-iso
+	branch = main
