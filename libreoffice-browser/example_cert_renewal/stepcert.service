@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=/home/user/services/certs
+
+[Service]
+WorkingDirectory=/home/user/services/certs
+ExecStart=/home/user/.local/bin/step ca renew --daemon --force --exec /home/user/services/certs/libreoffice-cert-restart.sh service.crt service.key
+Restart=always
+PrivateTmp=false
+NoNewPrivileges=false
+
+[Install]
+WantedBy=default.target
