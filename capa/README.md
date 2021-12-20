@@ -1,5 +1,7 @@
 # capa, dockerized
 
+![Docker Image](https://github.com/mmguero/docker/workflows/capa-build-push-ghcr/badge.svg)
+
 A simple Docker container for [fireeye/capa](https://github.com/fireeye/capa). This includes a [capa-docker.sh](capa-docker.sh) bash wrapper script which copies the PE file to be analyzed to a temporary directory, bind mounts that directory to the container and runs `capa` on it.
 
 ## Usage
