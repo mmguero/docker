@@ -55,4 +55,4 @@ jobs:
           context: ./mattermost
           file: ./mattermost/docker/postgres.Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/postgres:13-alpine
+          tags: ghcr.io/${{ github.repository_owner }}/postgres:14-alpine
