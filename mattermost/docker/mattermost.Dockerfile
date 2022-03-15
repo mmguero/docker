@@ -20,7 +20,7 @@ RUN set -eux; \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
   rm -rf /var/lib/apt/lists/*
 
-ARG MATTERMOST_VERSION=5.36.1
+ARG MATTERMOST_VERSION=5.37.9
 ENV MATTERMOST_VERSION $MATTERMOST_VERSION
 
 ADD https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-${MATTERMOST_VERSION}-linux-amd64.tar.gz /

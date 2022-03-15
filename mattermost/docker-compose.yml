@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: docker/postgres.Dockerfile
-    image: ghcr.io/mmguero/postgres:13-alpine
+    image: ghcr.io/mmguero/postgres:14-alpine
     environment:
       << : *process-variables
       POSTGRES_USER: ${POSTGRES_USER}
@@ -63,7 +63,7 @@ services:
       - mattermost-postgres
     ulimits:
       nofile: 49152
-    #labels:
+    # labels:
     #  - "traefik.enable=true"
     #  - "traefik.http.routers.mattermost.rule=Host(`mattermost.example.org`)"
     #  - "traefik.http.routers.mattermost.entrypoints=websecure"
@@ -72,5 +72,5 @@ services:
 
 networks:
   mattermost:
-    #external:
-    #  name: traefik-proxy
+    # external:
+    #   name: traefik-proxy

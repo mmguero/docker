@@ -1,4 +1,4 @@
-FROM postgres:13-alpine
+FROM postgres:14-alpine
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
