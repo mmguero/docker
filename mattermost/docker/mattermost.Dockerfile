@@ -20,7 +20,7 @@ RUN set -eux; \
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
   rm -rf /var/lib/apt/lists/*
 
-ARG MATTERMOST_VERSION=5.37.9
+ARG MATTERMOST_VERSION=6.3.5
 ENV MATTERMOST_VERSION $MATTERMOST_VERSION
 
 ADD https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-${MATTERMOST_VERSION}-linux-amd64.tar.gz /
@@ -51,4 +51,4 @@ VOLUME ["/opt/mattermost/data", "/opt/mattermost/plugins", "/opt/mattermost/expo
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
-CMD ["/opt/mattermost/bin/mattermost"]
+CMD ["/opt/mattermost/bin/mattermost", "-c", "/opt/mattermost/config/config.json", "server"]
