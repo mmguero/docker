@@ -22,6 +22,7 @@ ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gi
 
 RUN apk add --update --no-cache bash curl shadow py3-pip && \
     apk add --no-cache --virtual .build-deps \
+        build-base \
         gcc \
         make \
         musl-dev \

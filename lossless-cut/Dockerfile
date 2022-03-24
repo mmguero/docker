@@ -5,10 +5,10 @@ FROM debian:bullseye-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
-LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/firefox'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/lossless-cut'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/firefox'
-LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/lossless-cut'
+LABEL org.opencontainers.image.description='Dockerized LosslessCut'
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
@@ -43,9 +43,9 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       pulseaudio-utils && \
     mkdir -p /opt && \
     cd /opt && \
-      curl -sSL -J -O "https://github.com/$(curl -sSL 'https://github.com/mifi/lossless-cut/releases/latest' | grep '/LosslessCut-linux.tar.bz2' | sed 's/.*href="//' | sed 's/".*//')" && \
-      tar xvf ./LosslessCut-linux.tar.bz2 && \
-      rm -f ./LosslessCut-linux.tar.bz2 && \
+      curl -sSL -J -O "https://github.com/$(curl -sSL 'https://github.com/mifi/lossless-cut/releases/latest' | grep '/LosslessCut-linux-x64.tar.bz2' | sed 's/.*href="//' | sed 's/".*//')" && \
+      tar xvf ./LosslessCut-linux-x64.tar.bz2 && \
+      rm -f ./LosslessCut-linux-x64.tar.bz2 && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove curl ca-certificates && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
