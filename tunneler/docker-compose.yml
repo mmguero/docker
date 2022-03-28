@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: tunneler:latest
+    image: ghcr.io/mmguero/tunneler:latest
     container_name: tunneler
     ulimits:
       memlock:
