@@ -3,7 +3,7 @@ FROM golang:alpine AS go-build
 RUN apk --no-cache add --update git gettext libintl && \
     git clone https://github.com/octeep/wireproxy.git && \
     cd ./wireproxy && \
-    go build
+    go build ./cmd/wireproxy
 
 FROM alpine:latest
 
