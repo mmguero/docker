@@ -15,6 +15,8 @@ services:
     environment:
       << : *process-variables
       WIREPROXY_CONFIG_FROM_ENVS : 'true'
+    volumes:
+      - ./config.env:/etc/wireproxy/config.env:ro
     env_file:
       - wireproxy.env
     ports:
