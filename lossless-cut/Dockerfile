@@ -60,6 +60,6 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       mkdir -p /home/${PUSER}/Videos && \
       chown -R ${PUID}:${PGID} /home/${PUSER}
 
-ENV LD_LIBRARY_PATH=/opt/LosslessCut-linux
+ENV LD_LIBRARY_PATH=/opt/LosslessCut-linux-x64
 
-ENTRYPOINT ["/opt/LosslessCut-linux/losslesscut", "--no-sandbox"]
+ENTRYPOINT ["/opt/LosslessCut-linux-x64/losslesscut", "--no-sandbox"]
