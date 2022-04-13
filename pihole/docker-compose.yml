@@ -1,24 +1,60 @@
 version: '3.7'
 
 services:
+  dnscrypt:
+    container_name: dnscrypt-proxy
+    image: klutchell/dnscrypt-proxy:latest
+    networks:
+      pihole_net:
+        ipv4_address: 172.25.0.2
+    expose:
+      - "5300/udp"
+      - "5300/tcp"
+    environment:
+      TZ: 'America/Denver'
+    volumes:
+      - './etc-dnscrypt-proxy:/config'
+    dns:
+      - 1.1.1.1
+    restart: always
+
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
+    networks:
+      pihole_net:
+        ipv4_address: 172.25.0.3
     ports:
       # include any other IPs here as well (for VPN interfaces, etc.)
-      - "127.0.0.1:53:53/tcp"
-      - "127.0.0.1:53:53/udp"
-      - "127.0.0.1:8000:80/tcp"
-      - "127.0.0.1:8443:443/tcp"
+      - "53:53/tcp"
+      - "53:53/udp"
+      # - "80:80/tcp"
+      # - "443:443/tcp"
     environment:
       TZ: 'America/Denver'
       WEBPASSWORD: 'password'
+      DNS1: "172.25.0.2#5300"
+      DNS2: "no"
+      # DNS_FQDN_REQUIRED: 'false'
+      # DNS_BOGUS_PRIV: 'false'
+      # ServerIP: '192.168.0.216'
+      DNSMASQ_LISTENING: 'all'
+      DHCP_ACTIVE: 'false'
+      RATE_LIMIT: '0/0'
     volumes:
-      - './etc-pihole/:/etc/pihole/'
-      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-      # run `touch ./var-log/pihole.log` first unless you like errors
-      - './var-log/pihole.log:/var/log/pihole.log'
+       - './etc-pihole/:/etc/pihole/'
+       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+       # run `touch ./var-log/pihole.log` first unless you like errors
+       - './var-log/pihole.log:/var/log/pihole.log'
     dns:
-      - 127.0.0.1
       - 1.1.1.1
-    restart: unless-stopped
+    restart: always
+    depends_on:
+      - dnscrypt
+
+networks:
+  pihole_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
