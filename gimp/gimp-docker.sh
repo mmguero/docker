@@ -9,7 +9,13 @@ GPU_DEVICES=$( \
       | sed -E "s/^/--device /" \
   )
 
-mkdir -p "$HOME/.config/GIMP" "$HOME/.fonts"
+if [[ ! -d "$HOME/.config/GIMP" ]]; then
+  TMP_CONTAINER_ID=$(docker create ghcr.io/mmguero/gimp:latest)
+  mkdir -p "$HOME/.config"
+  docker cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
+fi
+
+mkdir -p "$HOME/.fonts"
 
 DOCS_FOLDER="$(realpath $(pwd))"
 if [[ -n "$1" ]]; then

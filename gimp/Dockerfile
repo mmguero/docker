@@ -20,11 +20,14 @@ ENV PUSER "gimp"
 ENV PGROUP "gimp"
 ENV PUSER_PRIV_DROP true
 
+ENV PHOTOGIMP_URL "https://codeload.github.com/Diolinux/PhotoGIMP/tar.gz/master"
+
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
 RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
+      curl \
       gimp \
       gimp-gmic \
       gimp-plugin-registry \
@@ -35,17 +38,22 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       libgl1-mesa-dri \
       libgl1-mesa-glx \
       libgmic1 && \
-    env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    cd /tmp && \
+      mkdir ./photogimp && \
+      curl -k -sSL "$PHOTOGIMP_URL" | tar xzvf - -C ./photogimp --strip-components 1 && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
       groupadd --gid ${DEFAULT_GID} ${PUSER} && \
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
       mkdir -p /home/${PUSER}/.config/GIMP \
                /home/${PUSER}/.fonts \
                /home/${PUSER}/Documents && \
-      chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER}
+      mv /tmp/photogimp/.var/app/org.gimp.GIMP/config/GIMP/2.10 /home/${PUSER}/.config/GIMP/ && \
+      chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER} && \
+    apt-get -q -y --purge remove curl && \
+      apt-get -q -y autoremove && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/usr/bin/gimp"]
 
-CMD ["--no-splash"]
+VOLUME ["/home/${PUSER}/.config/GIMP"]
