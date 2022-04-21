@@ -13,6 +13,7 @@ if [[ ! -d "$HOME/.config/GIMP" ]]; then
   TMP_CONTAINER_ID=$(docker create ghcr.io/mmguero/gimp:latest)
   mkdir -p "$HOME/.config"
   docker cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
+  docker rm $TMP_CONTAINER_ID
 fi
 
 mkdir -p "$HOME/.fonts"
