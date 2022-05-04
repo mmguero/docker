@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=%h/services/wireproxy
+After=network.target
+
+[Service]
+WorkingDirectory=%h/services/wireproxy
+ExecStart=podman-compose -f docker-compose.yml up --no-color --abort-on-container-exit
+ExecStop=podman-compose -f docker-compose.yml down
+Restart=always
+
+[Install]
+WantedBy=default.target
