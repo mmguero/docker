@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
+ENGINE="${CONTAINER_ENGINE:-docker}"
+if [[ "$ENGINE" == "podman" ]]; then
+  CONTAINER_PUID=0
+  CONTAINER_PGID=0
+else
+  CONTAINER_PUID=$(id -u)
+  CONTAINER_PGID=$(id -g)
+fi
+
 function dstopped(){
   local name=$1
   local state
-  state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
+  state=$($ENGINE inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
 
   if [[ "$state" == "false" ]]; then
-    docker rm "$name"
+    $ENGINE rm "$name"
   fi
 
   echo "$state"
@@ -15,7 +24,7 @@ function dstopped(){
 state=$(dstopped firefox)
 
 if [[ "$state" == "true" ]]; then
-  docker exec -u $(id -u) -d firefox /opt/firefox/firefox --new-tab --url "$@"
+  $ENGINE exec -u $CONTAINER_PUID -d firefox /opt/firefox/firefox --new-tab --url "$@"
 
 else
   GPU_DEVICES=$( \
@@ -34,7 +43,7 @@ else
            "$HOME"/.cache/mozilla/firefox
   export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
-  docker run -d --rm \
+  $ENGINE run -d --rm \
     --net host \
     -v "$HOME/.mozilla/firefox:/home/firefox/.mozilla/firefox" \
     -v "$HOME/.cache/mozilla/firefox:/home/firefox/.cache/mozilla/firefox" \
@@ -53,8 +62,8 @@ else
     -e "DISPLAY=$DISPLAY" \
     -e GDK_DPI_SCALE \
     -e GDK_SCALE \
-    -e PGID=$(id -g) \
-    -e PUID=$(id -u) \
+    -e PGID=$CONTAINER_PGID \
+    -e PUID=$CONTAINER_PUID \
     -e PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native \
     -e TZ="$(head -n 1 /etc/timezone)" \
     --device /dev/input \

@@ -2,6 +2,7 @@ version: '3.7'
 
 x-process-variables: &process-variables
   # docker containers will run processes as unprivileged user with UID:GID
+  PUSER_PRIV_DROP : "false"
   PUID : 1000
   PGID : 1000
 
@@ -16,9 +17,9 @@ services:
       << : *process-variables
       WIREPROXY_CONFIG_FROM_ENVS : 'true'
     volumes:
-      - ./config.env:/etc/wireproxy/config.env:ro
+      - ./config.env.local:/etc/wireproxy/config.env:ro
     env_file:
       - wireproxy.env
     ports:
       - "127.0.0.1:11080:11080"
-    restart: unless-stopped
+    restart: "no"

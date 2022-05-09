@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+ENGINE="${CONTAINER_ENGINE:-docker}"
+if [[ "$ENGINE" == "podman" ]]; then
+  CONTAINER_PUID=0
+  CONTAINER_PGID=0
+else
+  CONTAINER_PUID=$(id -u)
+  CONTAINER_PGID=$(id -g)
+fi
+
 GPU_DEVICES=$( \
     echo "$( \
         find /dev -maxdepth 1 -regextype posix-extended -iregex '.+/nvidia([0-9]|ctl)' \
@@ -10,10 +19,10 @@ GPU_DEVICES=$( \
   )
 
 if [[ ! -d "$HOME/.config/GIMP" ]]; then
-  TMP_CONTAINER_ID=$(docker create ghcr.io/mmguero/gimp:latest)
+  TMP_CONTAINER_ID=$($ENGINE create ghcr.io/mmguero/gimp:latest)
   mkdir -p "$HOME/.config"
-  docker cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
-  docker rm $TMP_CONTAINER_ID
+  $ENGINE cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
+  $ENGINE rm $TMP_CONTAINER_ID
 fi
 
 mkdir -p "$HOME/.fonts" "$HOME/.config/GIMP"
@@ -31,7 +40,7 @@ if [[ -n "$1" ]]; then
   fi
 fi
 
-docker run -d --rm \
+$ENGINE run -d --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \
@@ -45,8 +54,8 @@ docker run -d --rm \
   -e "DISPLAY=$DISPLAY" \
   -e GDK_DPI_SCALE \
   -e GDK_SCALE \
-  -e PGID=$(id -g) \
-  -e PUID=$(id -u) \
+  -e PGID=$CONTAINER_PGID \
+  -e PUID=$CONTAINER_PUID \
   --device /dev/input \
   $GPU_DEVICES \
   --name gimp-$(date -u +%s) \

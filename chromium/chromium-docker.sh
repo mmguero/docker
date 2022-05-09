@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
+ENGINE="${CONTAINER_ENGINE:-docker}"
+if [[ "$ENGINE" == "podman" ]]; then
+  CONTAINER_PUID=0
+  CONTAINER_PGID=0
+else
+  CONTAINER_PUID=$(id -u)
+  CONTAINER_PGID=$(id -g)
+fi
+
 function dstopped(){
   local name=$1
   local state
-  state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
+  state=$($ENGINE inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
 
   if [[ "$state" == "false" ]]; then
-    docker rm "$name"
+    $ENGINE rm "$name"
   fi
 }
 
@@ -30,7 +39,7 @@ mkdir -p "$DOWNLOAD_DIR" \
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
 # create the container
-docker run -d --rm \
+$ENGINE run -d --rm \
   --name chromium \
   --cap-add SYS_ADMIN \
   --security-opt apparmor:unconfined \
@@ -40,8 +49,8 @@ docker run -d --rm \
   $GPU_DEVICES \
   -v "$DOWNLOAD_DIR:/downloads" \
   -v "$HOME/.config/chromium:/data" \
-  -e PUID=$(id -u) \
-  -e PGID=$(id -g) \
+  -e PUID=$CONTAINER_PUID \
+  -e PGID=$CONTAINER_PGID \
   -e DISPLAY=unix$DISPLAY \
   -e LANG=${LANG:-en_US.UTF-8} \
   -e PULSE_SERVER=unix:$XDG_RUNTIME_DIR/pulse/native \

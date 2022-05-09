@@ -2,6 +2,9 @@
 
 ENCODING="utf-8"
 
+IMAGE="${CAPA_IMAGE:-ghcr.io/mmguero/capa:latest}"
+ENGINE="${CONTAINER_ENGINE:-docker}"
+
 IN_FILE="$1"
 if [[ -z $IN_FILE ]] ; then
   echo "usage:"
@@ -28,6 +31,7 @@ IN_BASENAME="$(basename "$IN_FILE")"
 
 cp "$IN_FILE" "$TEMP_DIR/"
 
-docker run --rm -t \
+$ENGINE run --rm -t \
   -v "$TEMP_DIR:/data:rw" \
-  ghcr.io/mmguero/capa:latest "/data/$IN_BASENAME" "$@"
+  -e PUSER_PRIV_DROP=$([[ "$CONTAINER_ENGINE" == "docker" ]] && echo true || echo false) \
+  "$CAPA_IMAGE" "/data/$IN_BASENAME" "$@"
