@@ -7,8 +7,10 @@ services:
     container_name: "traefik"
     command:
       - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker=false"
+      - "--providers.file=true"
+      - "--providers.file.filename=/etc/traefik/rules.toml"
+      - "--providers.file.watch=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -21,30 +23,24 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - 0.0.0.0:80:80
-      - 0.0.0.0:443:443
+      - "80:80"
+      - "443:443"
     networks:
       - proxy
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       - "./certs:/etc/ssl/certs:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    restart: unless-stopped
+      - "./rules.toml:/etc/traefik/rules.toml:ro"
 
   whoami:
     image: "traefik/whoami:latest"
     container_name: "whoami"
+    expose:
+      - 80
     networks:
       - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.example.org`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
-    restart: unless-stopped
 
 networks:
   proxy:
     external:
       name: traefik-proxy
-
