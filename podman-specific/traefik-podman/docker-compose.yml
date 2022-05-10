@@ -9,7 +9,7 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=false"
       - "--providers.file=true"
-      - "--providers.file.filename=/etc/traefik/rules.toml"
+      - "--providers.file.directory=/etc/traefik/sites-enabled"
       - "--providers.file.watch=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
@@ -30,7 +30,7 @@ services:
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       - "./certs:/etc/ssl/certs:ro"
-      - "./rules.toml:/etc/traefik/rules.toml:ro"
+      - "./rules:/etc/traefik/sites-enabled:ro"
 
   whoami:
     image: "traefik/whoami:latest"

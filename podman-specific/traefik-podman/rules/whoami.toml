@@ -7,19 +7,8 @@
    [http.routers.whoami.tls]
       certResolver = "myresolver"
 
-   [http.routers.web]
-      rule = "Host(`web.example.org`)"
-      entrypoints = ["websecure"]
-      service = "web"
-   [http.routers.web.tls]
-      certResolver = "myresolver"
-
 [http.services]
 
    [http.services.whoami.loadBalancer]
       [[http.services.whoami.loadBalancer.servers]]
          url = "http://whoami:80"
-
-   [http.services.web.loadBalancer]
-      [[http.services.web.loadBalancer.servers]]
-         url = "http://host.containers.internal:9443"
