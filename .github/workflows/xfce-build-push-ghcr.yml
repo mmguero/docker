@@ -64,11 +64,3 @@ jobs:
         name: Sleep for 30 more seconds
         run: sleep 30s
         shell: bash
-      -
-        name: Build and push ext image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./xfce
-          file: ./xfce/xfce-ext.Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/xfce-ext:latest

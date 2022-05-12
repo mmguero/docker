@@ -26,8 +26,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       findutils \
       fonts-hack-ttf \
       git \
-      gnupg2 \
       gnome-themes-extra \
+      gnupg2 \
       jq \
       keepassxc \
       less \
@@ -36,6 +36,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       libsecret-1-dev \
       libsecret-tools \
       moreutils \
+      openssh-client \
+      openssh-sftp-server \
       patchutils \
       pigz \
       procps \
@@ -46,11 +48,13 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       python3-wheel \
       rar \
       rename \
+      rsync \
       testdisk \
       tilix \
       unrar \
       unzip \
       vim-tiny \
+      wget \
       xxdiff \
       xz-utils && \
     for CATEGORY in apps multimedia net; do \
