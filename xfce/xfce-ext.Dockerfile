@@ -66,7 +66,7 @@ RUN cd /tmp && \
     wget \
     xz-utils \
     zlib1g-dev && \
-  curl -o /tmp/vagrant.deb "https://releases.hashicorp.com$(curl -fsL "https://releases.hashicorp.com$(curl -fsL "https://releases.hashicorp.com/vagrant" | grep 'href="/vagrant/' | head -n 1 | grep -o '".*"' | tr -d '"' )" | grep "x86_64\.deb" | head -n 1 | grep -o 'href=".*"' | sed 's/href=//' | tr -d '"')" && \
+  curl -o /tmp/vagrant.deb "$(curl -fsL "https://releases.hashicorp.com$(curl -fsL "https://releases.hashicorp.com/vagrant" | grep 'href="/vagrant/' | head -n 1 | grep -o '".*"' | tr -d '"' )" | grep "x86_64\.deb" | head -n 1 | grep -o 'href=".*"' | sed 's/href=//' | tr -d '"')" && \
     env DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/vagrant.deb && \
   env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
     apt-get clean && \
