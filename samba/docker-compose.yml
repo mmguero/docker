@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  samba:
+    image: dperson/samba:latest
+    environment:
+      TZ: 'America/Denver'
+      USERID: 1000
+      GROUPID: 1000
+    ports:
+      - "0.0.0.0:137:137/udp"
+      - "0.0.0.0:138:138/udp"
+      - "0.0.0.0:139:139/tcp"
+      - "0.0.0.0:445:445/tcp"
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: "no"
+    volumes:
+      - /home/user/Public:/public:z
+    command: '-s "Public;/public;yes;no;yes;guest" -u "guest;guest" -p -r'
