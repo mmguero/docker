@@ -1,11 +1,13 @@
 [Unit]
+AssertPathExists=/run/user/%U/podman/podman.sock
 AssertPathExists=%h/services/traefik-podman
 After=network.target
 
 [Service]
 WorkingDirectory=%h/services/traefik-podman
-ExecStart=podman-compose -f docker-compose.yml up --no-color --abort-on-container-exit
-ExecStop=podman-compose -f docker-compose.yml down
+Environment="DOCKER_HOST=unix:///run/user/%U/podman/podman.sock"
+ExecStart=docker-compose -f docker-compose.yml up --no-color --abort-on-container-exit
+ExecStop=docker-compose -f docker-compose.yml down
 Restart=always
 
 [Install]
