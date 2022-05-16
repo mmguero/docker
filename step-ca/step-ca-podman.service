@@ -1,0 +1,15 @@
+[Unit]
+AssertPathExists=/run/user/%U/podman/podman.sock
+AssertPathExists=%h/services/step-ca
+After=network.target
+
+[Service]
+WorkingDirectory=%h/services/step-ca
+Environment="DOCKER_HOST=unix:///run/user/%U/podman/podman.sock"
+ExecStart=podman-compose -f docker-compose.yml --podman-run-args '--uidmap 1000:0:1 --uidmap 0:1:1000 --uidmap 1001:1001:64536' up --no-color --abort-on-container-exit
+ExecStop=podman-compose -f docker-compose.yml down
+Restart=always
+
+[Install]
+WantedBy=default.target
+

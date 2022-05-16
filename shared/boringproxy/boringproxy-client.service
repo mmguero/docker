@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=%h/services/boringproxy/client
+
+[Service]
+WorkingDirectory=%h/services/boringproxy/client
+ExecStart=%h/.local/bin/boringproxy client -client-name srv -acme-email user@example.org -acme-certificate-authority 'https://step.example.org:9000/acme/acme/directory' -cert-dir %h/services/boringproxy/client/certs -user user -token xxxxxxxxxx -server proxy.example.org
+Restart=always
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

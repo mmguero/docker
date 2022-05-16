@@ -1,4 +1,4 @@
-version: "3.3"
+* **Name:** ICS Incident Response - 5version: "3.3"
 
 services:
 
@@ -26,7 +26,7 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - proxy
+      - default
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       - "./certs:/etc/ssl/certs:ro"
@@ -38,9 +38,9 @@ services:
     expose:
       - 80
     networks:
-      - proxy
+      - default
 
 networks:
-  proxy:
+  default:
     external:
-      name: traefik-proxy
+      name: podman

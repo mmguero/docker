@@ -1,0 +1,13 @@
+[Unit]
+AssertPathExists=%h/services/boringproxy/server
+
+[Service]
+WorkingDirectory=%h/services/boringproxy/server
+ExecStart=%h/.local/bin/boringproxy server -accept-ca-terms -acme-email user@example.org -acme-certificate-authority 'https://step.example.org:9000/acme/acme/directory' -admin-domain proxy.example.org -cert-dir %h/services/boringproxy/server/certs -print-login -public-ip 192.168.0.10
+Restart=always
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target
+
