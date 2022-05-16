@@ -29,6 +29,10 @@ services:
        - KEEP_EXISTING_CONFIG=false
        - LDAP_REMOVE_CONFIG_AFTER_SETUP=true
        - LDAP_SSL_HELPER_PREFIX=ldap
+       # for podman:
+       # - DISABLE_CHOWN=true
+       # - LDAP_OPENLDAP_UID=0
+       # - LDAP_OPENLDAP_GID=0
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
