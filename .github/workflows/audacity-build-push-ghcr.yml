@@ -13,6 +13,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/audacity
   IMAGE_TAG: latest
+  REPO_CONTEXT: ./audacity
+  REPO_CONTAINERFILE: ./audacity/Dockerfile
 
 jobs:
   docker:
@@ -46,9 +48,9 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }}
-          context: ./audacity
+          context: ${{ env.REPO_CONTEXT }}
           containerfiles: |
-            ./audacity/Dockerfile
+            ${{ env.REPO_CONTAINERFILE }}
       -
         name: Push
         id: push-base-to-ghcr
