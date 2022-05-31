@@ -48,7 +48,7 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           context: ./audacity
           containerfiles: |
-            ./Dockerfile
+            ./audacity/Dockerfile
       -
         name: Push
         id: push-base-to-ghcr
