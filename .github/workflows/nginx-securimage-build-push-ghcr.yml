@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/nginx-securimage:latest
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/nginx-securimage
   IMAGE_TAG: latest
   IMAGE_PLATFORM: linux/amd64
   REPO_CONTEXT: ./nginx-securimage
