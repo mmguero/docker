@@ -25,7 +25,7 @@ if [[ ! -d "$HOME/.config/GIMP" ]]; then
   $ENGINE rm $TMP_CONTAINER_ID
 fi
 
-mkdir -p "$HOME/.fonts" "$HOME/.config/GIMP"
+mkdir -p "$HOME/.fonts" "$HOME/.local/share/fonts" "$HOME/.config/GIMP"
 
 DOCS_FOLDER="$(realpath $(pwd))"
 if [[ -n "$1" ]]; then
@@ -50,6 +50,7 @@ $ENGINE run -d --rm \
   -v /usr/share/fonts:/usr/share/fonts:ro \
   -v "$HOME"/.config/GIMP:/home/gimp/.config/GIMP \
   -v "$HOME"/.fonts:/home/gimp/.fonts:ro \
+  -v "$HOME"/.local/share/fonts:/home/gimp/.local/share/fonts:ro \
   -v "$DOCS_FOLDER":/home/gimp/Documents \
   -e "DISPLAY=$DISPLAY" \
   -e GDK_DPI_SCALE \
