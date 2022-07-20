@@ -22,6 +22,7 @@ ENV PUSER_PRIV_DROP true
 
 ENV PHOTOGIMP_URL "https://codeload.github.com/Diolinux/PhotoGIMP/tar.gz/master"
 ENV INSTA_URL "https://codeload.github.com/fberbert/gimp-instagram-filters/tar.gz/master"
+ENV MOLPOPGEN_URL "https://codeload.github.com/molpopgen/gimp_scripts/tar.gz/master"
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
@@ -45,6 +46,9 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     cd /tmp && \
       mkdir ./insta && \
       curl -k -sSL "$INSTA_URL" | tar xzvf - -C ./insta --strip-components 1 && \
+    cd /tmp && \
+      mkdir ./molpop && \
+      curl -k -sSL "$MOLPOPGEN_URL" | tar xzvf - -C ./molpop --strip-components 1 && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
       groupadd --gid ${DEFAULT_GID} ${PUSER} && \
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
@@ -53,7 +57,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
                /home/${PUSER}/Documents && \
       mv /tmp/photogimp/.var/app/org.gimp.GIMP/config/GIMP/2.10 /home/${PUSER}/.config/GIMP/ && \
       mkdir -p /home/${PUSER}/.config/GIMP/2.10/plug-ins && \
-      mv /tmp/insta/plug-ins/* /home/${PUSER}/.config/GIMP/2.10/plug-ins/ && \
+      mv /tmp/insta/plug-ins/*.py /home/${PUSER}/.config/GIMP/2.10/plug-ins/ && \
+      mv /tmp/molpop/*.py /home/${PUSER}/.config/GIMP/2.10/plug-ins/ && \
       chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER} && \
     apt-get -q -y --purge remove curl && \
       apt-get -q -y autoremove && \
