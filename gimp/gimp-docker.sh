@@ -41,7 +41,7 @@ if [[ -n "$1" ]]; then
   fi
 fi
 
-$ENGINE run --rm \
+$ENGINE run -d --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \
