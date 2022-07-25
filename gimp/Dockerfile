@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:buster-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -20,23 +20,25 @@ ENV PUSER "gimp"
 ENV PGROUP "gimp"
 ENV PUSER_PRIV_DROP true
 
-ENV PHOTOGIMP_URL "https://codeload.github.com/Diolinux/PhotoGIMP/tar.gz/master"
+ENV PHOTOGIMP_URL "https://codeload.github.com/mmguero/PhotoGIMP/tar.gz/master"
 ENV INSTA_URL "https://codeload.github.com/fberbert/gimp-instagram-filters/tar.gz/master"
 ENV MOLPOPGEN_URL "https://codeload.github.com/molpopgen/gimp_scripts/tar.gz/master"
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
       curl \
       gimp \
       gimp-gmic \
+      gimp-python \
       gimp-plugin-registry \
       gimp-texturize \
       gmic \
       gnome-icon-theme \
       gtk2-engines-pixbuf \
+      iso-codes \
       libgl1-mesa-dri \
       libgl1-mesa-glx \
       libgmic1 && \
@@ -54,11 +56,18 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
       mkdir -p /home/${PUSER}/.config/GIMP \
                /home/${PUSER}/.fonts \
-               /home/${PUSER}/Documents && \
+               /home/${PUSER}/Documents \
+               /usr/lib/gimp/2.0/plug-ins \
+               /usr/share/gimp/2.0/scripts && \
       mv /tmp/photogimp/.var/app/org.gimp.GIMP/config/GIMP/2.10 /home/${PUSER}/.config/GIMP/ && \
-      mkdir -p /home/${PUSER}/.config/GIMP/2.10/plug-ins && \
-      mv /tmp/insta/plug-ins/*.py /home/${PUSER}/.config/GIMP/2.10/plug-ins/ && \
-      mv /tmp/molpop/*.py /home/${PUSER}/.config/GIMP/2.10/plug-ins/ && \
+        for FOLDER in brushes filters fonts gradients plug-ins scripts splashes tool-options; do \
+          mkdir -p /home/${PUSER}/.config/GIMP/2.10/$FOLDER; \
+        done && \
+        sed -i "s/\(resolution [[:digit:]][[:digit:]]*\))/\1.0)/g" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
+        sed -i "s/\(radius [[:digit:]][[:digit:]]*\))/\1.0)/g" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
+        sed -i "/toolbox-group-menu-mode/d" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
+      mv /tmp/insta/plug-ins/*.py /usr/lib/gimp/2.0/plug-ins/ && \
+      mv /tmp/molpop/*.py /usr/lib/gimp/2.0/plug-ins/ && \
       chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER} && \
     apt-get -q -y --purge remove curl && \
       apt-get -q -y autoremove && \

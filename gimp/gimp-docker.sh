@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+IMAGE="${GIMP_IMAGE:-ghcr.io/mmguero/gimp:latest}"
 ENGINE="${CONTAINER_ENGINE:-docker}"
 if [[ "$ENGINE" == "podman" ]]; then
   CONTAINER_PUID=0
@@ -19,10 +20,10 @@ GPU_DEVICES=$( \
   )
 
 if [[ ! -d "$HOME/.config/GIMP" ]]; then
-  TMP_CONTAINER_ID=$($ENGINE create ghcr.io/mmguero/gimp:latest)
+  TMP_CONTAINER_ID="$($ENGINE run --detach --rm --entrypoint=sleep "$IMAGE" infinity)"
   mkdir -p "$HOME/.config"
   $ENGINE cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
-  $ENGINE rm $TMP_CONTAINER_ID
+  $ENGINE stop $TMP_CONTAINER_ID
 fi
 
 mkdir -p "$HOME/.fonts" "$HOME/.local/share/fonts" "$HOME/.config/GIMP"
@@ -40,7 +41,7 @@ if [[ -n "$1" ]]; then
   fi
 fi
 
-$ENGINE run -d --rm \
+$ENGINE run --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \
@@ -60,5 +61,5 @@ $ENGINE run -d --rm \
   --device /dev/input \
   $GPU_DEVICES \
   --name gimp-$(date -u +%s) \
-  ghcr.io/mmguero/gimp:latest \
+  "$IMAGE" \
   --no-splash "$@"
