@@ -13,7 +13,9 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \
       curl \
       imagemagick \
+      libegl1 \
       libmagic1 \
+      libopengl0 \
       python3 \
       python3-pip \
       python3-setuptools \
