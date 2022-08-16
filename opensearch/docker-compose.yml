@@ -46,16 +46,10 @@ services:
       - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
       - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
     ports:
-      - 0.0.0.0:9201:9200
-      - 0.0.0.0:9601:9600
+      - 127.0.0.1:9201:9200
+      - 127.0.0.1:9601:9600
     networks:
       - default
-    healthcheck:
-      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:9200"]
-      interval: 30s
-      timeout: 15s
-      retries: 3
-      start_period: 180s
 
   opensearch-node2:
     image: opensearchproject/opensearch:2.2.0
@@ -100,27 +94,24 @@ services:
       - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
       - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
     ports:
-      - 0.0.0.0:9202:9200
-      - 0.0.0.0:9602:9600
+      - 127.0.0.1:9202:9200
+      - 127.0.0.1:9602:9600
     networks:
       - default
-    healthcheck:
-      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:9200"]
-      interval: 30s
-      timeout: 15s
-      retries: 3
-      start_period: 180s
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.2.0
     container_name: opensearch-dashboards
     ports:
-      - 0.0.0.0:5601:5601
+      - 127.0.0.1:5601:5601
     environment:
        OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
        DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
     volumes:
-      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
+      - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
+      - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
+      - ./certs/client-key.pem:/usr/share/opensearch-dashboards/config/client-key.pem:ro
     networks:
       - default
 
@@ -128,17 +119,17 @@ services:
     image: osixia/openldap
     container_name: openldap
     command: --copy-service
-    # ports:
-      # - 127.0.0.1:389:389
-      # - 127.0.0.1:636:636
+    ports:
+      - 127.0.0.1:389:389
+      - 127.0.0.1:636:636
     environment:
       - LDAP_ADMIN_PASSWORD=changethis
       - LDAP_READONLY_USER=true
       - LDAP_READONLY_USER_PASSWORD=changethistoo
     volumes:
-      - ./directory.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/directory.ldif
+      - ./directory.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/directory.ldif:ro
     networks:
-      - opensearch-net
+      - default
 
   openldap-admin:
     image: osixia/phpldapadmin

@@ -58,19 +58,19 @@
 
 # Enables SSL and paths to the PEM-format SSL certificate and SSL key files, respectively.
 # These settings enable SSL for outgoing requests from the OpenSearch Dashboards server to the browser.
-# server.ssl.enabled: false
-# server.ssl.certificate: /path/to/your/server.crt
-# server.ssl.key: /path/to/your/server.key
+# server.ssl.enabled: true
+# server.ssl.certificate: /usr/share/opensearch-dashboards/config/client.pem
+# server.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
 
 # Optional settings that provide the paths to the PEM-format SSL certificate and key files.
 # These files are used to verify the identity of OpenSearch Dashboards to OpenSearch and are required when
 # xpack.security.http.ssl.client_authentication in OpenSearch is set to required.
-# opensearch.ssl.certificate: /path/to/your/client.crt
-# opensearch.ssl.key: /path/to/your/client.key
+# opensearch.ssl.certificate: /usr/share/opensearch-dashboards/config/client.pem
+# opensearch.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
 
 # Optional setting that enables you to specify a path to the PEM file for the certificate
 # authority for your OpenSearch instance.
-# opensearch.ssl.certificateAuthorities: [ "/path/to/your/CA.pem" ]
+# opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/root-ca.pem" ]
 
 # To disregard the validity of SSL certificates, change this setting's value to 'none'.
 # opensearch.ssl.verificationMode: full
@@ -173,15 +173,22 @@
 # for your map rendering services.
 # map.showRegionBlockedWarning: false%
 
+server.host: '0.0.0.0'
 opensearch.hosts: [https://localhost:9200]
-opensearch.ssl.verificationMode: none
+server.ssl.enabled: true
+server.ssl.certificate: /usr/share/opensearch-dashboards/config/client.pem
+server.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
+opensearch.ssl.certificate: /usr/share/opensearch-dashboards/config/client.pem
+opensearch.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
+opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/root-ca.pem" ]
+opensearch.ssl.verificationMode: full
 opensearch.username: kibanaserver
-opensearch.password: kibanaserver
+opensearch.password: changethistoo
 opensearch.requestHeadersWhitelist: [authorization, securitytenant]
-
 opensearch_security.multitenancy.enabled: true
 opensearch_security.multitenancy.tenants.preferred: [Private, Global]
 opensearch_security.readonly_mode.roles: [kibana_read_only]
+
 # Use this setting if you are running opensearch-dashboards without https
 opensearch_security.cookie.secure: false
-server.host: '0.0.0.0'
+

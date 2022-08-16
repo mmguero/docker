@@ -19,7 +19,7 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: top
 cn: asoryu
-userpassword: password
+userpassword: changethistoo
 givenname: Asuka
 sn: Soryu
 mail: asoryu@example.org
@@ -31,7 +31,7 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: top
 cn: rayanami
-userpassword: password
+userpassword: changethistoo
 givenname: Rei
 sn: Ayanami
 mail: rayanami@example.org
@@ -43,7 +43,7 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: top
 cn: sikari
-userpassword: password
+userpassword: changethis
 givenname: Shinji
 sn: Ikari
 mail: sikari@example.org
