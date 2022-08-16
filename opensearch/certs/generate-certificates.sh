@@ -66,10 +66,7 @@ req_extensions = req_ext
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = opensearch-node1.dns.a-record
-DNS.2 = node1.dns.a-record
-DNS.3 = opensearch-node1
-DNS.4 = node1
+DNS.1 = node1.dns.a-record
 EOF
 openssl x509 -req -in node1.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node1.pem -days 730 -extensions req_ext -extfile node1.ext
 # Node cert 2
@@ -84,10 +81,7 @@ req_extensions = req_ext
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = opensearch-node2.dns.a-record
-DNS.2 = node2.dns.a-record
-DNS.3 = opensearch-node2
-DNS.4 = node2
+DNS.1 = node2.dns.a-record
 EOF
 openssl x509 -req -in node2.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node2.pem -days 730 -extensions req_ext -extfile node2.ext
 # Client cert
@@ -103,7 +97,6 @@ subjectAltName = @alt_names
 
 [ alt_names ]
 DNS.1 = client.dns.a-record
-DNS.2 = client
 EOF
 openssl x509 -req -in client.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out client.pem -days 730 -extensions req_ext -extfile client.ext
 # Cleanup

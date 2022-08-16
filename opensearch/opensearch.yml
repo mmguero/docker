@@ -2,7 +2,7 @@
 cluster.name: docker-cluster
 network.host: 0.0.0.0
 
-plugins.security.ssl.http.clientauth_mode: NONE
+plugins.security.ssl.http.enabled: true
 plugins.security.ssl.http.pemcert_filepath: node.pem
 plugins.security.ssl.http.pemkey_filepath: node-key.pem
 plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
@@ -12,11 +12,10 @@ plugins.security.ssl.transport.pemkey_filepath: node-key.pem
 plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 plugins.security.ssl.transport.resolve_hostname: false
 
-plugins.security.nodes_dn:
-  - 'CN=opensearch-node*'
-  - 'CN=node*'
-
 plugins.security.authcz.admin_dn:
   - 'CN=admin,OU=Testing,O=Development,L=Rexburg,ST=IDAHO,C=US'
+
+plugins.security.nodes_dn:
+  - 'CN=node*.dns.a-record,OU=Testing,O=Development,L=Rexburg,ST=IDAHO,C=US'
 
 plugins.security.audit.type: internal_opensearch
