@@ -117,6 +117,7 @@ services:
       - 127.0.0.1:389:389
       - 127.0.0.1:636:636
     environment:
+      - LDAP_LOG_LEVEL=32768
       - LDAP_ADMIN_PASSWORD=changethis
       - LDAP_READONLY_USER=true
       - LDAP_READONLY_USER_PASSWORD=changethistoo
