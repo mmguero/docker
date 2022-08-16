@@ -1,0 +1,135 @@
+# Copyright (c) 2022 Battelle Energy Alliance, LLC.  All rights reserved.
+
+version: '3.7'
+
+services:
+  opensearch-node1:
+    image: opensearchproject/opensearch:2.2.0
+    container_name: opensearch-node1
+    environment:
+      - "cluster.name=opensearch-cluster"
+      - "node.name=opensearch-node1"
+      - "bootstrap.memory_lock=true"
+      - "MAX_LOCKED_MEMORY=unlimited"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=false"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "cluster.routing.allocation.node_initial_primaries_recoveries=8"
+      - "indices.query.bool.max_clause_count=4096"
+      - "path.repo=/opt/opensearch/backup"
+      - "network.host=0.0.0.0"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
+      - opensearch-backup1:/opt/opensearch/backup
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
+      - ./certs/node.pem:/usr/share/opensearch/config/node.pem
+      - ./certs/node-key.pem:/usr/share/opensearch/config/node-key.pem
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem
+      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
+      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml
+      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+    ports:
+      - 0.0.0.0:9202:9200
+      - 0.0.0.0:9602:9600
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:9200"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 180s
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:2.2.0
+    container_name: opensearch-node2
+    environment:
+      - "cluster.name=opensearch-cluster"
+      - "node.name=opensearch-node2"
+      - "bootstrap.memory_lock=true"
+      - "MAX_LOCKED_MEMORY=unlimited"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=false"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "cluster.routing.allocation.node_initial_primaries_recoveries=8"
+      - "indices.query.bool.max_clause_count=4096"
+      - "path.repo=/opt/opensearch/backup"
+      - "network.host=0.0.0.0"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+      - opensearch-backup2:/opt/opensearch/backup
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
+      - ./certs/node.pem:/usr/share/opensearch/config/node.pem
+      - ./certs/node-key.pem:/usr/share/opensearch/config/node-key.pem
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem
+      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
+      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml
+      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+    ports:
+      - 0.0.0.0:9202:9200
+      - 0.0.0.0:9602:9600
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:9200"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 180s
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.2.0
+    container_name: opensearch-dashboards
+    ports:
+      - 0.0.0.0:5601:5601
+    environment:
+       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
+    volumes:
+      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+    networks:
+      - default
+
+volumes:
+  opensearch-data1:
+  opensearch-data2:
+  opensearch-backup1:
+  opensearch-backup2:
+
+networks:
+  default:
+    external: false
