@@ -7,18 +7,14 @@ services:
     environment:
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node1"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
       - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "cluster.routing.allocation.node_initial_primaries_recoveries=8"
-      - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
-      - "network.host=0.0.0.0"
     ulimits:
       memlock:
         soft: -1
@@ -45,8 +41,8 @@ services:
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
-      - 127.0.0.1:9201:9200
-      - 127.0.0.1:9601:9600
+      - 0.0.0.0:9200:9200
+      - 0.0.0.0:9600:9600
     networks:
       - default
 
@@ -56,18 +52,14 @@ services:
     environment:
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node2"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
       - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "cluster.routing.allocation.node_initial_primaries_recoveries=8"
-      - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
-      - "network.host=0.0.0.0"
     ulimits:
       memlock:
         soft: -1
@@ -93,9 +85,9 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
-    ports:
-      - 127.0.0.1:9202:9200
-      - 127.0.0.1:9602:9600
+    # ports:
+    #   - 0.0.0.0:9200:9200
+    #   - 0.0.0.0:9600:9600
     networks:
       - default
 
@@ -103,7 +95,7 @@ services:
     image: opensearchproject/opensearch-dashboards:2.2.0
     container_name: opensearch-dashboards
     ports:
-      - 127.0.0.1:5601:5601
+      - 0.0.0.0:5601:5601
     environment:
        OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
        DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
@@ -120,8 +112,8 @@ services:
     container_name: openldap
     command: --copy-service
     ports:
-      - 127.0.0.1:389:389
-      - 127.0.0.1:636:636
+      - 0.0.0.0:389:389
+      - 0.0.0.0:636:636
     environment:
       - LDAP_ADMIN_PASSWORD=changethis
       - LDAP_READONLY_USER=true
@@ -135,7 +127,7 @@ services:
     image: osixia/phpldapadmin
     container_name: openldap-admin
     ports:
-      - 127.0.0.1:6443:443
+      - 0.0.0.0:6443:443
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
     networks:

@@ -84,3 +84,4 @@ rm node2.ext
 rm client-key-temp.pem
 rm client.csr
 rm client.ext
+chmod 600 *.pem
