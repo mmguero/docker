@@ -12,7 +12,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "path.repo=/opt/opensearch/backup"
