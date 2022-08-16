@@ -8,14 +8,15 @@ services:
       - "logger.level=WARN"
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node1"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "path.repo=/opt/opensearch/backup"
+      - "node.roles=cluster_manager"
     ulimits:
       memlock:
         soft: -1
@@ -54,14 +55,15 @@ services:
       - "logger.level=WARN"
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node2"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "path.repo=/opt/opensearch/backup"
+      - "node.roles=data,ingest"
     ulimits:
       memlock:
         soft: -1
@@ -93,13 +95,60 @@ services:
     networks:
       - default
 
+  opensearch-node3:
+    image: opensearchproject/opensearch:2.2.0
+    container_name: opensearch-node3
+    environment:
+      - "logger.level=WARN"
+      - "cluster.name=opensearch-cluster"
+      - "node.name=opensearch-node3"
+      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3"
+      - "cluster.initial_cluster_manager_nodes=opensearch-node1"
+      - "bootstrap.memory_lock=true"
+      - "MAX_LOCKED_MEMORY=unlimited"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=false"
+      - "path.repo=/opt/opensearch/backup"
+      - "node.roles=data,ingest"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - opensearch-data3:/usr/share/opensearch/data
+      - opensearch-backup3:/opt/opensearch/backup
+      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
+      - ./certs/node3-key.pem:/usr/share/opensearch/config/node-key.pem:ro
+      - ./certs/node3.pem:/usr/share/opensearch/config/node.pem:ro
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
+      - ./security/audit.yml:/usr/share/opensearch/config/opensearch-security/audit.yml:ro
+      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
+      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+    ports:
+      - 0.0.0.0:9203:9200
+      - 0.0.0.0:9603:9600
+    networks:
+      - default
+
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:2.2.0
     container_name: opensearch-dashboards
     ports:
       - 0.0.0.0:5601:5601
     environment:
-       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200","https://opensearch-node3:9200"]'
        DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
     volumes:
       - ./certs/client-key.pem:/usr/share/opensearch-dashboards/config/client-key.pem:ro
@@ -139,8 +188,10 @@ services:
 volumes:
   opensearch-data1:
   opensearch-data2:
+  opensearch-data3:
   opensearch-backup1:
   opensearch-backup2:
+  opensearch-backup3:
 
 networks:
   default:

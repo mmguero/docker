@@ -9,7 +9,8 @@ STATE="IDAHO"
 LOCALITY="Rexburg"
 ORGANIZATION="Development"
 UNIT="Testing"
-while getopts 'vc:s:l:o:u' OPTION; do
+NODE_COUNT=3
+while getopts 'vc:s:l:o:n:u' OPTION; do
   case "$OPTION" in
     v)
       set -x
@@ -35,30 +36,36 @@ while getopts 'vc:s:l:o:u' OPTION; do
       UNIT="$OPTARG"
       ;;
 
+    n)
+      NODE_COUNT="$OPTARG"
+      ;;
+
     ?)
-      echo "script usage: $(basename $0) [-v] [-c <Country>] [-s <State/Province>] [-l <City/Locality>] [-o <Organization>] [-u <Unit>]" >&2
+      echo "script usage: $(basename $0) [-v] [-c <Country>] [-s <State/Province>] [-l <City/Locality>] [-o <Organization>] [-u <Unit>] [-n <NodeCount>]" >&2
       exit 1
       ;;
   esac
 done
 shift "$(($OPTIND -1))"
 
-
 # from https://opensearch.org/docs/latest/security-plugin/configuration/generate-certificates/#sample-script
 
 # Root CA
 openssl genrsa -out root-ca-key.pem 2048
 openssl req -new -x509 -sha256 -key root-ca-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=root.dns.a-record" -out root-ca.pem -days 730
+
 # Admin cert
 openssl genrsa -out admin-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in admin-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out admin-key.pem
 openssl req -new -key admin-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=admin" -out admin.csr
 openssl x509 -req -in admin.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out admin.pem -days 730
-# Node cert 1
-openssl genrsa -out node1-key-temp.pem 2048
-openssl pkcs8 -inform PEM -outform PEM -in node1-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out node1-key.pem
-openssl req -new -key node1-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=node1.dns.a-record" -out node1.csr
-cat <<EOF > node1.ext
+
+# Nodes
+for NODENUM in $(seq 1 "$NODE_COUNT"); do
+  openssl genrsa -out node${NODENUM}-key-temp.pem 2048
+  openssl pkcs8 -inform PEM -outform PEM -in node${NODENUM}-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out node${NODENUM}-key.pem
+  openssl req -new -key node${NODENUM}-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=node${NODENUM}.dns.a-record" -out node${NODENUM}.csr
+  cat <<EOF > node${NODENUM}.ext
 [ req ]
 req_extensions = req_ext
 
@@ -66,24 +73,11 @@ req_extensions = req_ext
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = node1.dns.a-record
+DNS.1 = node${NODENUM}.dns.a-record
 EOF
-openssl x509 -req -in node1.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node1.pem -days 730 -extensions req_ext -extfile node1.ext
-# Node cert 2
-openssl genrsa -out node2-key-temp.pem 2048
-openssl pkcs8 -inform PEM -outform PEM -in node2-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out node2-key.pem
-openssl req -new -key node2-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=node2.dns.a-record" -out node2.csr
-cat <<EOF > node2.ext
-[ req ]
-req_extensions = req_ext
+  openssl x509 -req -in node${NODENUM}.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node${NODENUM}.pem -days 730 -extensions req_ext -extfile node${NODENUM}.ext
+done
 
-[ req_ext ]
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = node2.dns.a-record
-EOF
-openssl x509 -req -in node2.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node2.pem -days 730 -extensions req_ext -extfile node2.ext
 # Client cert
 openssl genrsa -out client-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in client-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out client-key.pem
@@ -99,15 +93,13 @@ subjectAltName = @alt_names
 DNS.1 = client.dns.a-record
 EOF
 openssl x509 -req -in client.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out client.pem -days 730 -extensions req_ext -extfile client.ext
+
 # Cleanup
 rm admin-key-temp.pem
 rm admin.csr
-rm node1-key-temp.pem
-rm node1.csr
-rm node1.ext
-rm node2-key-temp.pem
-rm node2.csr
-rm node2.ext
+rm node*-key-temp.pem
+rm node*.csr
+rm node*.ext
 rm client-key-temp.pem
 rm client.csr
 rm client.ext
