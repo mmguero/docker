@@ -15,6 +15,8 @@ services:
       - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
       - "node.roles=cluster_manager"
     ulimits:
@@ -62,6 +64,8 @@ services:
       - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
       - "node.roles=data,ingest"
     ulimits:
@@ -109,6 +113,8 @@ services:
       - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+      - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
       - "node.roles=data,ingest"
     ulimits:
