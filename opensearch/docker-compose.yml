@@ -5,6 +5,7 @@ services:
     image: opensearchproject/opensearch:2.2.0
     container_name: opensearch-node1
     environment:
+      - "logger.level=WARN"
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node1"
       - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
@@ -50,6 +51,7 @@ services:
     image: opensearchproject/opensearch:2.2.0
     container_name: opensearch-node2
     environment:
+      - "logger.level=WARN"
       - "cluster.name=opensearch-cluster"
       - "node.name=opensearch-node2"
       - "discovery.seed_hosts=opensearch-node1,opensearch-node2"
