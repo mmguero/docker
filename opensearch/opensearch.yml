@@ -13,7 +13,8 @@ plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 plugins.security.ssl.transport.resolve_hostname: true
 
 plugins.security.nodes_dn:
-  - 'CN=node*.dns.a-record,OU=Testing,O=Development,L=Rexburg,ST=IDAHO,C=US'
+  - 'CN=opensearch-node*'
+  - 'CN=node*'
 
 plugins.security.authcz.admin_dn:
   - 'CN=admin,OU=Testing,O=Development,L=Rexburg,ST=IDAHO,C=US'

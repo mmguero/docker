@@ -58,20 +58,54 @@ openssl x509 -req -in admin.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreate
 openssl genrsa -out node1-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in node1-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out node1-key.pem
 openssl req -new -key node1-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=node1.dns.a-record" -out node1.csr
-echo 'subjectAltName=DNS:node1.dns.a-record' > node1.ext
-openssl x509 -req -in node1.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node1.pem -days 730 -extfile node1.ext
+cat <<EOF > node1.ext
+[ req ]
+req_extensions = req_ext
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = opensearch-node1.dns.a-record
+DNS.2 = node1.dns.a-record
+DNS.3 = opensearch-node1
+DNS.4 = node1
+EOF
+openssl x509 -req -in node1.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node1.pem -days 730 -extensions req_ext -extfile node1.ext
 # Node cert 2
 openssl genrsa -out node2-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in node2-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out node2-key.pem
 openssl req -new -key node2-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=node2.dns.a-record" -out node2.csr
-echo 'subjectAltName=DNS:node2.dns.a-record' > node2.ext
-openssl x509 -req -in node2.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node2.pem -days 730 -extfile node2.ext
+cat <<EOF > node2.ext
+[ req ]
+req_extensions = req_ext
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = opensearch-node2.dns.a-record
+DNS.2 = node2.dns.a-record
+DNS.3 = opensearch-node2
+DNS.4 = node2
+EOF
+openssl x509 -req -in node2.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node2.pem -days 730 -extensions req_ext -extfile node2.ext
 # Client cert
 openssl genrsa -out client-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in client-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out client-key.pem
 openssl req -new -key client-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=client.dns.a-record" -out client.csr
-echo 'subjectAltName=DNS:client.dns.a-record' > client.ext
-openssl x509 -req -in client.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out client.pem -days 730 -extfile client.ext
+cat <<EOF > client.ext
+[ req ]
+req_extensions = req_ext
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = client.dns.a-record
+DNS.2 = client
+EOF
+openssl x509 -req -in client.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out client.pem -days 730 -extensions req_ext -extfile client.ext
 # Cleanup
 rm admin-key-temp.pem
 rm admin.csr
