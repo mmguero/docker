@@ -33,21 +33,21 @@ services:
     volumes:
       - opensearch-data1:/usr/share/opensearch/data
       - opensearch-backup1:/opt/opensearch/backup
-      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
-      - ./certs/node.pem:/usr/share/opensearch/config/node.pem
-      - ./certs/node-key.pem:/usr/share/opensearch/config/node-key.pem
-      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem
-      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem
-      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
-      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
-      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml
-      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
-      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml
-      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
+      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
+      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
+      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
+      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
+      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
     ports:
-      - 0.0.0.0:9202:9200
-      - 0.0.0.0:9602:9600
+      - 0.0.0.0:9201:9200
+      - 0.0.0.0:9601:9600
     networks:
       - default
     healthcheck:
@@ -87,18 +87,18 @@ services:
     volumes:
       - opensearch-data2:/usr/share/opensearch/data
       - opensearch-backup2:/opt/opensearch/backup
-      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem
-      - ./certs/node.pem:/usr/share/opensearch/config/node.pem
-      - ./certs/node-key.pem:/usr/share/opensearch/config/node-key.pem
-      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem
-      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem
-      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml
-      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml
-      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml
-      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml
-      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml
-      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
+      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
+      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
+      - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
+      - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
+      - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
     ports:
       - 0.0.0.0:9202:9200
       - 0.0.0.0:9602:9600
@@ -121,6 +121,32 @@ services:
        DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
     volumes:
       - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+    networks:
+      - default
+
+  openldap:
+    image: osixia/openldap
+    container_name: openldap
+    command: --copy-service
+    # ports:
+      # - 127.0.0.1:389:389
+      # - 127.0.0.1:636:636
+    environment:
+      - LDAP_ADMIN_PASSWORD=changethis
+      - LDAP_READONLY_USER=true
+      - LDAP_READONLY_USER_PASSWORD=changethistoo
+    volumes:
+      - ./directory.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/directory.ldif
+    networks:
+      - opensearch-net
+
+  openldap-admin:
+    image: osixia/phpldapadmin
+    container_name: openldap-admin
+    ports:
+      - 127.0.0.1:6443:443
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
     networks:
       - default
 
