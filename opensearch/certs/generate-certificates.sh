@@ -6,7 +6,7 @@ ENCODING="utf-8"
 
 COUNTRY="US"
 STATE="IDAHO"
-LOCALITY="Idaho Falls"
+LOCALITY="Rexburg"
 ORGANIZATION="Development"
 UNIT="Testing"
 while getopts 'vc:s:l:o:u' OPTION; do
