@@ -41,8 +41,8 @@ services:
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
-      - 0.0.0.0:9200:9200
-      - 0.0.0.0:9600:9600
+      - 0.0.0.0:9201:9200
+      - 0.0.0.0:9601:9600
     networks:
       - default
 
@@ -85,9 +85,9 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
-    # ports:
-    #   - 0.0.0.0:9200:9200
-    #   - 0.0.0.0:9600:9600
+    ports:
+      - 0.0.0.0:9202:9200
+      - 0.0.0.0:9602:9600
     networks:
       - default
 
@@ -112,8 +112,8 @@ services:
     container_name: openldap
     command: --copy-service
     ports:
-      - 0.0.0.0:389:389
-      - 0.0.0.0:636:636
+      - 127.0.0.1:389:389
+      - 127.0.0.1:636:636
     environment:
       - LDAP_ADMIN_PASSWORD=changethis
       - LDAP_READONLY_USER=true
@@ -127,7 +127,7 @@ services:
     image: osixia/phpldapadmin
     container_name: openldap-admin
     ports:
-      - 0.0.0.0:6443:443
+      - 127.0.0.1:6443:443
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
     networks:
