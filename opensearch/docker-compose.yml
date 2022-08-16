@@ -33,18 +33,18 @@ services:
     volumes:
       - opensearch-data1:/usr/share/opensearch/data
       - opensearch-backup1:/opt/opensearch/backup
-      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
-      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
-      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
-      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
+      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
+      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
       - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
-      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
-      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
-      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
-      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
       - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
       - 127.0.0.1:9201:9200
       - 127.0.0.1:9601:9600
@@ -81,18 +81,18 @@ services:
     volumes:
       - opensearch-data2:/usr/share/opensearch/data
       - opensearch-backup2:/opt/opensearch/backup
-      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
-      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
-      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
-      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
+      - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
+      - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
+      - ./certs/node2.pem:/usr/share/opensearch/config/node.pem:ro
+      - ./certs/root-ca.pem:/usr/share/opensearch/config/root-ca.pem:ro
       - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
-      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
-      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
-      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
-      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/action_groups.yml:/usr/share/opensearch/config/opensearch-security/action_groups.yml:ro
       - ./security/config.yml:/usr/share/opensearch/config/opensearch-security/config.yml:ro
+      - ./security/internal_users.yml:/usr/share/opensearch/config/opensearch-security/internal_users.yml:ro
+      - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
+      - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
+      - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
       - 127.0.0.1:9202:9200
       - 127.0.0.1:9602:9600
@@ -108,10 +108,10 @@ services:
        OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
        DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
     volumes:
-      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
-      - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
-      - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
       - ./certs/client-key.pem:/usr/share/opensearch-dashboards/config/client-key.pem:ro
+      - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
+      - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
+      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
     networks:
       - default
 

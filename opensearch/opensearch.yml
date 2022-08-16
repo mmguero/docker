@@ -2,15 +2,15 @@
 cluster.name: docker-cluster
 network.host: 0.0.0.0
 
-plugins.security.ssl.transport.pemkey_filepath: node-key.pem
-plugins.security.ssl.transport.pemcert_filepath: node.pem
-plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
-plugins.security.ssl.http.pemkey_filepath: node-key.pem
-plugins.security.ssl.http.pemcert_filepath: node.pem
-plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
-plugins.security.ssl.transport.enforce_hostname_verification: true
-plugins.security.ssl.transport.resolve_hostname: true
 plugins.security.ssl.http.clientauth_mode: OPTIONAL
+plugins.security.ssl.http.pemcert_filepath: node.pem
+plugins.security.ssl.http.pemkey_filepath: node-key.pem
+plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
+plugins.security.ssl.transport.enforce_hostname_verification: false
+plugins.security.ssl.transport.pemcert_filepath: node.pem
+plugins.security.ssl.transport.pemkey_filepath: node-key.pem
+plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
+plugins.security.ssl.transport.resolve_hostname: false
 
 plugins.security.nodes_dn:
   - 'CN=node*,OU=Testing,O=Development,L=Idaho Falls,S=IDAHO,C=US'

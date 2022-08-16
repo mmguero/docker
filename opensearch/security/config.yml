@@ -12,7 +12,7 @@ config:
         order: 0
         description: "HTTP basic authentication using the internal user database"
         http_enabled: true
-        transport_enabled: true
+        transport_enabled: false
         http_authenticator:
           type: basic
           challenge: false
@@ -22,7 +22,7 @@ config:
         order: 1
         description: "Authenticate using LDAP"
         http_enabled: true
-        transport_enabled: true
+        transport_enabled: false
         http_authenticator:
           type: basic
           challenge: false
@@ -32,7 +32,7 @@ config:
             enable_ssl: false
             enable_start_tls: false
             enable_ssl_client_auth: false
-            verify_hostnames: true
+            verify_hostnames: false
             hosts:
             - openldap:389
             bind_dn: cn=readonly,dc=example,dc=org
@@ -44,14 +44,14 @@ config:
       ldap_roles:
         description: "Authorize using LDAP"
         http_enabled: true
-        transport_enabled: true
+        transport_enabled: false
         authorization_backend:
           type: ldap
           config:
             enable_ssl: false
             enable_start_tls: false
             enable_ssl_client_auth: false
-            verify_hostnames: true
+            verify_hostnames: false
             hosts:
             - openldap:389
             bind_dn: cn=readonly,dc=example,dc=org

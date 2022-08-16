@@ -181,7 +181,7 @@ server.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
 opensearch.ssl.certificate: /usr/share/opensearch-dashboards/config/client.pem
 opensearch.ssl.key: /usr/share/opensearch-dashboards/config/client-key.pem
 opensearch.ssl.certificateAuthorities: [ "/usr/share/opensearch-dashboards/config/root-ca.pem" ]
-opensearch.ssl.verificationMode: full
+opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
 opensearch.password: changethistoo
 opensearch.requestHeadersWhitelist: [authorization, securitytenant]
