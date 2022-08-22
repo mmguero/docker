@@ -29,15 +29,16 @@ config:
         authentication_backend:
           type: ldap
           config:
-            enable_ssl: false
+            enable_ssl: true
             enable_start_tls: false
             enable_ssl_client_auth: false
             verify_hostnames: false
+            pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - openldap:389
-            bind_dn: cn=readonly,dc=example,dc=org
+            - glauth:636
+            bind_dn: cn=binddn,dc=example,dc=org
             password: changethistoo
-            userbase: ou=People,dc=example,dc=org
+            userbase: ou=users,dc=example,dc=org
             usersearch: (cn={0})
             username_attribute: cn
     authz:
@@ -48,23 +49,25 @@ config:
         authorization_backend:
           type: ldap
           config:
-            enable_ssl: false
+            enable_ssl: true
             enable_start_tls: false
             enable_ssl_client_auth: false
             verify_hostnames: false
+            pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - openldap:389
-            bind_dn: cn=readonly,dc=example,dc=org
+            - glauth:636
+            bind_dn: cn=binddn,dc=example,dc=org
             password: changethistoo
-            userbase: ou=People,dc=example,dc=org
+            userbase: ou=users,dc=example,dc=org
             usersearch: (cn={0})
             username_attribute: cn
             skip_users:
               - admin
               - kibanaserver
-            rolebase: ou=Groups,dc=example,dc=org
-            rolesearch: (uniqueMember={0})
-            userroleattribute: null
-            userrolename: disabled
+            rolebase: ou=groups,dc=example,dc=org
             rolename: cn
+            rolesearch_enabled: false
+            rolesearch: null
+            userroleattribute: null
+            userrolename: ou
             resolve_nested_roles: false

@@ -78,6 +78,22 @@ EOF
   openssl x509 -req -in node${NODENUM}.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node${NODENUM}.pem -days 730 -extensions req_ext -extfile node${NODENUM}.ext
 done
 
+# glauth cert
+openssl genrsa -out glauth-key-temp.pem 2048
+openssl pkcs8 -inform PEM -outform PEM -in glauth-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out glauth-key.pem
+openssl req -new -key glauth-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=glauth.dns.a-record" -out glauth.csr
+cat <<EOF > glauth.ext
+[ req ]
+req_extensions = req_ext
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = glauth.dns.a-record
+EOF
+openssl x509 -req -in glauth.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out glauth.pem -days 730 -extensions req_ext -extfile glauth.ext
+
 # Client cert
 openssl genrsa -out client-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in client-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out client-key.pem
@@ -103,4 +119,7 @@ rm node*.ext
 rm client-key-temp.pem
 rm client.csr
 rm client.ext
+rm glauth-key-temp.pem
+rm glauth.csr
+rm glauth.ext
 chmod 600 *.pem

@@ -12,7 +12,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -45,8 +45,8 @@ services:
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
-      - 0.0.0.0:9201:9200
-      - 0.0.0.0:9601:9600
+      - 0.0.0.0:9200:9200
+      - 127.0.0.1:9600:9600
     networks:
       - default
 
@@ -61,7 +61,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -94,8 +94,8 @@ services:
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
-      - 0.0.0.0:9202:9200
-      - 0.0.0.0:9602:9600
+      - 127.0.0.1:9202:9200
+      - 127.0.0.1:9602:9600
     networks:
       - default
 
@@ -110,7 +110,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node1"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -143,8 +143,8 @@ services:
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
     ports:
-      - 0.0.0.0:9203:9200
-      - 0.0.0.0:9603:9600
+      - 127.0.0.1:9203:9200
+      - 127.0.0.1:9603:9600
     networks:
       - default
 
@@ -164,30 +164,17 @@ services:
     networks:
       - default
 
-  openldap:
-    image: osixia/openldap
-    container_name: openldap
-    command: --copy-service
+  glauth:
+    image: ghcr.io/mmguero/glauth:standalone
     ports:
-      - 127.0.0.1:389:389
-      - 127.0.0.1:636:636
-    environment:
-      - LDAP_LOG_LEVEL=32768
-      - LDAP_ADMIN_PASSWORD=changethis
-      - LDAP_READONLY_USER=true
-      - LDAP_READONLY_USER_PASSWORD=changethistoo
+      - "127.0.0.1:389:389"
+      - "127.0.0.1:636:636"
+      - "127.0.0.1:5555:5555"
     volumes:
-      - ./directory.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/directory.ldif:ro
-    networks:
-      - default
-
-  openldap-admin:
-    image: osixia/phpldapadmin
-    container_name: openldap-admin
-    ports:
-      - 127.0.0.1:6443:443
-    environment:
-      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - ./glauth.cfg:/app/config/config.cfg:ro
+      - ./certs/glauth-key.pem:/glauth-key.pem:ro
+      - ./certs/glauth.pem:/glauth.pem:ro
+      - ./certs/root-ca.pem:/root-ca.pem:ro
     networks:
       - default
 
