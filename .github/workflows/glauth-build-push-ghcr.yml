@@ -1,0 +1,93 @@
+name: glauth-build-push-ghcr
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'glauth/**'
+  workflow_dispatch:
+  repository_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PLATFORM: linux/amd64
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/glauth
+  IMAGE_TAG_STANDALONE: standalone
+  IMAGE_TAG_PLUGINS: plugins
+  REPO_CONTEXT: ./glauth
+  REPO_CONTAINERFILE_STANDALONE: ./glauth/standalone.Dockerfile
+  REPO_CONTAINERFILE_PLUGINS: ./glauth/plugins.Dockerfile
+
+jobs:
+  buildah:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      packages: write
+      contents: read
+    steps:
+      -
+        name: Cancel previous run in progress
+        id: cancel-previous-runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          ignore_sha: true
+          all_but_latest: true
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Checkout
+        id: repo-checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        id: setup-qemu
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Log in to registry
+        id: registry-login
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build standalone
+        id: build-image-standalone
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG_STANDALONE }}
+          context: ${{ env.REPO_CONTEXT }}
+          containerfiles: |
+            ${{ env.REPO_CONTAINERFILE_STANDALONE }}
+          platforms: |
+            ${{ env.IMAGE_PLATFORM }}
+      -
+        name: Push standalone
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image-standalone.outputs.image }}
+          tags: ${{ steps.build-image-standalone.outputs.tags }}
+          registry: ${{ env.REGISTRY }}
+      -
+        name: Build plugins
+        id: build-image-plugins
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG_PLUGINS }}
+          context: ${{ env.REPO_CONTEXT }}
+          containerfiles: |
+            ${{ env.REPO_CONTAINERFILE_PLUGINS }}
+          platforms: |
+            ${{ env.IMAGE_PLATFORM }}
+      -
+        name: Push plugins
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image-plugins.outputs.image }}
+          tags: ${{ steps.build-image-plugins.outputs.tags }}
+          registry: ${{ env.REGISTRY }}

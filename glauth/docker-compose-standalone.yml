@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  glauth-standalone:
+    image: ghcr.io/mmguero/glauth:standalone
+    build:
+      context: .
+      dockerfile: standalone.Dockerfile
+    ports:
+      - "127.0.0.1:389:389"
+      - "127.0.0.1:636:636"
+      - "127.0.0.1:5555:5555"
+    volumes:
+      - ./config-standalone.cfg:/app/config/config.cfg:ro
+    restart: unless-stopped

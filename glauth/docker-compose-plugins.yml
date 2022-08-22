@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  glauth-plugins:
+    image: ghcr.io/mmguero/glauth:plugins
+    build:
+      context: .
+      dockerfile: standalone.Dockerfile
+    ports:
+      - "127.0.0.1:389:389"
+      - "127.0.0.1:636:636"
+      - "127.0.0.1:5555:5555"
+    volumes:
+      - ./config-plugins.cfg:/app/config/config.cfg:ro
+      - ./gl.db:/app/config/gl.db:ro
+    restart: unless-stopped
