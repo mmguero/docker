@@ -9,7 +9,7 @@ STATE="IDAHO"
 LOCALITY="Rexburg"
 ORGANIZATION="Development"
 UNIT="Testing"
-NODE_COUNT=3
+NODE_COUNT=4
 while getopts 'vc:s:l:o:n:u' OPTION; do
   case "$OPTION" in
     v)
