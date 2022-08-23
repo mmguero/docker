@@ -12,7 +12,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms2g -Xmx2g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -60,7 +60,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms2g -Xmx2g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -109,7 +109,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms12g -Xmx12g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -158,7 +158,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms8g -Xmx8g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms12g -Xmx12g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -196,21 +196,21 @@ services:
     networks:
       - default
 
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.2.0
-    container_name: opensearch-dashboards
-    ports:
-      - 0.0.0.0:5601:5601
-    environment:
-       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]'
-       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
-    volumes:
-      - ./certs/client-key.pem:/usr/share/opensearch-dashboards/config/client-key.pem:ro
-      - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
-      - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
-      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
-    networks:
-      - default
+  # opensearch-dashboards:
+  #   image: opensearchproject/opensearch-dashboards:2.2.0
+  #   container_name: opensearch-dashboards
+  #   ports:
+  #     - 0.0.0.0:5601:5601
+  #   environment:
+  #      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]'
+  #      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
+  #   volumes:
+  #     - ./certs/client-key.pem:/usr/share/opensearch-dashboards/config/client-key.pem:ro
+  #     - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
+  #     - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
+  #     - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
+  #   networks:
+  #     - default
 
   glauth:
     image: ghcr.io/mmguero/glauth:standalone
