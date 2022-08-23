@@ -18,7 +18,6 @@ services:
       - "cluster.routing.allocation.disk.threshold_enabled=false"
       - "indices.query.bool.max_clause_count=4096"
       - "path.repo=/opt/opensearch/backup"
-      - "node.roles=ingest"
     ulimits:
       memlock:
         soft: -1

@@ -1,6 +1,7 @@
 ---
 cluster.name: docker-cluster
 network.host: 0.0.0.0
+node.roles: []
 
 plugins.security.ssl.http.enabled: true
 plugins.security.ssl.http.pemcert_filepath: node.pem
