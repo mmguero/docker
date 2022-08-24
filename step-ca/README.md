@@ -1,5 +1,8 @@
 # setup
 
+* enter a directory where you want `step-ca` to live
+* `mkdir -p step/{certs,config,db,secrets,templates}`
+* ensure you've got the `docker-compose.yml` from this repository in your directory
 * put what will be the intermediate password in secrets.txt, chmod 600
 * `docker run --rm -it -v $(pwd)/step:/home/step smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/path/to/password1.txt --provisioner-password-file=/path/to/password2.txt`
