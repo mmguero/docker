@@ -8,6 +8,8 @@
 * `docker-compose exec -u 0 ca sh`
     - `step ca provisioner add acme --type ACME`
 * use `step crypto change-pass` to change password for intermediate, `ssh_host` and `ssh_user` keys so that it's different from the root CA password (which you had in `password1.txt`). In the end have the password for those keys in `secrets.txt` to mount into your docker container.
+* `docker-compose down`
+* `docker-compose up -d`
 
 ## OIDC/OAuth
 
