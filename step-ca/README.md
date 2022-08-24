@@ -5,10 +5,10 @@
 * ensure you've got the `docker-compose.yml` from this repository in your directory
 * put what will be serve as the root CA password in `secrets.txt` and your provisioner pasword in `provisioner.txt`
 * `chmod 600 secrets.txt provisioner.txt`
-* `docker run --rm -it -v $(pwd)/step:/home/step -v $(pwd)/secrets.txt:/secrets.txt:ro -v $(pwd)/provisioner.txt:/provisioner.txt:ro smallstep/step-ca sh`
+* `docker run --rm -it -u 0 -v $(pwd)/step:/home/step -v $(pwd)/secrets.txt:/secrets.txt:ro -v $(pwd)/provisioner.txt:/provisioner.txt:ro smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/secrets.txt --provisioner-password-file=/provisioner.txt`
     - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
-* `docker-compose up -d`
+* `docker-compose up -d ; sleep 10; docker-compose logs`
 * `docker-compose exec -u 0 ca sh`
     - `step ca provisioner add acme --type ACME`
 * use `step crypto change-pass` to change password for intermediate, `ssh_host` and `ssh_user` keys so that it's different from the root CA password (which you had in `password1.txt`)
@@ -19,7 +19,7 @@
 * change the contents of `secrets.txt` to contain the new intermediate password you just set with `step crypto change-pass`
 * you don't need the `provisioner.txt` file any more (though you will need that password for manually provisioning certificates), so securely delete it
     + `shred -u provisioner.txt`
-* `docker-compose up -d`
+* `docker-compose up -d ; sleep 10; docker-compose logs`
 
 ## OIDC/OAuth
 
