@@ -5,6 +5,9 @@
 * ensure you've got the `docker-compose.yml` from this repository in your directory
 * put what will be the intermediate password in `secrets.txt` then `chmod 600 secrets.txt`
 * `docker run --rm -it -v $(pwd)/step:/home/step smallstep/step-ca sh`
+    - inside this container create two files somewhere: `/path/to/password1.txt` and `/path/to/password2.txt`
+        + in `password1.txt` put what you want to be your the CA password
+        + in `password2.txt` put what you want to be your the provisioner password
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/path/to/password1.txt --provisioner-password-file=/path/to/password2.txt`
     - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
 * `docker-compose up -d`
