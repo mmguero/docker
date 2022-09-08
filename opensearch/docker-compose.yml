@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   opensearch-node1:
-    image: opensearchproject/opensearch:2.2.0
+    image: opensearchproject/opensearch:2.2.1
     container_name: opensearch-node1
     environment:
       - "logger.level=WARN"
@@ -12,7 +12,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -50,7 +50,7 @@ services:
       - default
 
   opensearch-node2:
-    image: opensearchproject/opensearch:2.2.0
+    image: opensearchproject/opensearch:2.2.1
     container_name: opensearch-node2
     environment:
       - "logger.level=WARN"
@@ -60,7 +60,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -99,7 +99,7 @@ services:
       - default
 
   opensearch-node3:
-    image: opensearchproject/opensearch:2.2.0
+    image: opensearchproject/opensearch:2.2.1
     container_name: opensearch-node3
     environment:
       - "logger.level=WARN"
@@ -109,7 +109,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms12g -Xmx12g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms10g -Xmx10g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -148,7 +148,7 @@ services:
       - default
 
   opensearch-node4:
-    image: opensearchproject/opensearch:2.2.0
+    image: opensearchproject/opensearch:2.2.1
     container_name: opensearch-node4
     environment:
       - "logger.level=WARN"
@@ -158,7 +158,7 @@ services:
       - "cluster.initial_cluster_manager_nodes=opensearch-node2"
       - "bootstrap.memory_lock=true"
       - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms12g -Xmx12g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
+      - "OPENSEARCH_JAVA_OPTS=-server -Xms10g -Xmx10g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
       - "DISABLE_INSTALL_DEMO_CONFIG=true"
       - "DISABLE_SECURITY_PLUGIN=false"
       - "cluster.routing.allocation.disk.threshold_enabled=false"
@@ -197,7 +197,7 @@ services:
       - default
 
   # opensearch-dashboards:
-  #   image: opensearchproject/opensearch-dashboards:2.2.0
+  #   image: opensearchproject/opensearch-dashboards:2.2.1
   #   container_name: opensearch-dashboards
   #   ports:
   #     - 0.0.0.0:5601:5601
