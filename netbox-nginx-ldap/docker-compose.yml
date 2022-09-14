@@ -76,8 +76,8 @@ services:
     hostname: netbox-redis
     command:
     - sh
-    - -c # this is to evaluate the $REDIS_PASSWORD from the env
-    - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
+    - -c
+    - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD
     env_file: ./netbox/env/redis.env
     volumes:
     - ./netbox/redis:/data
@@ -89,8 +89,8 @@ services:
     hostname: netbox-redis-cache
     command:
     - sh
-    - -c # this is to evaluate the $REDIS_PASSWORD from the env
-    - redis-server --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
+    - -c
+    - redis-server --requirepass $$REDIS_PASSWORD
     env_file: ./netbox/env/redis-cache.env
     restart: "no"
 
@@ -102,7 +102,8 @@ services:
       << : *process-variables
       << : *auth-variables
     depends_on:
-      - whoami
+      - netbox
+      - whoville
     ports:
       - "0.0.0.0:7443:443"
     volumes:
