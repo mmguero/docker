@@ -113,7 +113,7 @@ if [[ $CONFIRMATION =~ ^[Yy]$ ]]; then
   POSTGRES_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
   REDIS_CACHE_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
   REDIS_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
-  SECRET_KEY="$(LC_ALL=C tr -dc 'A-Za-z0-9$%&()*+,-.:;<=>?@[\]^_`{|}~' </dev/urandom | head -c 50 ; echo)"
+  SECRET_KEY="$(LC_ALL=C tr -dc 'A-Za-z0-9%@<=>?~^_-' </dev/urandom | head -c 50 ; echo)"
   SUPERUSER_API_TOKEN="$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 40 ; echo)"
   cat <<EOF > postgres.env
 POSTGRES_DB=netbox
@@ -134,5 +134,6 @@ EOF
   sed -i "s/^\(SUPERUSER_API_TOKEN=\).*/\1${SUPERUSER_API_TOKEN}/" ./netbox.env
   popd >/dev/null 2>&1
 fi
+mkdir -p ./netbox/{media,postgres,redis}
 
 popd >/dev/null 2>&1

@@ -19,13 +19,12 @@ services:
   whoville:
     image: traefik/whoami:latest
     container_name: whoville
-    restart: "no"
     hostname: whoville
+    restart: "no"
 
   netbox: &netbox
     image: netboxcommunity/netbox:${VERSION-v3.3-2.2.0}
     container_name: netbox
-    restart: "no"
     hostname: netbox
     depends_on:
     - netbox-postgres
@@ -38,6 +37,7 @@ services:
     - ./netbox/reports:/etc/netbox/reports:z,ro
     - ./netbox/scripts:/etc/netbox/scripts:z,ro
     - ./netbox/media:/opt/netbox/netbox/media:z,rw
+    restart: "no"
 
   netbox-worker:
     <<: *netbox
@@ -64,16 +64,15 @@ services:
   netbox-postgres:
     image: postgres:14-alpine
     container_name: netbox-postgres
-    restart: "no"
     hostname: netbox-postgres
     env_file: ./netbox/env/postgres.env
     volumes:
     - ./netbox/postgres:/var/lib/postgresql/data:rw
+    restart: "no"
 
   netbox-redis:
     image: redis:7-alpine
     container_name: netbox-redis
-    restart: "no"
     hostname: netbox-redis
     command:
     - sh
@@ -82,23 +81,23 @@ services:
     env_file: ./netbox/env/redis.env
     volumes:
     - ./netbox/redis:/data
+    restart: "no"
 
   netbox-redis-cache:
     image: redis:7-alpine
     container_name: netbox-redis-cache
-    restart: "no"
     hostname: netbox-redis-cache
     command:
     - sh
     - -c # this is to evaluate the $REDIS_PASSWORD from the env
     - redis-server --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
     env_file: ./netbox/env/redis-cache.env
+    restart: "no"
 
   nginx-ldap:
     image: ghcr.io/mmguero/nginx-ldap:latest
     container_name: nginx-ldap
     hostname: nginx-ldap
-    restart: "no"
     environment:
       << : *process-variables
       << : *auth-variables
@@ -119,3 +118,4 @@ services:
       timeout: 15s
       retries: 3
       start_period: 120s
+    restart: "no"
