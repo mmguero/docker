@@ -5,7 +5,7 @@ ENV BASE_PATH $BASE_PATH
 
 ADD netbox/unit/ /etc/unit/
 
-RUN if [ "${BASE_PATH}" != "netbox" ]; then \
-        mkdir /opt/netbox/$BASE_PATH && \
-        mv /opt/netbox/netbox/static /opt/netbox/$BASE_PATH/static; \
+RUN if [ ! -d /"${BASE_PATH}" ]; then \
+        mkdir /"$BASE_PATH" && \
+        mv /opt/netbox/netbox/static /"$BASE_PATH"/static; \
     fi

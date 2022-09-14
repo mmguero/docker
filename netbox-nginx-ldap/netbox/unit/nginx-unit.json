@@ -11,7 +11,7 @@
         "uri": "/{{ BASE_PATH }}/static/*"
       },
       "action": {
-        "share": "/opt/netbox${uri}"
+        "share": "${uri}"
       }
     },
 
