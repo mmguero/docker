@@ -16,12 +16,6 @@ x-auth-variables: &auth-variables
 
 services:
 
-  whoville:
-    image: traefik/whoami:latest
-    container_name: whoville
-    hostname: whoville
-    restart: "no"
-
   netbox: &netbox
     image: netboxcommunity/netbox:${VERSION-v3.3-2.2.0}
     container_name: netbox
@@ -103,7 +97,6 @@ services:
       << : *auth-variables
     depends_on:
       - netbox
-      - whoville
     ports:
       - "0.0.0.0:7443:443"
     volumes:
