@@ -21,12 +21,12 @@ ENV TERM xterm
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/bin/docker-uid-gid-setup.sh
 
 RUN set -x && \
-   apk --no-cache add bash procps psmisc shadow && \
+   apk --no-cache add bash procps psmisc rsync shadow && \
    chmod 755 /usr/bin/docker-uid-gid-setup.sh && \
-   mv /usr/local/bin/* /usr/bin/ && \
-   mv /usr/local/share/* /usr/share/ && \
-   mv /usr/local/lib/* /usr/lib/ && \
-   rmdir /usr/local/bin /usr/local/share /usr/local/lib && \
+   rsync -a /usr/local/bin/ /usr/bin/ && \
+   rsync -a /usr/local/share/ /usr/share/ && \
+   rsync -a /usr/local/lib/ /usr/lib/ && \
+   rm -rf /usr/local/bin /usr/local/share /usr/local/lib && \
    ln -s /usr/bin /usr/local/bin && \
    ln -s /usr/share /usr/local/share && \
    ln -s /usr/lib /usr/local/lib
