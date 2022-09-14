@@ -33,7 +33,6 @@ services:
     - netbox-redis-cache
     - netbox-worker
     env_file: ./netbox/env/netbox.env
-    user: 'unit:root'
     volumes:
     - ./netbox/configuration:/etc/netbox/config:z,ro
     - ./netbox/reports:/etc/netbox/reports:z,ro

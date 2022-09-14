@@ -104,4 +104,35 @@ if [[ $CONFIRMATION =~ ^[Yy]$ ]]; then
   popd >/dev/null 2>&1
 fi
 
+unset CONFIRMATION
+echo ""
+read -p "(Re)generate internal passwords for netbox [Y/n]? " CONFIRMATION
+CONFIRMATION=${CONFIRMATION:-Y}
+if [[ $CONFIRMATION =~ ^[Yy]$ ]]; then
+  pushd ./netbox/env >/dev/null 2>&1
+  POSTGRES_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
+  REDIS_CACHE_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
+  REDIS_PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 16 ; echo)"
+  SECRET_KEY="$(LC_ALL=C tr -dc 'A-Za-z0-9$%&()*+,-.:;<=>?@[\]^_`{|}~' </dev/urandom | head -c 50 ; echo)"
+  SUPERUSER_API_TOKEN="$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 40 ; echo)"
+  cat <<EOF > postgres.env
+POSTGRES_DB=netbox
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_USER=netbox
+EOF
+  cat <<EOF > redis-cache.env
+REDIS_PASSWORD=${REDIS_CACHE_PASSWORD}
+EOF
+  cat <<EOF > redis.env
+REDIS_PASSWORD=${REDIS_PASSWORD}
+EOF
+  [[ ! -f ./netbox.env ]] && [[ -f ./netbox.env.example ]] && cp ./netbox.env.example ./netbox.env
+  sed -i "s/^\(DB_PASSWORD=\).*/\1${POSTGRES_PASSWORD}/" ./netbox.env
+  sed -i "s/^\(REDIS_CACHE_PASSWORD=\).*/\1${REDIS_CACHE_PASSWORD}/" ./netbox.env
+  sed -i "s/^\(REDIS_PASSWORD=\).*/\1${REDIS_PASSWORD}/" ./netbox.env
+  sed -i "s/^\(SECRET_KEY=\).*/\1${SECRET_KEY}/" ./netbox.env
+  sed -i "s/^\(SUPERUSER_API_TOKEN=\).*/\1${SUPERUSER_API_TOKEN}/" ./netbox.env
+  popd >/dev/null 2>&1
+fi
+
 popd >/dev/null 2>&1

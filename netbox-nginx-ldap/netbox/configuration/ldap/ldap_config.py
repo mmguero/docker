@@ -15,6 +15,7 @@ def _read_secret(secret_name, default=None):
         with f:
             return f.readline().strip()
 
+
 # Import and return the group type based on string name
 def _import_group_type(group_type_name):
     mod = import_module('django_auth_ldap.config')
@@ -23,13 +24,12 @@ def _import_group_type(group_type_name):
     except:
         return None
 
+
 # Server URI
 AUTH_LDAP_SERVER_URI = environ.get('AUTH_LDAP_SERVER_URI', '')
 
 # The following may be needed if you are binding to Active Directory.
-AUTH_LDAP_CONNECTION_OPTIONS = {
-    ldap.OPT_REFERRALS: 0
-}
+AUTH_LDAP_CONNECTION_OPTIONS = {ldap.OPT_REFERRALS: 0}
 
 # Set the DN and password for the NetBox service account.
 AUTH_LDAP_BIND_DN = environ.get('AUTH_LDAP_BIND_DN', '')
@@ -49,17 +49,16 @@ LDAP_IGNORE_CERT_ERRORS = environ.get('LDAP_IGNORE_CERT_ERRORS', 'False').lower(
 AUTH_LDAP_USER_SEARCH_BASEDN = environ.get('AUTH_LDAP_USER_SEARCH_BASEDN', '')
 AUTH_LDAP_USER_SEARCH_ATTR = environ.get('AUTH_LDAP_USER_SEARCH_ATTR', 'sAMAccountName')
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    AUTH_LDAP_USER_SEARCH_BASEDN,
-    ldap.SCOPE_SUBTREE,
-    "(" + AUTH_LDAP_USER_SEARCH_ATTR + "=%(user)s)"
+    AUTH_LDAP_USER_SEARCH_BASEDN, ldap.SCOPE_SUBTREE, "(" + AUTH_LDAP_USER_SEARCH_ATTR + "=%(user)s)"
 )
 
 # This search ought to return all groups to which the user belongs. django_auth_ldap uses this to determine group
 # heirarchy.
 AUTH_LDAP_GROUP_SEARCH_BASEDN = environ.get('AUTH_LDAP_GROUP_SEARCH_BASEDN', '')
 AUTH_LDAP_GROUP_SEARCH_CLASS = environ.get('AUTH_LDAP_GROUP_SEARCH_CLASS', 'group')
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(AUTH_LDAP_GROUP_SEARCH_BASEDN, ldap.SCOPE_SUBTREE,
-                                    "(objectClass=" + AUTH_LDAP_GROUP_SEARCH_CLASS + ")")
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    AUTH_LDAP_GROUP_SEARCH_BASEDN, ldap.SCOPE_SUBTREE, "(objectClass=" + AUTH_LDAP_GROUP_SEARCH_CLASS + ")"
+)
 AUTH_LDAP_GROUP_TYPE = _import_group_type(environ.get('AUTH_LDAP_GROUP_TYPE', 'GroupOfNamesType'))
 
 # Define a group required to login.
@@ -72,7 +71,7 @@ if AUTH_LDAP_REQUIRE_GROUP is not None:
     AUTH_LDAP_USER_FLAGS_BY_GROUP = {
         "is_active": environ.get('AUTH_LDAP_REQUIRE_GROUP_DN', ''),
         "is_staff": environ.get('AUTH_LDAP_IS_ADMIN_DN', ''),
-        "is_superuser": environ.get('AUTH_LDAP_IS_SUPERUSER_DN', '')
+        "is_superuser": environ.get('AUTH_LDAP_IS_SUPERUSER_DN', ''),
     }
 
 # For more granular permissions, we can map LDAP groups to Django groups.
@@ -86,5 +85,5 @@ AUTH_LDAP_CACHE_TIMEOUT = int(environ.get('AUTH_LDAP_CACHE_TIMEOUT', 3600))
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": environ.get('AUTH_LDAP_ATTR_FIRSTNAME', 'givenName'),
     "last_name": environ.get('AUTH_LDAP_ATTR_LASTNAME', 'sn'),
-    "email": environ.get('AUTH_LDAP_ATTR_MAIL', 'mail')
+    "email": environ.get('AUTH_LDAP_ATTR_MAIL', 'mail'),
 }
