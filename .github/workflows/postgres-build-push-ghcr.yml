@@ -1,21 +1,21 @@
-name: mattermost-build-push-ghcr
+name: postgres-build-push-ghcr
 
 on:
   push:
     branches:
       - 'master'
     paths:
-      - 'mattermost/**'
+      - 'postgres/**'
   workflow_dispatch:
   repository_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mattermost
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/postgres
   IMAGE_TAG: latest
   IMAGE_PLATFORM: linux/amd64
-  REPO_CONTEXT: ./mattermost
-  REPO_CONTAINERFILE: ./mattermost/docker/mattermost.Dockerfile
+  REPO_CONTEXT: ./postgres
+  REPO_CONTAINERFILE: ./postgres/Dockerfile
 
 jobs:
   buildah:

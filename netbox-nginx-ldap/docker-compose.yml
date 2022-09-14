@@ -62,7 +62,7 @@ services:
     - /opt/netbox/housekeeping.sh
 
   netbox-postgres:
-    image: postgres:14-alpine
+    image: ghcr.io/mmguero/postgres:14-alpine
     container_name: netbox-postgres
     hostname: netbox-postgres
     env_file: ./netbox/env/postgres.env
