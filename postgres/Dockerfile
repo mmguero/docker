@@ -20,7 +20,8 @@ ENV TERM xterm
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/bin/docker-uid-gid-setup.sh
 
-RUN apk --no-cache add bash procps psmisc shadow && \
+RUN set -x && \
+   apk --no-cache add bash procps psmisc shadow && \
    chmod 755 /usr/bin/docker-uid-gid-setup.sh && \
    mv /usr/local/bin/* /usr/bin/ && \
    mv /usr/local/share/* /usr/share/ && \
