@@ -17,7 +17,10 @@ x-auth-variables: &auth-variables
 services:
 
   netbox: &netbox
-    image: netboxcommunity/netbox:${VERSION-v3.3-2.2.0}
+    image: ghcr.io/mmguero/netbox:latest
+    build:
+      context: .
+      dockerfile: netbox/Dockerfile
     container_name: netbox
     hostname: netbox
     depends_on:
@@ -28,9 +31,10 @@ services:
     env_file: ./netbox/env/netbox.env
     volumes:
     - ./netbox/configuration:/etc/netbox/config:z,ro
+    - ./netbox/media:/opt/netbox/netbox/media:z,rw
     - ./netbox/reports:/etc/netbox/reports:z,ro
     - ./netbox/scripts:/etc/netbox/scripts:z,ro
-    - ./netbox/media:/opt/netbox/netbox/media:z,rw
+    - ./netbox/unit:/etc/unit:z,ro
     restart: "no"
 
   netbox-worker:
