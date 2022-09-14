@@ -12,7 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/postgres
-  IMAGE_TAG: latest
+  IMAGE_TAG: 14-alpine
   IMAGE_PLATFORM: linux/amd64
   REPO_CONTEXT: ./postgres
   REPO_CONTAINERFILE: ./postgres/Dockerfile
