@@ -1,4 +1,11 @@
 {
+
+  "settings": {
+    "http": {
+      "discard_unsafe_fields": false
+    }
+  },
+
   "listeners": {
     "*:8080": {
       "pass": "routes"
