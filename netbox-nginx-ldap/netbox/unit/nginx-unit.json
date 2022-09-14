@@ -8,10 +8,10 @@
   "routes": [
     {
       "match": {
-        "uri": "/{{ BASE_PATH }}/static/*"
+        "uri": "/assets/static/*"
       },
       "action": {
-        "share": "${uri}"
+        "share": "/opt/netbox/netbox${uri}"
       }
     },
 
