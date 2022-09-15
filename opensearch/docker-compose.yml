@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   opensearch-node1:
-    image: opensearchproject/opensearch:2.2.1
+    image: opensearchproject/opensearch:2.3.0
     container_name: opensearch-node1
     environment:
       - "logger.level=WARN"
@@ -50,7 +50,7 @@ services:
       - default
 
   opensearch-node2:
-    image: opensearchproject/opensearch:2.2.1
+    image: opensearchproject/opensearch:2.3.0
     container_name: opensearch-node2
     environment:
       - "logger.level=WARN"
@@ -99,7 +99,7 @@ services:
       - default
 
   opensearch-node3:
-    image: opensearchproject/opensearch:2.2.1
+    image: opensearchproject/opensearch:2.3.0
     container_name: opensearch-node3
     environment:
       - "logger.level=WARN"
@@ -148,7 +148,7 @@ services:
       - default
 
   opensearch-node4:
-    image: opensearchproject/opensearch:2.2.1
+    image: opensearchproject/opensearch:2.3.0
     container_name: opensearch-node4
     environment:
       - "logger.level=WARN"
@@ -197,7 +197,7 @@ services:
       - default
 
   # opensearch-dashboards:
-  #   image: opensearchproject/opensearch-dashboards:2.2.1
+  #   image: opensearchproject/opensearch-dashboards:2.3.0
   #   container_name: opensearch-dashboards
   #   ports:
   #     - 0.0.0.0:5601:5601
