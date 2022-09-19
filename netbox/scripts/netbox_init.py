@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import logging
 import json
+import logging
 import os
 import pynetbox
 import sys
 
-import mmguero
+from slugify import slugify
 
 ###################################################################################################
 args = None
@@ -89,6 +89,16 @@ def main():
         required=True,
         help="Netbox API Token",
     )
+    parser.add_argument(
+        '-s',
+        '--site',
+        dest='netboxSites',
+        nargs='*',
+        type=str,
+        default=[],
+        required=False,
+        help="Site(s) to create",
+    )
     try:
         parser.error = parser.exit
         args = parser.parse_args()
@@ -143,6 +153,23 @@ def main():
             nb.users.permissions.create(permConfig)
 
     logging.debug([x.name for x in nb.users.permissions.all()])
+
+    # ###### PERMISSIONS ###########################################################################################
+    # get existing sites
+    sitesPreExisting = [x.name for x in nb.dcim.sites.all()]
+    logging.debug(sitesPreExisting)
+
+    # create sites that don't already exist
+    for siteName in args.netboxSites:
+        if siteName not in sitesPreExisting:
+            nb.dcim.sites.create(
+                {
+                    "name": siteName,
+                    "slug": slugify(siteName),
+                },
+            )
+
+    logging.debug([f'{x.name} ({x.slug})' for x in nb.dcim.sites.all()])
 
 
 ###################################################################################################
