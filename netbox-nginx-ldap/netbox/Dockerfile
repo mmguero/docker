@@ -35,6 +35,8 @@ RUN apt-get -q update && \
     groupadd --gid ${DEFAULT_GID} ${PUSER} && \
     useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} ${PUSER} && \
     usermod -a -G tty ${PUSER} && \
+    mkdir -p /opt/unit && \
+    chown -R $PUSER:$PGROUP /etc/netbox /opt/unit /opt/netbox && \
     if [ -n "${BASE_PATH}" ] && [ "${BASE_PATH}" != "netbox" ]; then \
         mkdir /opt/netbox/netbox/$BASE_PATH && \
         mv /opt/netbox/netbox/static /opt/netbox/netbox/$BASE_PATH/static; \
