@@ -1,4 +1,5 @@
 auth.env
+.envrc
 /nginx/certs
 /nginx/ca-trust
 /nginx/htpasswd

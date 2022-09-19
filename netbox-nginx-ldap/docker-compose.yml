@@ -1,8 +1,8 @@
 version: '3.7'
 
 x-process-variables: &process-variables
-  PUID : 0
-  PGID : 0
+  PUID : 1000
+  PGID : 1000
 
 x-auth-variables: &auth-variables
   NGINX_BASIC_AUTH : 'false'
@@ -16,7 +16,7 @@ x-auth-variables: &auth-variables
 
 services:
 
-  netbox: &netbox
+  netbox:
     image: ghcr.io/mmguero/netbox:latest
     build:
       context: .
@@ -27,7 +27,8 @@ services:
     - netbox-postgres
     - netbox-redis
     - netbox-redis-cache
-    - netbox-worker
+    environment:
+      << : *process-variables
     env_file: ./netbox/env/netbox.env
     volumes:
     - ./netbox/configuration:/etc/netbox/config:z,ro
@@ -36,61 +37,61 @@ services:
     - ./netbox/scripts:/etc/netbox/scripts:z,ro
     - ./netbox/unit:/etc/unit:z,ro
     restart: "no"
-
-  netbox-worker:
-    <<: *netbox
-    container_name: netbox-worker
-    hostname: netbox-worker
-    depends_on:
-    - netbox-redis
-    - netbox-postgres
-    command:
-    - /opt/netbox/venv/bin/python
-    - /opt/netbox/netbox/manage.py
-    - rqworker
-
-  netbox-housekeeping:
-    <<: *netbox
-    container_name: netbox-housekeeping
-    hostname: netbox-housekeeping
-    depends_on:
-    - netbox-redis
-    - netbox-postgres
-    command:
-    - /opt/netbox/housekeeping.sh
+    stdin_open: false
+    tty: true
+    networks:
+      - default
 
   netbox-postgres:
-    image: postgres:14-alpine
+    image: ghcr.io/mmguero/postgres:14-alpine
     container_name: netbox-postgres
     hostname: netbox-postgres
+    environment:
+      << : *process-variables
     env_file: ./netbox/env/postgres.env
     volumes:
     - ./netbox/postgres:/var/lib/postgresql/data:rw
     restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+      - default
 
   netbox-redis:
-    image: redis:7-alpine
+    image: ghcr.io/mmguero/redis:7-alpine
     container_name: netbox-redis
     hostname: netbox-redis
     command:
     - sh
     - -c
     - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD
+    environment:
+      << : *process-variables
     env_file: ./netbox/env/redis.env
     volumes:
     - ./netbox/redis:/data
     restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+      - default
 
   netbox-redis-cache:
-    image: redis:7-alpine
+    image: ghcr.io/mmguero/redis:7-alpine
     container_name: netbox-redis-cache
     hostname: netbox-redis-cache
     command:
     - sh
     - -c
     - redis-server --requirepass $$REDIS_PASSWORD
+    environment:
+      << : *process-variables
     env_file: ./netbox/env/redis-cache.env
     restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+      - default
 
   nginx-ldap:
     image: ghcr.io/mmguero/nginx-ldap:latest
@@ -117,3 +118,11 @@ services:
       retries: 3
       start_period: 120s
     restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+      - default
+
+networks:
+  default:
+    external: false
