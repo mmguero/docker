@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'netbox-nginx-ldap/**'
+      - 'netbox/**'
   workflow_dispatch:
   repository_dispatch:
 
@@ -14,8 +14,8 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/netbox
   IMAGE_TAG: latest
   IMAGE_PLATFORM: linux/amd64
-  REPO_CONTEXT: ./netbox-nginx-ldap
-  REPO_CONTAINERFILE: ./netbox-nginx-ldap/netbox/Dockerfile
+  REPO_CONTEXT: ./netbox
+  REPO_CONTAINERFILE: ./netbox/netbox/Dockerfile
 
 jobs:
   buildah:
