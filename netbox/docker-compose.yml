@@ -31,11 +31,11 @@ services:
       << : *process-variables
     env_file: ./netbox/env/netbox.env
     volumes:
-    - ./netbox/configuration:/etc/netbox/config:z,ro
-    - ./netbox/media:/opt/netbox/netbox/media:z,rw
-    - ./netbox/reports:/etc/netbox/reports:z,ro
-    - ./netbox/scripts:/etc/netbox/scripts:z,ro
-    - ./netbox/unit:/etc/unit:z,ro
+    - ./netbox/configuration:/etc/netbox/config:ro
+    - ./netbox/media:/opt/netbox/netbox/media:rw
+    - ./netbox/reports:/etc/netbox/reports:ro
+    - ./netbox/scripts:/etc/netbox/scripts:ro
+    - ./netbox/unit:/etc/unit:ro
     restart: "no"
     stdin_open: false
     tty: true

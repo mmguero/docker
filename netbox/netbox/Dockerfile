@@ -25,6 +25,7 @@ RUN apt-get -q update && \
       iputils-ping \
       procps \
       psmisc \
+      python3-psycopg2 \
       supervisor \
       tini \
       vim-tiny && \
