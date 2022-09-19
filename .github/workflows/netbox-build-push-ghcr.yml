@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
     paths:
-      - 'netbox/**'
+      - 'netbox-nginx-ldap/**'
   workflow_dispatch:
   repository_dispatch:
 
