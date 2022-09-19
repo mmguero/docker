@@ -39,6 +39,12 @@ services:
     restart: "no"
     stdin_open: false
     tty: true
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "http://localhost:8080/assets/api/" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
     networks:
       - default
 
@@ -54,6 +60,12 @@ services:
     restart: "no"
     stdin_open: false
     tty: true
+    healthcheck:
+      test: ["CMD", "pg_isready" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
     networks:
       - default
 
@@ -73,6 +85,12 @@ services:
     restart: "no"
     stdin_open: false
     tty: true
+    healthcheck:
+      test: ["CMD", "sh", "-c", "pidof redis-server || exit 1" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
     networks:
       - default
 
@@ -90,6 +108,12 @@ services:
     restart: "no"
     stdin_open: false
     tty: true
+    healthcheck:
+      test: ["CMD", "sh", "-c", "pidof redis-server || exit 1" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
     networks:
       - default
 
