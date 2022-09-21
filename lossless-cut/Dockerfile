@@ -43,7 +43,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       pulseaudio-utils && \
     mkdir -p /opt && \
     cd /opt && \
-      curl -sSL -J -O "https://github.com/$(curl -sSL 'https://github.com/mifi/lossless-cut/releases/latest' | grep '/LosslessCut-linux-x64.tar.bz2' | sed 's/.*href="//' | sed 's/".*//')" && \
+      curl -sSL -J -O "https://github.com/mifi/lossless-cut/releases/latest/download/LosslessCut-linux-x64.tar.bz2" && \
       tar xvf ./LosslessCut-linux-x64.tar.bz2 && \
       rm -f ./LosslessCut-linux-x64.tar.bz2 && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove curl ca-certificates && \
