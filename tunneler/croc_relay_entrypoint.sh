@@ -11,7 +11,7 @@ else
 fi
 
 if [ -n "$CROC_PASS" ]; then
-  /usr/local/bin/croc --pass "$CROC_PASS" relay --ports "$PORTS"
+  /usr/bin/croc --pass "$CROC_PASS" relay --ports "$PORTS"
 else
-  /usr/local/bin/croc relay --ports "$PORTS"
+  /usr/bin/croc relay --ports "$PORTS"
 fi
