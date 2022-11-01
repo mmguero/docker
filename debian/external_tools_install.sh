@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 set -x
@@ -6,8 +6,8 @@ set -x
 DEB_ARCH=$(dpkg --print-architecture)
 LINUX_CPU=$(uname -m)
 
-if [ $DEB_ARCH = arm* ]; then
-  if [ $LINUX_CPU = aarch64 ]; then
+if [[ $DEB_ARCH == arm* ]]; then
+  if [[ $LINUX_CPU == aarch64 ]]; then
     STARSHIP_RELEASE_FILENAME=starship-aarch64-unknown-linux-musl.tar.gz
   else
     STARSHIP_RELEASE_FILENAME=starship-arm-unknown-linux-musleabihf.tar.gz
