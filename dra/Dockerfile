@@ -28,6 +28,4 @@ RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       usermod -a -G tty ${PUSER} && \
       chmod 755 /usr/local/bin/docker-uid-gid-setup.sh
 
-ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
-
-CMD ["/dra"]
+ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/dra"]
