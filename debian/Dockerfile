@@ -13,6 +13,7 @@ ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gi
 
 RUN export DEB_ARCH=$(dpkg --print-architecture) && \
     export LINUX_CPU=$(uname -m) && \
+    echo "$DEB_ARCH on $LINUX_CPU" && \
     sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
     echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get -q update && \
