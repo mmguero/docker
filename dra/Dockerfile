@@ -1,5 +1,3 @@
-# syntax = docker/dockerfile:experimental
-
 FROM rust:latest as builder
 
 ENV USER root
@@ -8,10 +6,7 @@ RUN git clone https://github.com/devmatteini/dra /usr/src/dra
 
 WORKDIR /usr/src/dra
 
-RUN --security=insecure mkdir -p /root/.cargo && \
-    chmod 777 /root/.cargo && \
-    mount -t tmpfs none /root/.cargo && \
-    make release && \
+RUN make release && \
     chmod 755 /usr/src/dra/target/release/dra
 
 FROM debian:stable-slim
