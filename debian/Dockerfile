@@ -41,7 +41,9 @@ RUN export DEB_ARCH=$(dpkg --print-architecture) && \
         ripgrep \
         sudo \
         tini \
+        unzip \
         vim-tiny \
+        xz-utils \
         zlib1g && \
     if [ $DEB_ARCH = arm* ]; then \
       if [ $LINUX_CPU = aarch64 ]; then \
