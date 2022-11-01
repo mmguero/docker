@@ -1,17 +1,17 @@
 ---
-name: Docker Build
+name: dra-build-push-ghcr
 
 on:
   push:
     branches:
       - 'master'
     paths:
-      - 'api/**'
+      - 'dra/**'
       - '.github/workflows/dra-build-push-ghcr.yml'
       - 'docker-entrypoint.sh'
   pull_request:
     paths:
-      - 'api/**'
+      - 'dra/**'
       - '.github/workflows/dra-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:

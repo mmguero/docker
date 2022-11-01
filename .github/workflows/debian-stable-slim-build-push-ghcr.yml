@@ -1,17 +1,17 @@
 ---
-name: Docker Build
+name: debian-stable-slim-build-push-ghcr
 
 on:
   push:
     branches:
       - 'master'
     paths:
-      - 'api/**'
+      - 'debian/**'
       - '.github/workflows/debian-stable-slim-build-push-ghcr.yml'
       - 'docker-entrypoint.sh'
   pull_request:
     paths:
-      - 'api/**'
+      - 'debian/**'
       - '.github/workflows/debian-stable-slim-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
