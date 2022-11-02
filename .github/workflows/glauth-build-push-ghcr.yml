@@ -52,7 +52,7 @@ jobs:
     with:
       context: ./glauth
       file: ./glauth/plugins.Dockerfile
-      cancel-previous-runs: true
+      cancel-previous-runs: false
       dockerhub-enable: false
       ghcr-enable: true
       image-names: |
