@@ -18,8 +18,8 @@ on:
     - cron: '0 12 15 * *'
 
 jobs:
-  build-debian-image:
-    name: Call Docker Build debian
+  build-image:
+    name: Call Docker Build
     uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
     permissions:
       contents: read
@@ -34,4 +34,10 @@ jobs:
       ghcr-enable: true
       image-names: |
         ghcr.io/${{ github.repository_owner }}/debian
+      tag-rules: |
+        type=raw,value=latest,enable={{is_default_branch}}
+        type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
+        type=ref,event=pr
+        type=ref,event=branch
+        type=raw,value=gha-${{ github.run_id }}
       platforms: linux/amd64,linux/arm64,linux/arm/v7

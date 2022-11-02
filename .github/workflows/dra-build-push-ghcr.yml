@@ -8,7 +8,6 @@ on:
     paths:
       - 'dra/**'
       - '.github/workflows/dra-build-push-ghcr.yml'
-      - 'docker-entrypoint.sh'
   pull_request:
     paths:
       - 'dra/**'
@@ -16,30 +15,29 @@ on:
   workflow_dispatch:
   repository_dispatch:
   schedule:
-    # re-run montly to keep image fresh with upstream base images
     - cron: '0 12 15 * *'
 
 jobs:
-
-  build-dra-image:
-
-    # use Reusable Workflows
-    # https://docs.github.com/en/actions/learn-github-actions/reusing-workflows
-    name: Call Docker Build dra
-
-    # my fork of bretfisher/docker-build-workflow
+  build-image:
+    name: Call Docker Build
     uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
-
     permissions:
       contents: read
-      packages: write # needed to push docker image to ghcr.io
-      pull-requests: write # needed to create and update comments in PRs
-
+      actions: write
+      packages: write
+      pull-requests: write
     with:
       context: ./dra
       file: ./dra/Dockerfile
+      cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
       image-names: |
         ghcr.io/${{ github.repository_owner }}/dra
+      tag-rules: |
+        type=raw,value=latest,enable={{is_default_branch}}
+        type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
+        type=ref,event=pr
+        type=ref,event=branch
+        type=raw,value=gha-${{ github.run_id }}
       platforms: linux/amd64
