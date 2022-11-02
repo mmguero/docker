@@ -19,28 +19,27 @@ on:
 
 jobs:
   build-debian-image:
-    steps:
-      -
-        name: Cancel previous run in progress
-        id: cancel-previous-runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          ignore_sha: true
-          all_but_latest: true
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: Build and push docker images
-        id: build-and-push
-        uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
-        permissions:
-          contents: read
-          packages: write
-          pull-requests: write
-        with:
-          context: ./debian
-          file: ./debian/Dockerfile
-          dockerhub-enable: false
-          ghcr-enable: true
-          image-names: |
-            ghcr.io/${{ github.repository_owner }}/debian
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+    -
+      name: Cancel previous run in progress
+      id: cancel-previous-runs
+      uses: styfle/cancel-workflow-action@0.11.0
+      with:
+        ignore_sha: true
+        all_but_latest: true
+        access_token: ${{ secrets.GITHUB_TOKEN }}
+    -
+      name: Build and push docker images
+      id: build-and-push
+      uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+      permissions:
+        contents: read
+        packages: write
+        pull-requests: write
+      with:
+        context: ./debian
+        file: ./debian/Dockerfile
+        dockerhub-enable: false
+        ghcr-enable: true
+        image-names: |
+          ghcr.io/${{ github.repository_owner }}/debian
+        platforms: linux/amd64,linux/arm64,linux/arm/v7
