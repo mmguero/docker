@@ -1,5 +1,5 @@
 ---
-name: yt-dlp-build-push-ghcr
+name: ytdlp-build-push-ghcr
 
 on:
   push:
