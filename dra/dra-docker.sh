@@ -9,7 +9,7 @@ else
   CONTAINER_PGID=$(id -g)
 fi
 
-TEMP_DIR="$(mktemp -d -p "$(pwd)" -t dra.XXXXXXXXXX)"
+TEMP_DIR="$(TMPDIR="$(pwd)" mktemp -d -t dra.XXXXXXXXXX)"
 TEMP_DIR_BASENAME="$(basename "$TEMP_DIR")"
 
 function finish {
