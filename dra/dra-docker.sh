@@ -9,11 +9,18 @@ else
   CONTAINER_PGID=$(id -g)
 fi
 
-DIR="$(pwd)"
+TEMP_DIR=$(mktemp -d -t dra.XXXXXXXXXX)
+
+function finish {
+  rm -rf "$TEMP_DIR"
+}
+trap finish EXIT
 
 $ENGINE run -i -t --rm \
   -e PUID=$CONTAINER_PUID \
   -e PGID=$CONTAINER_PGID \
-  -v "$DIR:$DIR:rw" \
-  -w "$DIR" \
+  -v "$TEMP_DIR:$TEMP_DIR:rw" \
+  -w "$TEMP_DIR" \
   ghcr.io/mmguero/dra "$@"
+
+mv "$TEMP_DIR"/* ./ >/dev/null 2>&1 || true
