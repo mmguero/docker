@@ -1,39 +1,40 @@
 version: '3'
 
 x-process-variables: &process-variables
-  PUID : 0
-  PGID : 0
-  PUSER_PRIV_DROP : 'false'
+  PUID : 1000
+  PGID : 1000
+  PUSER_PRIV_DROP : 'true'
 
 services:
-  # ctfd:
-  #   image: ctfd/ctfd:3.5.0
-  #   restart: unless-stopped
-  #   ports:
-  #     - "127.0.0.1:8000:8000"
-  #   environment:
-  #     UPLOAD_FOLDER : '/var/uploads'
-  #     DATABASE_URL : 'mysql+pymysql://ctfd:Correct_Horse_Battery_Staple@db/ctfd'
-  #     REDIS_URL : 'redis://cache:6379'
-  #     WORKERS : 5
-  #     LOG_FOLDER : '/var/log/CTFd'
-  #     ACCESS_LOG : '-'
-  #     ERROR_LOG : '-'
-  #     REVERSE_PROXY : 'true'
-  #     SECRET_KEY : 'Mistake_After_Childhood_Roar'
-  #   volumes:
-  #     - ./data/CTFd/logs:/var/log/CTFd:rw
-  #     - ./data/CTFd/uploads:/var/uploads:rw
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - default
-  #   labels:
-  #     - "traefik.enable=false"
-  #     # - "traefik.http.routers.ctfd.rule=Host(`example.org`,`www.example.org`)"
-  #     # - "traefik.http.routers.ctfd.entrypoints=websecure"
-  #     # - "traefik.http.routers.ctfd.tls.certresolver=myresolver"
-  #     # - "traefik.http.services.ctfd.loadbalancer.server.port=8000"
+  ctfd:
+    image: ghcr.io/mmguero/ctfd:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      << : *process-variables
+      UPLOAD_FOLDER : '/var/uploads'
+      DATABASE_URL : 'mysql+pymysql://ctfd:Correct_Horse_Battery_Staple@db/ctfd'
+      REDIS_URL : 'redis://cache:6379'
+      WORKERS : 5
+      LOG_FOLDER : '/var/log/CTFd'
+      ACCESS_LOG : '-'
+      ERROR_LOG : '-'
+      REVERSE_PROXY : 'true'
+      SECRET_KEY : 'Mistake_After_Childhood_Roar'
+    volumes:
+      - ./data/CTFd/logs:/var/log/CTFd:rw
+      - ./data/CTFd/uploads:/var/uploads:rw
+    depends_on:
+      - db
+    networks:
+      - default
+    labels:
+      - "traefik.enable=false"
+      # - "traefik.http.routers.ctfd.rule=Host(`example.org`,`www.example.org`)"
+      # - "traefik.http.routers.ctfd.entrypoints=websecure"
+      # - "traefik.http.routers.ctfd.tls.certresolver=myresolver"
+      # - "traefik.http.services.ctfd.loadbalancer.server.port=8000"
 
   db:
     image: ghcr.io/mmguero/mariadb:latest
@@ -48,7 +49,7 @@ services:
       - ./data/mysql:/var/lib/mysql:rw
     networks:
       - default
-    command: [mysqld, --user=root, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+    command: [mysqld, --user=mysql, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
     image: ghcr.io/mmguero/redis:latest
