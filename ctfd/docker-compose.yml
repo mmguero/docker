@@ -1,6 +1,9 @@
 version: '3'
 
 x-process-variables: &process-variables
+  # If you're using podman (which does the UID/GUID mapping for you)
+  # change PUID/PGID to 0, PUSER_PRIV_DROP to 'false' and
+  # '--user=mysql' to '--user=root' in the ctfd command section.
   PUID : 1000
   PGID : 1000
   PUSER_PRIV_DROP : 'true'
