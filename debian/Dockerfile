@@ -15,11 +15,15 @@ COPY --chmod=755 external_tools_install.sh /usr/local/bin/
 RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
     echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get -q update && \
+    apt-get install -q -y -t bullseye-backports --no-install-recommends \
+        fasttrack-archive-keyring && \
+    echo "deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get install -q -y -t bullseye-backports --no-install-recommends \
         bash \
         bat \
         bc \
+        bzip2 \
         ca-certificates \
         curl \
         direnv \
@@ -32,17 +36,20 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         iputils-ping \
         jq \
         less \
+        lz4 \
         moreutils \
         peco \
         procps \
         psmisc \
         pv \
+        p7zip \
         ripgrep \
         sudo \
         tini \
         unzip \
         vim-tiny \
         xz-utils \
+        zip \
         zlib1g && \
     sed -i "s/set[[:space:]]*compatible/set nocompatible/g" /etc/vim/vimrc.tiny && \
     groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
