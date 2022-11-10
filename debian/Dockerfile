@@ -42,12 +42,11 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         procps \
         psmisc \
         pv \
-        p7zip \
-        rar \
+        p7zip-full \
+        p7zip-rar \
         ripgrep \
         sudo \
         tini \
-        unrar \
         unzip \
         vim-tiny \
         xz-utils \
