@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:bullseye-slim
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
@@ -43,9 +43,11 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         psmisc \
         pv \
         p7zip \
+        rar \
         ripgrep \
         sudo \
         tini \
+        unrar \
         unzip \
         vim-tiny \
         xz-utils \
