@@ -29,14 +29,23 @@ RUN apk update --no-cache && \
     apk upgrade --no-cache && \
     apk --no-cache add --update \
       bash \
+      ca-certificates \
       libcap \
       openssh-client \
       openssh-server \
+      openssl \
       shadow && \
     addgroup -g ${DEFAULT_GID} ${PGROUP} && \
-      adduser -D -H -u ${DEFAULT_UID} -h /nonexistent -s /sbin/nologin -G ${PGROUP} -g ${PUSER} ${PUSER} && \
-    chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
+      adduser -D -u ${DEFAULT_UID} -h /home/${PUSER} -s /sbin/nologin -G ${PGROUP} -g ${PUSER} ${PUSER} && \
+    mkdir -p /home/${PUSER}/.ssh /home/${PUSER}/certs /home/${PUSER}/db && \
+      chmod 700 /home/${PUSER}/.ssh /home/${PUSER}/certs /home/${PUSER}/db && \
+      touch /home/${PUSER}/.ssh/authorized_keys && \
+      chmod 600 /home/${PUSER}/.ssh/authorized_keys && \
+    chown ${PUSER}:${PGROUP} /home/${PUSER}/.ssh /home/${PUSER}/.ssh/authorized_keys && \
     chown root:${PGROUP} /boringproxy && \
-      setcap 'CAP_NET_BIND_SERVICE+eip' /boringproxy
+      setcap 'CAP_NET_BIND_SERVICE+eip' /boringproxy && \
+    chmod 755 /usr/local/bin/docker-uid-gid-setup.sh
+
+WORKDIR /home/${PUSER}/db
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/boringproxy"]
