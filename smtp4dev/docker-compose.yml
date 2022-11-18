@@ -21,9 +21,9 @@ services:
     container_name: stunnel-smtp
     restart: unless-stopped
     ports:
-      - "3025:3025"
+      - "0.0.0.0:3025:3025"
     volumes:
-      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/smtp.pem:/etc/stunnel/stunnel.pem:ro
       - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
     environment:
       CLIENT : "no"
@@ -39,9 +39,9 @@ services:
     container_name: stunnel-imap
     restart: unless-stopped
     ports:
-      - "3143:3143"
+      - "0.0.0.0:3143:3143"
     volumes:
-      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/smtp.pem:/etc/stunnel/stunnel.pem:ro
       - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
     environment:
       CLIENT : "no"
@@ -57,9 +57,9 @@ services:
     container_name: stunnel-http
     restart: unless-stopped
     ports:
-      - "3443:3443"
+      - "0.0.0.0:3443:3443"
     volumes:
-      - ./certs/server.pem:/etc/stunnel/stunnel.pem:ro
+      - ./certs/smtp.pem:/etc/stunnel/stunnel.pem:ro
       - ./certs/ca.crt:/etc/stunnel/ca.crt:ro
     environment:
       CLIENT : "no"
