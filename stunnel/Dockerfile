@@ -7,4 +7,5 @@ LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='ghcr.io/mmguero/stunnel'
 LABEL org.opencontainers.image.description='Dockerized stunnel'
 
-RUN sed -i '/cert =.*/i CAfile = /etc/stunnel/ca.crt' /entrypoint.sh
+RUN apk --no-cache add openssl && \
+    sed -i '/cert =.*/i CAfile = /etc/stunnel/ca.crt' /entrypoint.sh
