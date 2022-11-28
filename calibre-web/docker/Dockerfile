@@ -21,7 +21,8 @@ RUN apt-get update && \
       python3-setuptools \
       python3-wheel \
       xvfb \
-      xdg-utils && \
+      xdg-utils \
+      xz-utils && \
     pip3 install filemagic ebooklib Flask-SimpleLDAP python-ldap goodreads python-Levenshtein lxml Pillow rarfile && \
     bash -c 'curl https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | python3 -c "import sys; main=lambda:sys.stderr.write(\"Download failed\n\"); exec(sys.stdin.read()); main()"' && \
     ln -rs /opt/calibre/lib/libcalibre-launcher.so /usr/local/lib/libcalibre-launcher.so && \

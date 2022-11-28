@@ -53,6 +53,7 @@ RUN apt-get update && \
       tk8.6-blt2.5 \
       xdg-utils \
       xvfb \
+      xz-utils \
       zlib1g-dev && \
     pip3 install \
       filemagic \
