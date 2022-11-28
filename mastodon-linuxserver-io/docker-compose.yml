@@ -4,6 +4,9 @@ services:
 
   mastodon:
     image: ghcr.io/mmguero/mastodon:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: mastodon
     env_file: ./env.production
     environment:
@@ -11,6 +14,7 @@ services:
       - PGID=0
       - TZ=America/Denver
       - LOCAL_DOMAIN=mastodon.example.com
+      # - ALTERNATE_DOMAINS=127.0.0.1,localhost
     volumes:
       - ./config:/config
     ports:
@@ -41,8 +45,6 @@ services:
       options:
         max-size: 10m
         max-file: "3"
-    ports:
-      - "127.0.0.1:5432:5432"
     networks:
       - default
     volumes:

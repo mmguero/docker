@@ -7,10 +7,5 @@ LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='ghcr.io/mmguero/mastodon'
 LABEL org.opencontainers.image.description='Dockerized Mastodon'
 
-COPY ./mastodon_lsio_nginx_conf_no_https.patch /tmp/mastodon_lsio_nginx_conf_no_https.patch
-
-RUN apk add --no-cache --virtual .build-deps patch && \
-    cd /app/www/dist && \
-    patch -p 1 -r - --no-backup-if-mismatch < /tmp/mastodon_lsio_nginx_conf_no_https.patch && \
-    rm /tmp/mastodon_lsio_nginx_conf_no_https.patch && \
-    apk del .build-deps
+RUN sed -i -n '/^[[:space:]]*listen.*[::]/!p' /defaults/nginx/site-confs/default.conf.sample && \
+    sed -i -n '/^[[:space:]]*listen.*[::]/!p' /app/www/dist/nginx.conf
