@@ -24,7 +24,7 @@ services:
       - postgres
 
   redis:
-    image: docker.io/library/bitnami/redis:latest
+    image: docker.io/bitnami/redis:latest
     container_name: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
