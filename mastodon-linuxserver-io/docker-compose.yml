@@ -10,8 +10,8 @@ services:
     container_name: mastodon
     env_file: ./env.production
     environment:
-      - PUID=0
-      - PGID=0
+      - PUID=1000
+      - PGID=1000
       - TZ=America/Denver
       - LOCAL_DOMAIN=mastodon.example.com
       # - ALTERNATE_DOMAINS=127.0.0.1,localhost
@@ -23,6 +23,8 @@ services:
     networks:
       - default
     restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider --proxy=off localhost:3000/health || exit 1']
     depends_on:
       - redis
       - postgres
@@ -35,6 +37,8 @@ services:
     networks:
       - default
     restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
 
   postgres:
     hostname: db
@@ -49,6 +53,8 @@ services:
       - default
     volumes:
       - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
     restart: unless-stopped
 
 networks:
