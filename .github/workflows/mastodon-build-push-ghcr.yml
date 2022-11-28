@@ -27,8 +27,8 @@ jobs:
       packages: write
       pull-requests: write
     with:
-      context: ./mastodon
-      file: ./mastodon/Dockerfile
+      context: ./mastodon-linuxserver-io
+      file: ./mastodon-linuxserver-io/Dockerfile
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
