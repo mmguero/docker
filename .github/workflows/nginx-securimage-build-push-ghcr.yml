@@ -1,17 +1,17 @@
 ---
-name: nginx-secureimage-build-push-ghcr
+name: nginx-securimage-build-push-ghcr
 
 on:
   push:
     branches:
       - 'master'
     paths:
-      - 'nginx-secureimage/**'
-      - '.github/workflows/nginx-secureimage-build-push-ghcr.yml'
+      - 'nginx-securimage/**'
+      - '.github/workflows/nginx-securimage-build-push-ghcr.yml'
   pull_request:
     paths:
-      - 'nginx-secureimage/**'
-      - '.github/workflows/nginx-secureimage-build-push-ghcr.yml'
+      - 'nginx-securimage/**'
+      - '.github/workflows/nginx-securimage-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
   schedule:
@@ -27,13 +27,13 @@ jobs:
       packages: write
       pull-requests: write
     with:
-      context: ./nginx-secureimage
+      context: ./nginx-securimage
       file: ./nginx-securimage/docker/nginx.Dockerfile
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
       image-names: |
-        ghcr.io/${{ github.repository_owner }}/nginx-secureimage
+        ghcr.io/${{ github.repository_owner }}/nginx-securimage
       tag-rules: |
         type=raw,value=latest,enable={{is_default_branch}}
         type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}

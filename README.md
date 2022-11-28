@@ -19,7 +19,7 @@
 ![mattermost-build-push-ghcr](https://github.com/mmguero/docker/workflows/mattermost-build-push-ghcr/badge.svg)
 ![nextcloud-build-push-arm32v7-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-arm32v7-ghcr/badge.svg)
 ![nextcloud-build-push-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-ghcr/badge.svg)
-![nginx-secureimage-build-push-ghcr](https://github.com/mmguero/docker/workflows/nginx-secureimage-build-push-ghcr/badge.svg)
+![nginx-securimage-build-push-ghcr](https://github.com/mmguero/docker/workflows/nginx-securimage-build-push-ghcr/badge.svg)
 ![postgres-build-push-ghcr](https://github.com/mmguero/docker/workflows/postgres-build-push-ghcr/badge.svg)
 ![redis-build-push-ghcr](https://github.com/mmguero/docker/workflows/redis-build-push-ghcr/badge.svg)
 ![signal-build-push-ghcr](https://github.com/mmguero/docker/workflows/signal-build-push-ghcr/badge.svg)
