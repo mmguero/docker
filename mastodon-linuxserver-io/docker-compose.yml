@@ -3,12 +3,12 @@ version: "2.1"
 services:
 
   mastodon:
-    image: lscr.io/linuxserver/mastodon:latest
+    image: ghcr.io/mmguero/mastodon:latest
     container_name: mastodon
     env_file: ./env.production
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=America/Denver
       - LOCAL_DOMAIN=mastodon.example.com
     volumes:

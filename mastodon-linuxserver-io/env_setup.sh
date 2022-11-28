@@ -30,7 +30,7 @@ SCRIPT_PATH="$($DIRNAME $($REALPATH -e "${BASH_SOURCE[0]}"))"
 pushd "$SCRIPT_PATH" >/dev/null 2>&1
 
 # stuff for running the image to generate secrets
-MASTODON_IMAGE=${MASTODON_IMAGE:-lscr.io/linuxserver/mastodon:latest}
+MASTODON_IMAGE=${MASTODON_IMAGE:-ghcr.io/mmguero/mastodon:latest}
 CONTAINER_ENGINE="${CONTAINER_ENGINE:-docker}"
 if [[ "$CONTAINER_ENGINE" == "podman" ]]; then
   DEFAULT_UID=0

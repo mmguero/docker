@@ -14,7 +14,3 @@
 	path = qemu-live-iso
 	url = https://github.com/mmguero/docker-qemu-live-iso
 	branch = main
-[submodule "glitch-soc-docker"]
-	path = mastodon-glitch-soc
-	url = https://github.com/mmguero/glitch-soc-docker
-	branch = main
