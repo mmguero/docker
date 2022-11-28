@@ -1,0 +1,44 @@
+version: "2.1"
+
+services:
+
+  mastodon:
+    image: lscr.io/linuxserver/mastodon:latest
+    container_name: mastodon
+    env_file: ./env.production
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - LOCAL_DOMAIN=mastodon.example.com
+    volumes:
+      - ./config:/config
+    ports:
+      - "127.0.0.1:45580:80"
+      - "127.0.0.1:45543:443"
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: docker.io/library/bitnami/redis:latest
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: unless-stopped
+
+  postgres:
+    hostname: db
+    container_name: postgres
+    image: docker.io/library/postgres:10.5
+    env_file: ./env.postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    restart: unless-stopped
