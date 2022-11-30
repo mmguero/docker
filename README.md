@@ -17,6 +17,7 @@
 ![mariadb-build-push-ghcr](https://github.com/mmguero/docker/workflows/mariadb-build-push-ghcr/badge.svg)
 ![mastodon-build-push-ghcr](https://github.com/mmguero/docker/workflows/mastodon-build-push-ghcr/badge.svg)
 ![mattermost-build-push-ghcr](https://github.com/mmguero/docker/workflows/mattermost-build-push-ghcr/badge.svg)
+![net-clients-build-push-ghcr](https://github.com/mmguero/docker/workflows/net-clients-build-push-ghcr/badge.svg)
 ![nextcloud-build-push-arm32v7-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-arm32v7-ghcr/badge.svg)
 ![nextcloud-build-push-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-ghcr/badge.svg)
 ![nginx-securimage-build-push-ghcr](https://github.com/mmguero/docker/workflows/nginx-securimage-build-push-ghcr/badge.svg)
