@@ -9,6 +9,8 @@ ENV PGROUP "user"
 
 ENV PUSER_PRIV_DROP true
 
+ARG GITHUB_TOKEN
+
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 COPY --chmod=755 external_tools_install.sh /usr/local/bin/
 
@@ -21,14 +23,11 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get install -q -y -t bullseye-backports --no-install-recommends \
         bash \
-        bat \
         bc \
         bzip2 \
         ca-certificates \
         curl \
         direnv \
-        exa \
-        fd-find \
         file \
         git \
         gpg \
@@ -38,17 +37,25 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         less \
         lz4 \
         moreutils \
-        peco \
+        ncat \
+        netcat-openbsd \
+        openssh-client \
         procps \
         psmisc \
         pv \
         p7zip-full \
         p7zip-rar \
-        ripgrep \
+        rsync \
+        socat \
+        sqlite3 \
+        stunnel \
         sudo \
-        tini \
+        telnet \
         unzip \
         vim-tiny \
+        w3m \
+        wget \
+        whois \
         xz-utils \
         zip \
         zlib1g && \
@@ -59,10 +66,11 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       chsh -s /bin/bash ${PUSER} && \
       usermod -a -G sudo ${PUSER} && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    ln -s -r /usr/bin/batcat /usr/bin/bat && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
-    external_tools_install.sh && \
+    /usr/local/bin/external_tools_install.sh && \
     apt-get clean && \
-        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/local/bin/external_tools_install.sh
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/docker-uid-gid-setup.sh"]
+
+ENTRYPOINT /bin/bash
