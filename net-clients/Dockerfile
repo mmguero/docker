@@ -29,6 +29,7 @@ RUN apk add --no-cache \
         shadow \
         socat \
         stunnel \
+        w3m \
         wget \
         whois \
         yq
