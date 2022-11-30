@@ -22,6 +22,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
     echo "deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get install -q -y -t bullseye-backports --no-install-recommends \
+        autossh \
         bash \
         bc \
         bzip2 \
