@@ -14,8 +14,10 @@ RUN apk add --no-cache \
         busybox-extras \
         croc \
         curl \
+        file \
         git \
         iproute2 \
+        jq \
         moreutils \
         mosh \
         netcat-openbsd \
@@ -28,6 +30,7 @@ RUN apk add --no-cache \
         socat \
         stunnel \
         wget \
-        whois
+        whois \
+        yq
 
 ENTRYPOINT /bin/bash
