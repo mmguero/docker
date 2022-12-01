@@ -12,6 +12,7 @@ services:
       - OPENVPN_USERNAME=
       - OPENVPN_PASSWORD=
       - LOCAL_NETWORK=192.168.0.0/16
+      - OPENVPN_OPTS=--tls-cipher DEFAULT:@SECLEVEL=0
     logging:
       driver: json-file
       options:
@@ -22,3 +23,10 @@ services:
       - 8.8.8.8
       - 8.8.4.4
     image: haugene/transmission-openvpn
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--connect-timeout", "15", "-o", "/dev/null", "--silent", "--show-error", "--fail", "http://localhost:9091" ]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 90s
