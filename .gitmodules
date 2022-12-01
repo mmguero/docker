@@ -14,7 +14,3 @@
 	path = qemu-live-iso
 	url = https://github.com/mmguero/docker-qemu-live-iso
 	branch = main
-[submodule "send"]
-	path = send
-	url = https://github.com/timvisee/send-docker-compose
-	path = master
