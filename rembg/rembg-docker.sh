@@ -15,14 +15,15 @@ while getopts vi:o: opts; do
       o) OUT_FILE=${OPTARG} ;;
    esac
 done
+shift "$(($OPTIND -1))"
 
 if [[ -z "${IN_FILE}" ]] || [[ -z "${OUT_FILE}" ]] ; then
   echo "usage:" >&2
-  echo "  rembg-docker.sh -i <IN_FILE> -o <OUT_FILE>" >&2
+  echo "  rembg-docker.sh -i <IN_FILE> -o <OUT_FILE> [-- other rembg options]" >&2
   exit 1
 elif [[ ! -f "${IN_FILE}" ]]; then
   echo "usage:" >&2
-  echo "  rembg-docker.sh -i <IN_FILE> -o <OUT_FILE>" >&2
+  echo "  rembg-docker.sh -i <IN_FILE> -o <OUT_FILE> [-- other rembg options]" >&2
   echo "" >&2
   echo "${IN_FILE} does not exist!" >&2
   exit 1
@@ -43,7 +44,7 @@ cp "${IN_FILE}" "${TEMP_DIR}/"
 "${ENGINE}" run --rm \
   -u $([[ "${ENGINE}" == "podman" ]] && echo 0 || id -u):$([[ "${ENGINE}" == "podman" ]] && echo 0 || id -g) \
   -v "${TEMP_DIR}:/data:rw" \
-  "${IMAGE}" i "/data/${IN_BASENAME}" "/data/${OUT_BASENAME}"
+  "${IMAGE}" i "$@" "/data/${IN_BASENAME}" "/data/${OUT_BASENAME}"
 
 cp "${TEMP_DIR}/${OUT_BASENAME}" "${OUT_FILE}"
 
