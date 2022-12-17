@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+
+  ################################################################################
+  server:
+    container_name: gitea
+    restart: unless-stopped
+    image: "docker.io/gitea/gitea:${GITEA_IMAGE_TAG}"
+    env_file: .env
+    volumes:
+      - ./gitea:/data/git:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - gitea
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:2222:2222"
+
+  ################################################################################
+  db:
+    container_name: gitea-db
+    restart: unless-stopped
+    image: ghcr.io/mmguero/mariadb:latest
+    env_file: .env
+    command: [mysqld, --user=$MARIADB_SYSTEM_USER, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+    volumes:
+      - ./db:/var/lib/mysql:rw
+    networks:
+      - gitea
+
+networks:
+  gitea:
+    external: false
+    # name:
