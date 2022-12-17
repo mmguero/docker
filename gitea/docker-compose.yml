@@ -8,6 +8,8 @@ services:
     restart: unless-stopped
     image: "docker.io/gitea/gitea:${GITEA_IMAGE_TAG}"
     env_file: .env
+    # userns_mode: keep-id
+    # see https://github.com/containers/podman-compose/issues/166
     volumes:
       - ./gitea:/data/git:rw
       - /etc/timezone:/etc/timezone:ro
