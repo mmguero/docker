@@ -1,4 +1,4 @@
-FROM docker.io/gitea/gitea:latest
+FROM gitea/gitea:latest
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
