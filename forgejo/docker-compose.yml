@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+
+  ################################################################################
+  server:
+    container_name: forgejo
+    restart: unless-stopped
+    #
+    # docker:
+    # image: codeberg.org/forgejo/forgejo:1.18.0-rc1-1-rootless
+    #   (doesn't exist yet? https://codeberg.org/forgejo/-/packages)
+    #   OR
+    # image: codeberg.org/forgejo/forgejo:1.18.0-rc1-1
+    #   (may need to manually chown .ssh directory upon startup?)
+    #
+    # podman (rootless):
+    image: ghcr.io/mmguero/forgejo:root
+    #
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #
+    env_file: .env
+    volumes:
+      #
+      # docker (latest-rootless):
+      # - ./forgejo/git:/var/lib/gitea:rw
+      # - ./forgejo/conf:/etc/gitea:rw
+      #
+      # docker (latest):
+      # - ./forgejo/git:/data/git:rw
+      # - ./forgejo/conf:/data/gitea/conf:rw
+      # - ./forgejo/log:/data/gitea/log:rw
+      #
+      # podman:
+      - ./forgejo/git:/data/git:rw
+      - ./forgejo/conf:/data/gitea/conf:rw
+      - ./forgejo/log:/data/gitea/log:rw
+      #
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - forgejo
+    ports:
+      - "127.0.0.1:3000:3000"
+      # - "127.0.0.1:2222:2222"
+
+  ################################################################################
+  db:
+    container_name: forgejo-db
+    restart: unless-stopped
+    image: lscr.io/linuxserver/mariadb:latest
+    env_file: .env
+    volumes:
+      - ./forgejo/db:/config:rw
+    networks:
+      - forgejo
+
+networks:
+  forgejo:
+    external: false
+    # name:
