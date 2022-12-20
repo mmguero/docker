@@ -37,4 +37,4 @@ jobs:
       tag-rules: |
         type=raw,value=root,enable={{is_default_branch}}
         type=raw,value=root-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
-      platforms: linux/amd64,linux/arm64,linux/arm/v7
+      platforms: linux/amd64,linux/arm64
