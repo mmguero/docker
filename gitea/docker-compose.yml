@@ -6,29 +6,39 @@ services:
   server:
     container_name: gitea
     restart: unless-stopped
-    image: "docker.io/gitea/gitea:${GITEA_IMAGE_TAG}"
+    # docker:
+    # image: docker.io/gitea/gitea:latest-rootless
+    #
+    # podman (rootless):
+    image: ghcr.io/mmguero/gitea:root
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #
     env_file: .env
-    # userns_mode: keep-id
-    # see https://github.com/containers/podman-compose/issues/166
     volumes:
-      - ./gitea:/data/git:rw
+      # docker:
+      # - ./gitea/git:/var/lib/gitea:rw
+      # - ./gitea/conf:/etc/gitea:rw
+      # podman:
+      - ./gitea/git:/data/git:rw
+      - ./gitea/conf:/data/gitea/conf:rw
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
       - gitea
     ports:
       - "127.0.0.1:3000:3000"
-      - "127.0.0.1:2222:2222"
+      # - "127.0.0.1:2222:2222"
 
   ################################################################################
   db:
     container_name: gitea-db
     restart: unless-stopped
-    image: ghcr.io/mmguero/mariadb:latest
+    image: lscr.io/linuxserver/mariadb:latest
     env_file: .env
-    command: [mysqld, --user=$MARIADB_SYSTEM_USER, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
     volumes:
-      - ./db:/var/lib/mysql:rw
+      - ./gitea/db:/config:rw
     networks:
       - gitea
 
