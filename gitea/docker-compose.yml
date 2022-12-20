@@ -6,23 +6,37 @@ services:
   server:
     container_name: gitea
     restart: unless-stopped
+    #
     # docker:
     # image: docker.io/gitea/gitea:latest-rootless
+    #   OR
+    # image: docker.io/gitea/gitea:latest
+    #   (may need to manually chown .ssh directory upon startup?)
     #
     # podman (rootless):
     image: ghcr.io/mmguero/gitea:root
+    #
     build:
       context: .
       dockerfile: Dockerfile
     #
     env_file: .env
     volumes:
-      # docker:
+      #
+      # docker (latest-rootless):
       # - ./gitea/git:/var/lib/gitea:rw
       # - ./gitea/conf:/etc/gitea:rw
+      #
+      # docker (latest):
+      # - ./gitea/git:/data/git:rw
+      # - ./gitea/conf:/data/gitea/conf:rw
+      # - ./gitea/log:/data/gitea/log:rw
+      #
       # podman:
       - ./gitea/git:/data/git:rw
       - ./gitea/conf:/data/gitea/conf:rw
+      - ./gitea/log:/data/gitea/log:rw
+      #
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
