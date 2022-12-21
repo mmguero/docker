@@ -30,6 +30,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       curl \
       libasound2 \
       libdbus-glib-1-2 \
+      libdrm2 \
+      libgbm1 \
       libgdk-pixbuf-2.0-0 \
       libgtk-3-0 \
       libnss3 \

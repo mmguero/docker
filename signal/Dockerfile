@@ -28,6 +28,8 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         curl \
         gnupg2 \
         libasound2 \
+        libdrm2 \
+        libgbm1 \
         libgtk-3-0 \
         libx11-xcb1 \
         libxkbfile1 && \
