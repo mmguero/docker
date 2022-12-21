@@ -41,6 +41,11 @@ if [[ -n "$1" ]]; then
   fi
 fi
 
+if [[ "$(realpath "$DOCS_FOLDER")" == "$(realpath "$HOME")" ]]; then
+  echo "\$DOCS_FOLDER needs to be a directory other than \"$HOME\"" >&2
+  exit 1
+fi
+
 $ENGINE run -d --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
