@@ -30,7 +30,7 @@ jobs:
       context: ./debian
       file: ./debian/Dockerfile
       build-args: |
-        GITHUB_TOKEN=${{ github.token }}
+        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
