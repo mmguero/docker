@@ -29,8 +29,10 @@ jobs:
     with:
       context: ./debian
       file: ./debian/Dockerfile
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       build-args: |
-        GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN=$GH_TOKEN
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
@@ -43,4 +45,3 @@ jobs:
         type=ref,event=branch
         type=raw,value=gha-${{ github.run_id }}
       platforms: linux/amd64,linux/arm64,linux/arm/v7
-    secrets: inherit
