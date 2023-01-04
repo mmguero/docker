@@ -21,18 +21,17 @@ jobs:
   build-image:
     name: Call Docker Build
     uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    secrets: inherit
     permissions:
       contents: read
       actions: write
       packages: write
       pull-requests: write
-    secrets:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
       context: ./debian
       file: ./debian/Dockerfile
       build-args: |
-        GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN=${{ github.token }}
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
