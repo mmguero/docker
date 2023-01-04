@@ -26,10 +26,10 @@ jobs:
       actions: write
       packages: write
       pull-requests: write
+    secrets: inherit
     with:
       context: ./debian
       file: ./debian/Dockerfile
-      secrets: inherit
       build-args: |
         GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
       cancel-previous-runs: true
