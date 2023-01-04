@@ -26,14 +26,13 @@ jobs:
       actions: write
       packages: write
       pull-requests: write
-    secrets: inherit
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       context: ./debian
       file: ./debian/Dockerfile
       build-args: |
-        GITHUB_TOKEN=$GH_TOKEN
+        GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
       cancel-previous-runs: true
       dockerhub-enable: false
       ghcr-enable: true
