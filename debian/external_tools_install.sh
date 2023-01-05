@@ -31,7 +31,7 @@ chmod +x ./getcroc.sh
 DEB_ARCH=$(dpkg --print-architecture)
 LINUX_CPU=$(uname -m)
 
-echo "GITHUB_TOKEN is ${GITHUB_TOKEN}"
+echo "GITHUB_TOKEN is \"${GITHUB_TOKEN}\""
 
 DRA_RELEASE="$(git_latest_release devmatteini/dra)"
 cd /tmp

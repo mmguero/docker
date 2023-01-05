@@ -9,12 +9,13 @@ ENV PGROUP "user"
 
 ENV PUSER_PRIV_DROP true
 
-ARG GITHUB_TOKEN
+ARG GH_TOKEN
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 COPY --chmod=755 external_tools_install.sh /usr/local/bin/
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+RUN set -x && \
+    sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
     echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get -q update && \
     apt-get install -q -y -t bullseye-backports --no-install-recommends \
@@ -68,7 +69,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       usermod -a -G sudo ${PUSER} && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
-    GITHUB_TOKEN=$GITHUB_TOKEN /usr/local/bin/external_tools_install.sh && \
+    GITHUB_TOKEN=$GH_TOKEN /usr/local/bin/external_tools_install.sh && \
     apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/local/bin/external_tools_install.sh
 
