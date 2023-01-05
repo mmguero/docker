@@ -62,4 +62,4 @@ jobs:
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/debian:latest
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
