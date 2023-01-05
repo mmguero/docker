@@ -52,7 +52,7 @@ jobs:
       -
         name: Log in to registry
         id: registry-login
-        uses: redhat-actions/podman-login@v2
+        uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.repository_owner }}
