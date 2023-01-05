@@ -69,7 +69,8 @@ RUN set -x && \
       usermod -a -G sudo ${PUSER} && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
-    GITHUB_TOKEN=$GH_TOKEN /usr/local/bin/external_tools_install.sh && \
+    export GITHUB_TOKEN=$GH_TOKEN && \
+        /usr/local/bin/external_tools_install.sh && \
     apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/local/bin/external_tools_install.sh
 
