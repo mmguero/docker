@@ -54,7 +54,6 @@ if [[ -x /usr/bin/dra ]]; then
       ASSETS=(
         "aptible/supercronic|supercronic-linux-arm64|/usr/bin/supercronic|755"
         "boringproxy/boringproxy|boringproxy-linux-arm64|/usr/bin/boringproxy|755"
-        "BurntSushi/ripgrep|ripgrep-{tag}-arm-unknown-linux-gnueabihf.tar.gz|/tmp/ripgrep.tar.gz"
         "darkhz/rclone-tui|rclone-tui_{tag}_Linux_arm64.tar.gz|/tmp/rclone-tui.tar.gz"
         "FiloSottile/age|age-v{tag}-linux-arm64.tar.gz|/tmp/age.tar.gz"
         "gabrie30/ghorg|ghorg_{tag}_Linux_arm64.tar.gz|/tmp/ghorg.tar.gz"
@@ -75,7 +74,6 @@ if [[ -x /usr/bin/dra ]]; then
       ASSETS=(
         "aptible/supercronic|supercronic-linux-arm|/usr/bin/supercronic|755"
         "boringproxy/boringproxy|boringproxy-linux-arm|/usr/bin/boringproxy|755"
-        "BurntSushi/ripgrep|ripgrep-{tag}-arm-unknown-linux-gnueabihf.tar.gz|/tmp/ripgrep.tar.gz"
         "darkhz/rclone-tui|rclone-tui_{tag}_Linux_armv6.tar.gz|/tmp/rclone-tui.tar.gz"
         "FiloSottile/age|age-v{tag}-linux-arm.tar.gz|/tmp/age.tar.gz"
         "mikefarah/yq|yq_linux_arm|/usr/bin/yq|755"
@@ -93,7 +91,6 @@ if [[ -x /usr/bin/dra ]]; then
       ASSETS=(
         "aptible/supercronic|supercronic-linux-arm|/usr/bin/supercronic|755"
         "boringproxy/boringproxy|boringproxy-linux-arm|/usr/bin/boringproxy|755"
-        "BurntSushi/ripgrep|ripgrep-{tag}-arm-unknown-linux-gnueabihf.tar.gz|/tmp/ripgrep.tar.gz"
         "darkhz/rclone-tui|rclone-tui_{tag}_Linux_armv7.tar.gz|/tmp/rclone-tui.tar.gz"
         "FiloSottile/age|age-v{tag}-linux-arm.tar.gz|/tmp/age.tar.gz"
         "mikefarah/yq|yq_linux_arm|/usr/bin/yq|755"
@@ -112,7 +109,6 @@ if [[ -x /usr/bin/dra ]]; then
     ASSETS=(
       "aptible/supercronic|supercronic-linux-amd64|/usr/bin/supercronic|755"
       "boringproxy/boringproxy|boringproxy-linux-x86_64|/usr/bin/boringproxy|755"
-      "BurntSushi/ripgrep|ripgrep-{tag}-x86_64-unknown-linux-musl.tar.gz|/tmp/ripgrep.tar.gz"
       "darkhz/rclone-tui|rclone-tui_{tag}_Linux_x86_64.tar.gz|/tmp/rclone-tui.tar.gz"
       "FiloSottile/age|age-v{tag}-linux-amd64.tar.gz|/tmp/age.tar.gz"
       "gabrie30/ghorg|ghorg_{tag}_Linux_x86_64.tar.gz|/tmp/ghorg.tar.gz"

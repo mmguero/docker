@@ -46,6 +46,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         pv \
         p7zip-full \
         p7zip-rar \
+        ripgrep \
         rsync \
         socat \
         sqlite3 \
