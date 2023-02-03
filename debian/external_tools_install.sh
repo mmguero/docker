@@ -23,6 +23,8 @@ function git_latest_release () {
   fi
 }
 
+set -x
+
 cd /tmp
 curl -o ./getcroc.sh -sSL "https://getcroc.schollz.com"
 chmod +x ./getcroc.sh
@@ -34,6 +36,7 @@ LINUX_CPU=$(uname -m)
 DRA_RELEASE="$(git_latest_release devmatteini/dra)"
 cd /tmp
 mkdir ./dra
+DRA_ALT_URL=
 if [[ $DEB_ARCH == arm* ]]; then
   if [[ $LINUX_CPU == aarch64 ]]; then
     DRA_URL="https://github.com/devmatteini/dra/releases/download/${DRA_RELEASE}/dra-${DRA_RELEASE}-aarch64-unknown-linux-gnu.tar.gz"
@@ -42,13 +45,19 @@ if [[ $DEB_ARCH == arm* ]]; then
   fi
 else
   DRA_URL="https://github.com/devmatteini/dra/releases/download/${DRA_RELEASE}/dra-${DRA_RELEASE}-x86_64-unknown-linux-gnu.tar.gz"
+  DRA_ALT_URL="https://filedn.com/lqGgqyaOApSjKzN216iPGQf/Software/Linux/dra_Linux_x86_64"
 fi
 curl -sSL "$DRA_URL" | tar xzf - -C ./dra --strip-components 1
-cp -f /tmp/dra/dra /usr/bin/dra
-chmod 755 /usr/bin/dra
+chmod 755 /tmp/dra/dra
+if /tmp/dra/dra --version >/dev/null 2>&1; then
+  cp -f /tmp/dra/dra /usr/bin/dra
+elif [[ -n "$DRA_ALT_URL" ]]; then
+  curl -sSL -o /usr/bin/dra "$DRA_ALT_URL"
+  chmod 755 /usr/bin/dra
+fi
 rm -rf /tmp/dra
 
-if [[ -x /usr/bin/dra ]]; then
+if /usr/bin/dra --version >/dev/null 2>&1; then
   if [[ "$DEB_ARCH" =~ ^arm ]]; then
     if [[ "$LINUX_CPU" == "aarch64" ]]; then
       ASSETS=(
@@ -162,4 +171,8 @@ if [[ -x /usr/bin/dra ]]; then
       fi
     fi
   done
+else
+  echo "Could not download and/or execute dra"
+  rm -f /usr/bin/dra
+  exit 1
 fi

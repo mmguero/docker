@@ -28,7 +28,9 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
         bzip2 \
         ca-certificates \
         curl \
+        detox \
         direnv \
+        dtrx \
         file \
         git \
         gpg \
