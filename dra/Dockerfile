@@ -31,11 +31,11 @@ COPY --from=rust-sources /usr/src/dra/vendor /usr/src/dra/vendor
 WORKDIR /usr/src/dra
 
 RUN apt-get -q update && \
-    apt-get install --no-install-recommends -y -q musl-dev musl-tools && \
+    apt-get install --no-install-recommends -y -q musl musl-dev musl-tools && \
     sed -i "s/\(--release\)/\1 --offline/" Makefile && \
     uname -m && \
     if [ $(uname -m) = x86_64 ]; then export CARGO_TARGET=x86_64-unknown-linux-musl; fi && \
-    if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; fi && \
+    if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; export CC=musl-gcc; RUSTFLAGS="-C linker=aarch64-linux-gnu-gcc"; fi && \
     if [ $(uname -m) = armv7l ]; then export CARGO_TARGET=armv7-unknown-linux-musleabihf; fi && \
     if uname -m | grep -q ^arm; then export CARGO_TARGET=arm-unknown-linux-musleabihf; fi && \
     rustup target add $CARGO_TARGET && \
