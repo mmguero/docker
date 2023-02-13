@@ -44,7 +44,7 @@ if [[ $DEB_ARCH == arm* ]]; then
     DRA_URL="https://github.com/devmatteini/dra/releases/download/${DRA_RELEASE}/dra-${DRA_RELEASE}-arm-unknown-linux-gnueabihf.tar.gz"
   fi
 else
-  DRA_URL="https://github.com/devmatteini/dra/releases/download/${DRA_RELEASE}/dra-${DRA_RELEASE}-x86_64-unknown-linux-gnu.tar.gz"
+  DRA_URL="https://github.com/devmatteini/dra/releases/download/${DRA_RELEASE}/dra-${DRA_RELEASE}-x86_64-unknown-linux-musl.tar.gz"
   DRA_ALT_URL="https://filedn.com/lqGgqyaOApSjKzN216iPGQf/Software/Linux/dra_Linux_x86_64"
 fi
 curl -sSL "$DRA_URL" | tar xzf - -C ./dra --strip-components 1
