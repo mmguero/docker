@@ -30,13 +30,13 @@ COPY --from=rust-sources /usr/src/dra/vendor /usr/src/dra/vendor
 
 WORKDIR /usr/src/dra
 
-RUN set -x && \
-    apt-get -q update && \
+RUN apt-get -q update && \
     apt-get install --no-install-recommends -y -q musl-dev musl-tools && \
     sed -i "s/\(--release\)/\1 --offline/" Makefile && \
+    uname -m && \
     if [ $(uname -m) = x86_64 ]; then export CARGO_TARGET=x86_64-unknown-linux-musl; fi && \
     if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; fi && \
-    if [ $(uname -m) = arm* ]; then export CARGO_TARGET=arm-unknown-linux-musl; fi && \
+    if uname -m | grep -q ^arm; then export CARGO_TARGET=arm-unknown-linux-musl; fi && \
     rustup target add $CARGO_TARGET && \
     make release && \
     mv -v /usr/src/dra/target/$CARGO_TARGET/release/dra /dra && \
