@@ -36,7 +36,8 @@ RUN apt-get -q update && \
     uname -m && \
     if [ $(uname -m) = x86_64 ]; then export CARGO_TARGET=x86_64-unknown-linux-musl; fi && \
     if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; fi && \
-    if uname -m | grep -q ^arm; then export CARGO_TARGET=arm-unknown-linux-musl; fi && \
+    if [ $(uname -m) = armv7l ]; then export CARGO_TARGET=armv7-unknown-linux-musleabihf; fi && \
+    if uname -m | grep -q ^arm; then export CARGO_TARGET=arm-unknown-linux-musleabihf; fi && \
     rustup target add $CARGO_TARGET && \
     make release && \
     mv -v /usr/src/dra/target/$CARGO_TARGET/release/dra /dra && \
