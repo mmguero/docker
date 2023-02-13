@@ -30,29 +30,22 @@ COPY --from=rust-sources /usr/src/dra/vendor /usr/src/dra/vendor
 
 WORKDIR /usr/src/dra
 
-RUN sed "s/\(--release\)/\1 --offline/" Makefile && \
+RUN set -x && \
+    apt-get -q update && \
+    apt-get install --no-install-recommends -y -q musl-dev musl-tools && \
+    sed -i "s/\(--release\)/\1 --offline/" Makefile && \
+    if [ $(uname -m) = x86_64 ]; then export CARGO_TARGET=x86_64-unknown-linux-musl; fi && \
+    if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; fi && \
+    if [ $(uname -m) = arm* ]; then export CARGO_TARGET=arm-unknown-linux-musl; fi && \
+    rustup target add $CARGO_TARGET && \
     make release && \
-    chmod 755 /usr/src/dra/target/release/dra
+    mv -v /usr/src/dra/target/$CARGO_TARGET/release/dra /dra && \
+    chmod 755 /dra
 
 # Copy build artifact to final image
 
-FROM debian:bullseye-slim
+FROM scratch
 
-ARG DEFAULT_UID=1000
-ARG DEFAULT_GID=1000
-ENV DEFAULT_UID $DEFAULT_UID
-ENV DEFAULT_GID $DEFAULT_GID
-ENV PUSER "dra"
-ENV PGROUP "dra"
-ENV PUSER_PRIV_DROP true
+COPY --from=builder /dra /dra
 
-COPY --from=builder /usr/src/dra/target/release/dra /dra
-
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
-
-RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
-      useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /home/${PUSER} ${PUSER} && \
-      usermod -a -G tty ${PUSER} && \
-      chmod 755 /usr/local/bin/docker-uid-gid-setup.sh
-
-ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh", "/dra"]
+ENTRYPOINT ["/dra"]

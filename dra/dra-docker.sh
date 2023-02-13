@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
 ENGINE="${CONTAINER_ENGINE:-docker}"
-if [[ "$ENGINE" == "podman" ]]; then
-  CONTAINER_PUID=0
-  CONTAINER_PGID=0
-else
-  CONTAINER_PUID=$(id -u)
-  CONTAINER_PGID=$(id -g)
+UID_ARGS=()
+if [[ "$ENGINE" == "docker" ]]; then
+  UID_ARGS+=( --user )
+  UID_ARGS+=( $(id -u):$(id -g) )
 fi
 
 TEMP_DIR="$(TMPDIR="$(pwd)" mktemp -d -t dra.XXXXXXXXXX)"
@@ -18,8 +16,7 @@ function finish {
 trap finish EXIT
 
 $ENGINE run -i -t --rm \
-  -e PUID=$CONTAINER_PUID \
-  -e PGID=$CONTAINER_PGID \
+  "${UID_ARGS[@]}" \
   -v "$TEMP_DIR:/tmp/$TEMP_DIR_BASENAME:rw" \
   -w "/tmp/$TEMP_DIR_BASENAME" \
   ghcr.io/mmguero/dra "$@"
