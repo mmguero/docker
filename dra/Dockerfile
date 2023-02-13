@@ -45,6 +45,14 @@ RUN apt-get -q update && \
 
 # Copy build artifact to final image
 
+LABEL maintainer="mero.mero.guero@gmail.com"
+LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
+LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/dra'
+LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
+LABEL org.opencontainers.image.documentation='https://github.com/devmatteini/dra'
+LABEL org.opencontainers.image.title='ghcr.io/mmguero/dra'
+LABEL org.opencontainers.image.description='Single-binary container for devmatteini/dra'
+
 FROM scratch
 
 COPY --from=builder /dra /dra
