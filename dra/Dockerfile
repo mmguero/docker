@@ -3,7 +3,7 @@
 # - https://github.com/rust-lang/cargo/issues/8719#issuecomment-932084513
 # - https://github.com/jdrouet/jolimail/blob/main/multiarch.Dockerfile#L33
 
-FROM --platform=$BUILDPLATFORM rust:latest AS rust-sources
+FROM rust:latest AS rust-sources
 
 ENV USER root
 
