@@ -72,6 +72,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     GITHUB_TOKEN=$GITHUB_TOKEN /usr/local/bin/external_tools_install.sh && \
+    find /usr/bin -mindepth 1 -maxdepth 1 -type f ! -user root -exec chown -v root:root "{}" ';' && \
     apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/local/bin/external_tools_install.sh
 
