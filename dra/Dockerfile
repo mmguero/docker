@@ -1,4 +1,4 @@
-FROM rust:latest AS rust-sources
+FROM docker.io/library/rust:latest AS rust-sources
 
 ENV USER root
 
@@ -12,7 +12,7 @@ RUN cargo init && \
     cargo vendor > /usr/src/dra/.cargo/config && \
     rm -rf /tmp/dra
 
-FROM rust:latest as builder
+FROM docker.io/library/rust:latest as builder
 
 ENV USER root
 
