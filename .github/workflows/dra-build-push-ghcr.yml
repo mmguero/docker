@@ -17,13 +17,6 @@ on:
   schedule:
     - cron: '0 12 15 * *'
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME_AND_TAG: ghcr.io/${{ github.repository_owner }}/dra:latest
-  IMAGE_ARCH: amd64,arm64
-  REPO_CONTEXT: ./dra
-  REPO_CONTAINERFILE: ./dra/Dockerfile
-
 jobs:
   buildah:
     runs-on: ubuntu-latest
@@ -49,7 +42,7 @@ jobs:
         id: setup-qemu
         uses: docker/setup-qemu-action@v2
         with:
-          platforms: ${{ env.IMAGE_ARCH }}
+          platforms: amd64,arm64
       -
         name: Set up Docker Buildx
         id: setup-buildx
@@ -62,7 +55,7 @@ jobs:
         id: registry-login
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
@@ -70,7 +63,8 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v3
         with:
-          context: ${{ env.REPO_CONTEXT }}
-          file: ${{ env.REPO_CONTAINERFILE }}
-          tags: ${{ env.IMAGE_NAME_AND_TAG }}
+          context: ./dra
+          platforms: linux/amd64,linux/arm64
+          file: ./dra/Dockerfile
+          tags: ghcr.io/${{ github.repository_owner }}/dra:latest
           push: true
