@@ -31,7 +31,6 @@ COPY --from=rust-sources /usr/src/dra/vendor /usr/src/dra/vendor
 WORKDIR /usr/src/dra
 
 RUN apt-get -q update && \
-    apt-get -y -q --no-install-recommends upgrade && \
     apt-get install --no-install-recommends -y -q musl musl-dev musl-tools && \
     sed -i "s/\(--release\)/\1 --offline/" Makefile && \
     uname -m && \
