@@ -66,8 +66,6 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           context: ${{ env.REPO_CONTEXT }}
           containerfiles: ${{ env.REPO_CONTAINERFILE }}
-          build-args: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           archs: ${{ env.IMAGE_ARCH }}
       -
         name: Push
