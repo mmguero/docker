@@ -23,7 +23,7 @@ env:
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64,arm64
   REPO_CONTEXT: ./calibre-web
-  REPO_CONTAINERFILE: ./calibre-web/docker/Dockerfile
+  REPO_CONTAINERFILE: ./calibre-web/Dockerfile
 
 jobs:
   buildah:

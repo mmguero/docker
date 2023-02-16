@@ -18,6 +18,7 @@ RUN apt-get update && \
       libjpeg8 \
       libmagic1 \
       libopengl0 \
+      libxkbcommon0 \
       python3 \
       python3-pip \
       python3-setuptools \

@@ -6,7 +6,7 @@ services:
     image: ghcr.io/mmguero/calibre-web:latest
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     container_name: calibre
     expose:
       - 8083
