@@ -3,12 +3,10 @@ version: '3'
 services:
 
   calibre:
-    image: ghcr.io/mmguero/calibre-web
-    #image: ghcr.io/mmguero/calibre-web:arm32v7
+    image: ghcr.io/mmguero/calibre-web:latest
     build:
       context: .
       dockerfile: docker/Dockerfile
-      #dockerfile: docker/Dockerfile.arm32v7
     container_name: calibre
     expose:
       - 8083
