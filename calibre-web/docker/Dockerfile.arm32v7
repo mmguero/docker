@@ -17,7 +17,7 @@ RUN apt-get update && \
       calibre-bin \
       curl \
       imagemagick \
-      libicu66 \
+      libicu70 \
       libjpeg-dev \
       libmagic1 \
       libtcl8.6 \
