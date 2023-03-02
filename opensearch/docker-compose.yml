@@ -1,23 +1,49 @@
 version: '3.7'
 
+x-process-variables: &process-variables
+  # docker containers will run processes as unprivileged user with UID:GID
+  PUID : 1000
+  PGID : 1000
+
 services:
+
+  glauth:
+    image: ghcr.io/mmguero/glauth:standalone
+    restart: "unless-stopped"
+    ports:
+      - "127.0.0.1:389:389"
+      - "127.0.0.1:5555:5555"
+      - "0.0.0.0:636:636"
+    volumes:
+      - ./glauth.cfg:/app/config/config.cfg:ro
+      - ./certs/glauth-key.pem:/glauth-key.pem:ro
+      - ./certs/glauth.pem:/glauth.pem:ro
+      - ./certs/root-ca.pem:/root-ca.pem:ro
+    networks:
+      - default
+
   opensearch-node1:
-    image: opensearchproject/opensearch:2.3.0
+    image: ghcr.io/mmguero/opensearch:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: "unless-stopped"
     container_name: opensearch-node1
     environment:
-      - "logger.level=WARN"
-      - "cluster.name=opensearch-cluster"
-      - "node.name=opensearch-node1"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node2"
-      - "bootstrap.memory_lock=true"
-      - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=false"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "indices.query.bool.max_clause_count=4096"
-      - "path.repo=/opt/opensearch/backup"
+      << : *process-variables
+      logger.level : 'WARN'
+      cluster.name : 'opensearch-cluster'
+      node.name : 'opensearch-node1'
+      discovery.seed_hosts : 'opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4'
+      cluster.initial_cluster_manager_nodes : 'opensearch-node2'
+      bootstrap.memory_lock : 'true'
+      MAX_LOCKED_MEMORY : 'unlimited'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      DISABLE_INSTALL_DEMO_CONFIG : 'true'
+      DISABLE_SECURITY_PLUGIN : 'false'
+      cluster.routing.allocation.disk.threshold_enabled : 'false'
+      indices.query.bool.max_clause_count : 4096
+      path.repo : '/opt/opensearch/backup'
     ulimits:
       memlock:
         soft: -1
@@ -30,6 +56,7 @@ services:
     volumes:
       - opensearch-data1:/usr/share/opensearch/data
       - opensearch-backup1:/opt/opensearch/backup
+      - ./certs/ca-trust:/var/local/ca-trust:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
       - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
@@ -50,23 +77,30 @@ services:
       - default
 
   opensearch-node2:
-    image: opensearchproject/opensearch:2.3.0
+    image: ghcr.io/mmguero/opensearch:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: false
+    tty: true
+    restart: "unless-stopped"
     container_name: opensearch-node2
     environment:
-      - "logger.level=WARN"
-      - "cluster.name=opensearch-cluster"
-      - "node.name=opensearch-node2"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node2"
-      - "bootstrap.memory_lock=true"
-      - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=false"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "indices.query.bool.max_clause_count=4096"
-      - "path.repo=/opt/opensearch/backup"
-      - "node.roles=cluster_manager"
+      << : *process-variables
+      logger.level : 'WARN'
+      cluster.name : 'opensearch-cluster'
+      node.name : 'opensearch-node2'
+      discovery.seed_hosts : 'opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4'
+      cluster.initial_cluster_manager_nodes : 'opensearch-node2'
+      bootstrap.memory_lock : 'true'
+      MAX_LOCKED_MEMORY : 'unlimited'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      DISABLE_INSTALL_DEMO_CONFIG : 'true'
+      DISABLE_SECURITY_PLUGIN : 'false'
+      cluster.routing.allocation.disk.threshold_enabled : 'false'
+      indices.query.bool.max_clause_count : 4096
+      path.repo : '/opt/opensearch/backup'
+      node.roles : 'cluster_manager'
     ulimits:
       memlock:
         soft: -1
@@ -79,6 +113,7 @@ services:
     volumes:
       - opensearch-data2:/usr/share/opensearch/data
       - opensearch-backup2:/opt/opensearch/backup
+      - ./certs/ca-trust:/var/local/ca-trust:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
       - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/node2-key.pem:/usr/share/opensearch/config/node-key.pem:ro
@@ -99,23 +134,30 @@ services:
       - default
 
   opensearch-node3:
-    image: opensearchproject/opensearch:2.3.0
+    image: ghcr.io/mmguero/opensearch:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: false
+    tty: true
+    restart: "unless-stopped"
     container_name: opensearch-node3
     environment:
-      - "logger.level=WARN"
-      - "cluster.name=opensearch-cluster"
-      - "node.name=opensearch-node3"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node2"
-      - "bootstrap.memory_lock=true"
-      - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms10g -Xmx10g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=false"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "indices.query.bool.max_clause_count=4096"
-      - "path.repo=/opt/opensearch/backup"
-      - "node.roles=data,ingest"
+      << : *process-variables
+      logger.level : 'WARN'
+      cluster.name : 'opensearch-cluster'
+      node.name : 'opensearch-node3'
+      discovery.seed_hosts : 'opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4'
+      cluster.initial_cluster_manager_nodes : 'opensearch-node2'
+      bootstrap.memory_lock : 'true'
+      MAX_LOCKED_MEMORY : 'unlimited'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      DISABLE_INSTALL_DEMO_CONFIG : 'true'
+      DISABLE_SECURITY_PLUGIN : 'false'
+      cluster.routing.allocation.disk.threshold_enabled : 'false'
+      indices.query.bool.max_clause_count : 4096
+      path.repo : '/opt/opensearch/backup'
+      node.roles : 'data,ingest'
     ulimits:
       memlock:
         soft: -1
@@ -128,6 +170,7 @@ services:
     volumes:
       - opensearch-data3:/usr/share/opensearch/data
       - opensearch-backup3:/opt/opensearch/backup
+      - ./certs/ca-trust:/var/local/ca-trust:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
       - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/node3-key.pem:/usr/share/opensearch/config/node-key.pem:ro
@@ -148,23 +191,30 @@ services:
       - default
 
   opensearch-node4:
-    image: opensearchproject/opensearch:2.3.0
+    image: ghcr.io/mmguero/opensearch:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: false
+    tty: true
+    restart: "unless-stopped"
     container_name: opensearch-node4
     environment:
-      - "logger.level=WARN"
-      - "cluster.name=opensearch-cluster"
-      - "node.name=opensearch-node4"
-      - "discovery.seed_hosts=opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4"
-      - "cluster.initial_cluster_manager_nodes=opensearch-node2"
-      - "bootstrap.memory_lock=true"
-      - "MAX_LOCKED_MEMORY=unlimited"
-      - "OPENSEARCH_JAVA_OPTS=-server -Xms10g -Xmx10g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=false"
-      - "cluster.routing.allocation.disk.threshold_enabled=false"
-      - "indices.query.bool.max_clause_count=4096"
-      - "path.repo=/opt/opensearch/backup"
-      - "node.roles=data,ingest"
+      << : *process-variables
+      logger.level : 'WARN'
+      cluster.name : 'opensearch-cluster'
+      node.name : 'opensearch-node4'
+      discovery.seed_hosts : 'opensearch-node1,opensearch-node2,opensearch-node3,opensearch-node4'
+      cluster.initial_cluster_manager_nodes : 'opensearch-node2'
+      bootstrap.memory_lock : 'true'
+      MAX_LOCKED_MEMORY : 'unlimited'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      DISABLE_INSTALL_DEMO_CONFIG : 'true'
+      DISABLE_SECURITY_PLUGIN : 'false'
+      cluster.routing.allocation.disk.threshold_enabled : 'false'
+      indices.query.bool.max_clause_count : 4096
+      path.repo : '/opt/opensearch/backup'
+      node.roles : 'data,ingest'
     ulimits:
       memlock:
         soft: -1
@@ -177,6 +227,7 @@ services:
     volumes:
       - opensearch-data4:/usr/share/opensearch/data
       - opensearch-backup4:/opt/opensearch/backup
+      - ./certs/ca-trust:/var/local/ca-trust:ro
       - ./certs/admin-key.pem:/usr/share/opensearch/config/admin-key.pem:ro
       - ./certs/admin.pem:/usr/share/opensearch/config/admin.pem:ro
       - ./certs/node4-key.pem:/usr/share/opensearch/config/node-key.pem:ro
@@ -201,6 +252,7 @@ services:
   #   container_name: opensearch-dashboards
   #   ports:
   #     - 0.0.0.0:5601:5601
+  #   restart: "unless-stopped"
   #   environment:
   #      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]'
   #      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
@@ -211,20 +263,6 @@ services:
   #     - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
   #   networks:
   #     - default
-
-  glauth:
-    image: ghcr.io/mmguero/glauth:standalone
-    ports:
-      - "127.0.0.1:389:389"
-      - "0.0.0.0:636:636"
-      - "0.0.0.0:5555:5555"
-    volumes:
-      - ./glauth.cfg:/app/config/config.cfg:ro
-      - ./certs/glauth-key.pem:/glauth-key.pem:ro
-      - ./certs/glauth.pem:/glauth.pem:ro
-      - ./certs/root-ca.pem:/root-ca.pem:ro
-    networks:
-      - default
 
 volumes:
   opensearch-data1:

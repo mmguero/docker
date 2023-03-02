@@ -53,6 +53,8 @@ shift "$(($OPTIND -1))"
 # Root CA
 openssl genrsa -out root-ca-key.pem 2048
 openssl req -new -x509 -sha256 -key root-ca-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=root.dns.a-record" -out root-ca.pem -days 730
+mkdir -p ./ca-trust/
+cp root-ca.pem ./ca-trust/
 
 # Admin cert
 openssl genrsa -out admin-key-temp.pem 2048

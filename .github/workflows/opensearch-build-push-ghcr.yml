@@ -1,0 +1,40 @@
+---
+name: opensearch-build-push-ghcr
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'opensearch/**'
+      - '.github/workflows/opensearch-build-push-ghcr.yml'
+  pull_request:
+    paths:
+      - 'opensearch/**'
+      - '.github/workflows/opensearch-build-push-ghcr.yml'
+  workflow_dispatch:
+  repository_dispatch:
+  schedule:
+    - cron: '0 12 15 * *'
+
+jobs:
+  build-image:
+    name: Call Docker Build
+    uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      actions: write
+      packages: write
+      pull-requests: write
+    with:
+      context: ./opensearch
+      file: ./opensearch/Dockerfile
+      cancel-previous-runs: true
+      dockerhub-enable: false
+      ghcr-enable: true
+      image-names: |
+        ghcr.io/${{ github.repository_owner }}/opensearch
+      tag-rules: |
+        type=raw,value=latest,enable={{is_default_branch}}
+        type=raw,value=latest-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
+      platforms: linux/amd64
