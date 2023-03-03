@@ -1,2 +1,3 @@
-wireproxy.env
+wireproxy.env*
+config.env.local
 docker-compose-local.yml

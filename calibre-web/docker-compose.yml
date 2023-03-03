@@ -3,7 +3,7 @@ version: '3'
 services:
 
   calibre:
-    image: ghcr.io/mmguero/calibre-web:latest
+    image: linuxserver/calibre-web:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,6 +14,7 @@ services:
       - PUID=1000
       - PGID=100
       - TZ=America/Denver
+      - DOCKER_MODS=linuxserver/mods:universal-calibre
     volumes:
       - ./config:/config:rw
       - ./data:/books:rw
@@ -31,5 +32,4 @@ networks:
   proxy:
     external:
       name: traefik-proxy
-
 
