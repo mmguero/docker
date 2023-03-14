@@ -20,8 +20,10 @@ OUTPUT_DIR=
 KEY_BASE=${SRV_CERT_BASE:-"$(hostname -s)"}
 CA_NAME="ca.crt"
 EXECUTE_COMMAND=
+RESTART_COMPOSE=
+RESTART_COMPOSE_FILE=docker-compose.yml
 
-while getopts 'vnd:o:b:a:x:' OPTION; do
+while getopts 'vnd:o:b:a:x:r:f:' OPTION; do
   case "$OPTION" in
     v)
       VERBOSE_FLAG="-v"
@@ -48,8 +50,16 @@ while getopts 'vnd:o:b:a:x:' OPTION; do
       EXECUTE_COMMAND="$OPTARG"
       ;;
 
+    r)
+      RESTART_COMPOSE="$OPTARG"
+      ;;
+
+    f)
+      RESTART_COMPOSE_FILE="$OPTARG"
+      ;;
+
     ?)
-      echo "script usage: $(basename $0) [-v (verbose)] [-d <directory containing crt/key files>] [-o <output directory>] [-b <crt/key base name>] [-a <certificate authority crt>" >&2
+      echo "script usage: $(basename $0) [-v (verbose)] [-d <directory containing crt/key files>] [-o <output directory>] [-b <crt/key base name>] [-a <certificate authority crt>] [-r <(podman-compose|docker-compose) if restarting containers>] [-f <compose .yml file if restarting containers>] [-x <command to execute>]" >&2
       exit 1
       ;;
   esac
@@ -75,6 +85,12 @@ if [[ -r "$CRT_NAME" ]] && [[ -r "$KEY_NAME" ]] && [[ -r "$CA_NAME" ]]; then
 
   if [[ -n "$EXECUTE_COMMAND" ]]; then
     $EXECUTE_COMMAND
+  fi
+
+  if [[ -n "$RESTART_COMPOSE" ]] && "$RESTART_COMPOSE" --version >/dev/null 2>&1 && [[ -f "$RESTART_COMPOSE_FILE" ]]; then
+    pushd "$($DIRNAME $($REALPATH -e "$RESTART_COMPOSE_FILE"))"
+    "$RESTART_COMPOSE" down
+    "$RESTART_COMPOSE" up -d
   fi
 
   popd >/dev/null 2>&1
