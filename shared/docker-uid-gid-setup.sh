@@ -24,10 +24,10 @@ if [[ -n ${CONFIG_MAP_DIR} ]] && command -v rsync >/dev/null 2>&1; then
   find / -type d -name "${CONFIG_MAP_DIR}" -print -o -path /sys -prune -o -path /proc -prune 2>/dev/null | \
   while read CMDIR; do
 
-    rsync --recursive --mkpath \
+    rsync --verbose --recursive --mkpath \
           "--usermap=*:${PUID:-${DEFAULT_UID}}" \
           "--groupmap=*:${PGID:-${DEFAULT_GID}}" \
-          --exclude="${CMDIR}"/ --exclude=.dockerignore --exclude=.gitignore \
+          --exclude="${CONFIG_MAP_DIR}"/ --exclude=.dockerignore --exclude=.gitignore \
           "${CMDIR}"/ "${CMDIR}"/../
 
       # TODO - regarding ownership and permissions:
