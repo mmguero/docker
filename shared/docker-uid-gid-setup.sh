@@ -10,6 +10,45 @@ unset ENTRYPOINT_ARGS
 usermod --non-unique --uid ${PUID:-${DEFAULT_UID}} ${PUSER}
 groupmod --non-unique --gid ${PGID:-${DEFAULT_GID}} ${PGROUP}
 
+# Any directory named with the value of CONFIG_MAP_DIR will have its contents rsync'ed into
+#   the parent directory as the container starts up. This is mostly for convenience for
+#   Kubernetes configmap objects, which, because the directory into which they are
+#   copied is made read-only, doesn't play nicely if you're using it for configuration
+#   files which exist in a directory which may need to do read-write operations on other files.
+#   This works for nested subdirectories, but don't nest CONFIG_MAP_DIR directories
+#   inside of other CONFIG_MAP_DIR directories.
+#
+# TODO: else with cpio, tar, cp?
+
+if [[ -n ${CONFIG_MAP_DIR} ]] && command -v rsync >/dev/null 2>&1; then
+  find / -type d -name "${CONFIG_MAP_DIR}" 2>/dev/null | while read CMDIR; do
+
+    rsync --recursive --mkpath \
+          "--usermap=*:${PUID:-${DEFAULT_UID}}" \
+          "--groupmap=*:${PGID:-${DEFAULT_GID}}" \
+          --exclude="${CMDIR}"/ --exclude=.dockerignore --exclude=.gitignore \
+          "${CMDIR}"/ "${CMDIR}"/../
+
+      # TODO - regarding ownership and permissions:
+      #
+      # I *think* what we want to do here is change the ownership of
+      #   these configmap-copied files to be owned by the user specified by PUID
+      #   (falling back to DEFAULT_UID) and PGID (falling back to DEFAULT_GID).
+      #   The other option would be to preserve the ownership of the source
+      #   fine with --owner --group, but I don't think that's what we want, as
+      #   if we were doing this with a docker bind mount they'd likely have the
+      #   permissions of the original user on the host, anyway, which is
+      #   supposed to match up to PUID/PGID.
+      #
+      # For permissions, rsync says that "existing files retain their existing permissions"
+      #   and "new files get their normal permission bits set to the source file's
+      #   permissions masked with the receiving directory's default permissions"
+      #   (either via umask or ACL) which I think is what we want. The other alternative
+      #   would be to do something like --chmod=D2755,F644
+
+  done # loop over found CONFIG_MAP_DIR directories
+fi # check for CONFIG_MAP_DIR and rsync
+
 # change user/group ownership of any files/directories belonging to the original IDs
 if [[ -n ${PUID} ]] && [[ "${PUID}" != "${DEFAULT_UID}" ]]; then
   find / -path /sys -prune -o -path /proc -prune -o -user ${DEFAULT_UID} -exec chown -f ${PUID} "{}" \; || true
