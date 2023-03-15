@@ -22,6 +22,7 @@ groupmod --non-unique --gid ${PGID:-${DEFAULT_GID}} ${PGROUP}
 
 if [[ -n ${CONFIG_MAP_DIR} ]] && command -v rsync >/dev/null 2>&1; then
   find / -type d -name "${CONFIG_MAP_DIR}" -print -o -path /sys -prune -o -path /proc -prune 2>/dev/null | \
+  awk '{print gsub("/","/"), $0}' | sort -n | cut -d' ' -f2- | \
   while read CMDIR; do
 
     rsync --recursive --mkpath \
