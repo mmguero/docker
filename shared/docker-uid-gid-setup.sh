@@ -49,21 +49,26 @@ if [[ -n ${CONFIG_MAP_DIR} ]] && command -v rsync >/dev/null 2>&1; then
       #   would be to do something like --chmod=D2755,F644
 
   done # loop over found CONFIG_MAP_DIR directories
+  CONFIG_MAP_FIND_PRUNE_ARGS=(-o -name "${CONFIG_MAP_DIR}" -prune)
+
+else
+  CONFIG_MAP_FIND_PRUNE_ARGS=()
 fi # check for CONFIG_MAP_DIR and rsync
 
 # change user/group ownership of any files/directories belonging to the original IDs
+set +e
 if [[ -n ${PUID} ]] && [[ "${PUID}" != "${DEFAULT_UID}" ]]; then
-  find / -path /sys -prune -o -path /proc -prune -o -user ${DEFAULT_UID} -exec chown -f ${PUID} "{}" \; || true
+  find / -path /sys -prune -o -path /proc -prune -o -user ${DEFAULT_UID} -exec chown -f ${PUID} "{}" \; 2>/dev/null
 fi
 if [[ -n ${PGID} ]] && [[ "${PGID}" != "${DEFAULT_GID}" ]]; then
-  find / -path /sys -prune -o -path /proc -prune -o -group ${DEFAULT_GID} -exec chown -f :${PGID} "{}" \; || true
+  find / -path /sys -prune -o -path /proc -prune -o -group ${DEFAULT_GID} -exec chown -f :${PGID} "{}" \; 2>/dev/null
 fi
 
 # if there are semicolon-separated PUSER_CHOWN entries explicitly specified, chown them too
 if [[ -n ${PUSER_CHOWN} ]]; then
   IFS=';' read -ra ENTITIES <<< "${PUSER_CHOWN}"
   for ENTITY in "${ENTITIES[@]}"; do
-    chown -R ${PUSER}:${PGROUP} "${ENTITY}" || true
+    chown -R ${PUSER}:${PGROUP} "${ENTITY}" 2>/dev/null
   done
 fi
 
@@ -73,7 +78,7 @@ if [[ -n ${PUSER_CA_TRUST} ]] && command -v openssl >/dev/null 2>&1; then
   if [[ -d "${PUSER_CA_TRUST}" ]]; then
     while read -r -d ''; do
       CA_FILES+=("$REPLY")
-    done < <(find "${PUSER_CA_TRUST}" -type f -size +31c -print0 2>/dev/null)
+    done < <(find "${PUSER_CA_TRUST}" -type f -size +31c -print0 "${CONFIG_MAP_FIND_PRUNE_ARGS[@]}" 2>/dev/null)
   elif [[ -f "${PUSER_CA_TRUST}" ]]; then
     CA_FILES+=("${PUSER_CA_TRUST}")
   fi
@@ -112,15 +117,16 @@ if [[ -n ${PUSER_CA_TRUST} ]] && command -v openssl >/dev/null 2>&1; then
         CONCAT_FILE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
       fi
     fi
-    [[ -n "$DEST_FILE" ]] && ( cp "$CA_FILE" "$DEST_FILE" && chmod 644 "$DEST_FILE" ) || true
+    [[ -n "$DEST_FILE" ]] && ( cp "$CA_FILE" "$DEST_FILE" && chmod 644 "$DEST_FILE" )
     [[ -n "$CONCAT_FILE" ]] && \
       ( echo "" >> "$CONCAT_FILE" && \
         echo "# $CA_NAME_ORIG" >> "$CONCAT_FILE" \
-        && cat "$CA_FILE" >> "$CONCAT_FILE" ) || true
+        && cat "$CA_FILE" >> "$CONCAT_FILE" )
   done
-  command -v update-ca-certificates >/dev/null 2>&1 && update-ca-certificates >/dev/null 2>&1 || true
-  command -v update-ca-trust >/dev/null 2>&1 && update-ca-trust extract >/dev/null 2>&1 || true
+  command -v update-ca-certificates >/dev/null 2>&1 && update-ca-certificates >/dev/null 2>&1
+  command -v update-ca-trust >/dev/null 2>&1 && update-ca-trust extract >/dev/null 2>&1
 fi
+set -e
 
 # determine if we are now dropping privileges to exec ENTRYPOINT_CMD
 if [[ "$PUSER_PRIV_DROP" == "true" ]]; then
