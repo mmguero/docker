@@ -32,9 +32,14 @@
 ![xfce-build-push-ghcr](https://github.com/mmguero/docker/workflows/xfce-build-push-ghcr/badge.svg)
 ![ytdlp-build-push-ghcr](https://github.com/mmguero/docker/workflows/ytdlp-build-push-ghcr/badge.svg)
 
-## submodules
+## other repositories' docker images
 
-![zeek-build-push-ghcr](https://github.com/mmguero/zeek-docker/workflows/zeek-build-push-ghcr/badge.svg)
-![espejo-build-push-ghcr](https://github.com/mmguero/espejo/workflows/espejo-build-push-ghcr/badge.svg)
-![nginx-ldap-build-push-ghcr](https://github.com/mmguero/nginx-ldap/workflows/nginx-ldap-build-push-ghcr/badge.svg)
-![iso-build-docker-wrap-push-ghcr](https://github.com/mmguero/docker-qemu-live-iso/workflows/iso-build-docker-wrap-push-ghcr/badge.svg)
+[cleanvid](https://github.com/mmguero/cleanvid) ![cleanvid-build-push-ghcr](https://github.com/mmguero/cleanvid/workflows/cleanvid-build-push-ghcr/badge.svg)
+[deblive](https://github.com/mmguero/deblive) ![iso-build-wrap-push-ghcr](https://github.com/mmguero/deblive/workflows/iso-build-wrap-push-ghcr/badge.svg)
+[docker-qemu-live-iso](https://github.com/mmguero/docker-qemu-live-iso) ![iso-build-docker-wrap-push-ghcr](https://github.com/mmguero/docker-qemu-live-iso/workflows/iso-build-docker-wrap-push-ghcr/badge.svg)
+[espejo](https://github.com/mmguero/espejo) ![espejo-build-push-ghcr](https://github.com/mmguero/espejo/workflows/espejo-build-push-ghcr/badge.svg)
+[mirotalk](https://github.com/mmguero/mirotalk) ![mirotalk-build-push-ghcr](https://github.com/mmguero/mirotalk/workflows/mirotalk-build-push-ghcr/badge.svg)
+[monkeyplug](https://github.com/mmguero/monkeyplug) ![monkeyplug-build-push-ghcr](https://github.com/mmguero/monkeyplug/workflows/monkeyplug-build-push-ghcr/badge.svg)
+[montag](https://github.com/mmguero/montag) ![montag-build-push-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-ghcr/badge.svg) ![montag-build-push-arm32v7-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-arm32v7-ghcr/badge.svg)
+[nginx-ldap](https://github.com/mmguero/nginx-ldap) ![nginx-ldap-build-push-ghcr](https://github.com/mmguero/nginx-ldap/workflows/nginx-ldap-build-push-ghcr/badge.svg)
+[zeek-docker](https://github.com/mmguero/zeek-docker) ![zeek-build-push-ghcr](https://github.com/mmguero/zeek-docker/workflows/zeek-build-push-ghcr/badge.svg)
