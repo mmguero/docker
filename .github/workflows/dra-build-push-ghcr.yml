@@ -28,7 +28,7 @@ jobs:
       -
         name: Cancel previous run in progress
         id: cancel-previous-runs
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           ignore_sha: true
           all_but_latest: true
@@ -61,7 +61,7 @@ jobs:
       -
         name: Build and push
         id: build-and-push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./dra
           platforms: linux/amd64,linux/arm64
