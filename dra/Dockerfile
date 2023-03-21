@@ -1,11 +1,11 @@
 FROM docker.io/library/rust:latest AS rust-sources
 
 ENV USER root
-ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 
 WORKDIR /usr/src/dra
 
-RUN cargo init && \
+RUN export CARGO_NET_GIT_FETCH_WITH_CLI=true && \
+    cargo init && \
     git clone https://github.com/devmatteini/dra /tmp/dra && \
     rm -rf /usr/src/dra/src && \
     mv /tmp/dra/* /usr/src/dra && \
@@ -32,6 +32,7 @@ RUN apt-get -q update && \
     if [ $(uname -m) = aarch64 ]; then export CARGO_TARGET=aarch64-unknown-linux-musl; export CC=musl-gcc; RUSTFLAGS="-C linker=aarch64-linux-gnu-gcc"; fi && \
     if [ $(uname -m) = armv7l ]; then export CARGO_TARGET=armv7-unknown-linux-musleabihf; export CC=musl-gcc; RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc"; fi && \
     if uname -m | grep -q ^arm; then export CARGO_TARGET=arm-unknown-linux-musleabihf; export CC=musl-gcc; RUSTFLAGS="-C linker=arm-linux-gnueabihf-gcc"; fi && \
+    export CARGO_NET_GIT_FETCH_WITH_CLI=true && \
     rustup target add $CARGO_TARGET && \
     make release && \
     mv -v /usr/src/dra/target/$CARGO_TARGET/release/dra /dra && \
