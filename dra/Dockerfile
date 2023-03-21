@@ -1,4 +1,9 @@
-FROM docker.io/library/rust:latest AS rust-sources
+# Fetch the vendor with the builder platform to avoid QEMU issues, see:
+# - https://github.com/docker/buildx/issues/395
+# - https://github.com/rust-lang/cargo/issues/8719#issuecomment-932084513
+# - https://github.com/jdrouet/jolimail/blob/main/multiarch.Dockerfile#L33
+
+FROM --platform=$BUILDPLATFORM docker.io/library/rust:latest AS rust-sources
 
 ENV USER root
 
@@ -12,6 +17,8 @@ RUN export CARGO_NET_GIT_FETCH_WITH_CLI=true && \
     mkdir -p /usr/src/dra/.cargo && \
     cargo vendor > /usr/src/dra/.cargo/config && \
     rm -rf /tmp/dra
+
+# Build "offline" with the .cargo and vendor directories from builder platform
 
 FROM docker.io/library/rust:latest as builder
 
