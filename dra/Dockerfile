@@ -12,20 +12,21 @@ WORKDIR /usr/src/dra
 RUN export CARGO_NET_GIT_FETCH_WITH_CLI=true && \
     cargo init && \
     git clone https://github.com/devmatteini/dra /tmp/dra && \
+    mkdir -p /usr/src/dra-clean && \
     rm -rf /usr/src/dra/src && \
-    mv /tmp/dra/* /usr/src/dra && \
+    cp -r /tmp/dra/* /usr/src/dra/ && \
+    cp -r /tmp/dra/* /usr/src/dra-clean/ && \
     mkdir -p /usr/src/dra/.cargo && \
     cargo vendor > /usr/src/dra/.cargo/config && \
     rm -rf /tmp/dra
 
-# Build "offline" with the .cargo and vendor directories from builder platform
+# Build "offline" with the source, .cargo and vendor directories from builder platform
 
 FROM docker.io/library/rust:latest as builder
 
 ENV USER root
 
-RUN git clone https://github.com/devmatteini/dra /usr/src/dra
-
+COPY --from=rust-sources /usr/src/dra-clean /usr/src/dra
 COPY --from=rust-sources /usr/src/dra/.cargo /usr/src/dra/.cargo
 COPY --from=rust-sources /usr/src/dra/vendor /usr/src/dra/vendor
 
