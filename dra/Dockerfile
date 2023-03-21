@@ -1,6 +1,7 @@
 FROM docker.io/library/rust:latest AS rust-sources
 
 ENV USER root
+ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 
 WORKDIR /usr/src/dra
 
