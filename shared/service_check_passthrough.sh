@@ -49,7 +49,7 @@ while getopts 'vds:p:f:' OPTION; do
       ;;
 
     ?)
-      echo "script usage: $(basename $0) [-v] [-i input]" >&2
+      echo "script usage: $(basename $0) [-v (verbose)] [-d (disabled)] [-s <service>] [-p <port>] [-f <format>]" >&2
       exit 1
       ;;
   esac
@@ -94,43 +94,6 @@ if [[ -z "$DISABLED" ]] && [[ -n "$SERVICE" ]]; then
     fi
 fi
 
-# if port and/or format not specified via command line, make some inferences based on service
-if [[ -n "$SERVICE" ]]; then
-    if [[ -z "$PORT" ]]; then
-        if [[ "$SERVICE" == "api" ]]; then
-            PORT=500
-        elif [[ "$SERVICE" == "arkime" ]]; then
-            PORT=8005
-        elif [[ "$SERVICE" == "dashboards" ]]; then
-            PORT=5601
-        elif [[ "$SERVICE" == "dashboards-helper" ]]; then
-            PORT=28991
-        elif [[ "$SERVICE" == "file-monitor" ]]; then
-            PORT=8440
-        elif [[ "$SERVICE" == "freq" ]]; then
-            PORT=10004
-        elif [[ "$SERVICE" == "logstash" ]]; then
-            PORT=9600
-        elif [[ "$SERVICE" == "name-map-ui" ]]; then
-            PORT=8080
-        elif [[ "$SERVICE" == "netbox" ]]; then
-            PORT=8080
-        elif [[ "$SERVICE" == "opensearch" ]]; then
-            PORT=9200
-        fi
-    fi
-    if [[ -z "$FORMAT" ]]; then
-        if [[ "$SERVICE" == "api" ]]; then
-            FORMAT=json
-        elif [[ "$SERVICE" == "logstash" ]]; then
-            FORMAT=json
-        elif [[ "$SERVICE" == "netbox" ]]; then
-            FORMAT=json
-        elif [[ "$SERVICE" == "opensearch" ]]; then
-            FORMAT=json
-        fi
-    fi
-fi
 [[ -z "$PORT" ]] && PORT=80
 [[ -z "$FORMAT" ]] && FORMAT=http
 
