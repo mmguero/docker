@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -69,10 +69,11 @@ ENV PGROUP "firefox"
 ENV PUSER_PRIV_DROP true
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
 ADD local.conf /etc/fonts/local.conf
 ADD entrypoint.sh /usr/local/bin/firefox.sh
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
       bzip2 \

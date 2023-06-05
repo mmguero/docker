@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # x11docker --alsa $(find /dev/snd/ -type c | sed 's/^/--share /') ghcr.io/mmguero/audacity
 
@@ -21,7 +21,9 @@ ENV PGID $PGID
 ENV PUSER "audacity"
 ENV PGROUP "audacity"
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
       audacity \

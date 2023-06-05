@@ -7,7 +7,7 @@
 # -v /dev/shm:/dev/shm \
 # signal
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -20,8 +20,9 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV SIGNAL_USER signaler
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
-      echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       apt-get -q update && \
       apt-get install -q -y --no-install-recommends \
         ca-certificates \
@@ -36,7 +37,7 @@ RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.l
   bash -c "curl -sSL https://updates.signal.org/desktop/apt/keys.asc | apt-key add -" && \
     echo "deb https://updates.signal.org/desktop/apt xenial main" >> /etc/apt/sources.list && \
   apt-get -q update && \
-  apt-get install -q -y -t bullseye-backports --no-install-recommends signal-desktop && \
+  apt-get install -q -y --no-install-recommends signal-desktop && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

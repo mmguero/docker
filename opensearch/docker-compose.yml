@@ -10,6 +10,13 @@ services:
   glauth:
     image: ghcr.io/mmguero/glauth:standalone
     restart: "unless-stopped"
+    # x-podman:
+    #   uidmaps:
+    #     - 0:1000:1
+    #     - 1000:1000:1
+    #   gidmaps:
+    #     - 0:1000:1
+    #     - 1000:1000:1
     ports:
       - "127.0.0.1:389:389"
       - "127.0.0.1:5555:5555"
@@ -18,7 +25,6 @@ services:
       - ./glauth.cfg:/app/config/config.cfg:ro
       - ./certs/glauth-key.pem:/glauth-key.pem:ro
       - ./certs/glauth.pem:/glauth.pem:ro
-      - ./certs/root-ca.pem:/root-ca.pem:ro
     networks:
       - default
 
@@ -29,6 +35,10 @@ services:
       dockerfile: Dockerfile
     restart: "unless-stopped"
     container_name: opensearch-node1
+    # x-podman:
+    #   uidmaps:
+    #     - 0:1:999
+    #     - 1000:1000:1
     environment:
       << : *process-variables
       logger.level : 'WARN'
@@ -38,7 +48,7 @@ services:
       cluster.initial_cluster_manager_nodes : 'opensearch-node2'
       bootstrap.memory_lock : 'true'
       MAX_LOCKED_MEMORY : 'unlimited'
-      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
       DISABLE_INSTALL_DEMO_CONFIG : 'true'
       DISABLE_SECURITY_PLUGIN : 'false'
       cluster.routing.allocation.disk.threshold_enabled : 'false'
@@ -49,8 +59,8 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536
-        hard: 65536
+        soft: 65535
+        hard: 65535
     cap_add:
       - IPC_LOCK
     volumes:
@@ -85,6 +95,11 @@ services:
     tty: true
     restart: "unless-stopped"
     container_name: opensearch-node2
+    # x-podman:
+    #   uidmaps:
+    #     - 1000:1000:1
+    #   gidmaps:
+    #     - 1000:1000:1
     environment:
       << : *process-variables
       logger.level : 'WARN'
@@ -94,7 +109,7 @@ services:
       cluster.initial_cluster_manager_nodes : 'opensearch-node2'
       bootstrap.memory_lock : 'true'
       MAX_LOCKED_MEMORY : 'unlimited'
-      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms4g -Xmx4g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
       DISABLE_INSTALL_DEMO_CONFIG : 'true'
       DISABLE_SECURITY_PLUGIN : 'false'
       cluster.routing.allocation.disk.threshold_enabled : 'false'
@@ -106,8 +121,8 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536
-        hard: 65536
+        soft: 65535
+        hard: 65535
     cap_add:
       - IPC_LOCK
     volumes:
@@ -142,6 +157,11 @@ services:
     tty: true
     restart: "unless-stopped"
     container_name: opensearch-node3
+    # x-podman:
+    #   uidmaps:
+    #     - 1000:1000:1
+    #   gidmaps:
+    #     - 1000:1000:1
     environment:
       << : *process-variables
       logger.level : 'WARN'
@@ -151,7 +171,7 @@ services:
       cluster.initial_cluster_manager_nodes : 'opensearch-node2'
       bootstrap.memory_lock : 'true'
       MAX_LOCKED_MEMORY : 'unlimited'
-      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
       DISABLE_INSTALL_DEMO_CONFIG : 'true'
       DISABLE_SECURITY_PLUGIN : 'false'
       cluster.routing.allocation.disk.threshold_enabled : 'false'
@@ -163,8 +183,8 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536
-        hard: 65536
+        soft: 65535
+        hard: 65535
     cap_add:
       - IPC_LOCK
     volumes:
@@ -199,6 +219,11 @@ services:
     tty: true
     restart: "unless-stopped"
     container_name: opensearch-node4
+    # x-podman:
+    #   uidmaps:
+    #     - 1000:1000:1
+    #   gidmaps:
+    #     - 1000:1000:1
     environment:
       << : *process-variables
       logger.level : 'WARN'
@@ -208,7 +233,7 @@ services:
       cluster.initial_cluster_manager_nodes : 'opensearch-node2'
       bootstrap.memory_lock : 'true'
       MAX_LOCKED_MEMORY : 'unlimited'
-      OPENSEARCH_JAVA_OPTS : '-server -Xms3g -Xmx3g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
+      OPENSEARCH_JAVA_OPTS : '-server -Xms16g -Xmx16g -Xss256k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true -Dcom.sun.jndi.ldap.object.disableEndpointIdentification=true'
       DISABLE_INSTALL_DEMO_CONFIG : 'true'
       DISABLE_SECURITY_PLUGIN : 'false'
       cluster.routing.allocation.disk.threshold_enabled : 'false'
@@ -220,8 +245,8 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536
-        hard: 65536
+        soft: 65535
+        hard: 65535
     cap_add:
       - IPC_LOCK
     volumes:

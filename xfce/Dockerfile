@@ -9,9 +9,11 @@ LABEL org.opencontainers.image.description='Dockerized XFCE with my own special 
 
 # liberally steal some package lists and config scripts from my live USB image setup one of my other repos
 #   https://github.com/mmguero/deblive/
-ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/bullseye/config"
+ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/bookworm/config"
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q \
       bash \

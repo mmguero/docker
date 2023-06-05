@@ -36,9 +36,9 @@ config:
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
             - glauth:636
-            bind_dn: cn=binddn,dc=example,dc=org
-            password: changethistoo
-            userbase: ou=users,dc=example,dc=org
+            bind_dn: cn=binddn,dc=nein,dc=local
+            password: "r3@d0n!y"
+            userbase: ou=users,dc=nein,dc=local
             usersearch: (cn={0})
             username_attribute: cn
     authz:
@@ -56,15 +56,15 @@ config:
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
             - glauth:636
-            bind_dn: cn=binddn,dc=example,dc=org
-            password: changethistoo
-            userbase: ou=users,dc=example,dc=org
+            bind_dn: cn=binddn,dc=nein,dc=local
+            password: "r3@d0n!y" 
+            userbase: ou=users,dc=nein,dc=local
             usersearch: (cn={0})
             username_attribute: cn
             skip_users:
               - admin
               - kibanaserver
-            rolebase: ou=groups,dc=example,dc=org
+            rolebase: ou=groups,dc=nein,dc=local
             rolename: cn
             rolesearch_enabled: false
             rolesearch: null

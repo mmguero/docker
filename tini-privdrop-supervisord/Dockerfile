@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm

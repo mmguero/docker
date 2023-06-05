@@ -22,6 +22,7 @@ kibana_user:
   backend_roles:
   - "kibanauser"
   - "Developers"
+  - "Service"
   description: "Maps kibanauser to kibana_user"
 
 readall:
@@ -29,12 +30,14 @@ readall:
   backend_roles:
   - "readall"
   - "Developers"
+  - "Service"
 
 manage_snapshots:
   reserved: false
   backend_roles:
   - "snapshotrestore"
   - "Developers"
+  - "Service"
 
 kibana_server:
   reserved: true
