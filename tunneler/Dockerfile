@@ -64,7 +64,7 @@ RUN  apt-get update && \
     ./configure --prefix=/usr && \
     make && \
     make install && \
-  pip3 install magic-wormhole-transit-relay supervisor && \
+  pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
   curl -sSL -o /tmp/croc.deb "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
     dpkg -i /tmp/croc.deb && \
