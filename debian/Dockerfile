@@ -19,7 +19,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     apt-get install -q -y --no-install-recommends \
         fasttrack-archive-keyring && \
-    echo "deb https://fasttrack.debian.net/debian/ bookworm-fasttrack main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
+    echo "deb https://fasttrack.debian.net/debian/ bookworm-fasttrack main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get install -q -y --no-install-recommends \
         autossh \
