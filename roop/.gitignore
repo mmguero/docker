@@ -1,0 +1,3 @@
+*.onnx
+.env
+.envrc
