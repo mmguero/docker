@@ -3,10 +3,10 @@
 #
 # wrapper shell script for roop in a docker image
 #   eg.,
-#   roop-docker.sh -r nvidia -f ~/tmp/face.jpg -t ~/tmp/target.mp4 -o ~/tmp/outdocker.mp4 -- --gpu-vendor=nvidia --gpu-threads=2 --keep-frames
-#
+#   roop-docker.sh -e docker -r nvidia -f face.jpg -t target.mp4 -o outdocker.mp4 -- --gpu-vendor=nvidia --gpu-threads=2 --keep-fps
+#   roop-docker.sh -e podman -d 'nvidia.com/gpu=all' -f face.jpg -t target.mp4 -o output.mp4 -- --gpu-vendor nvidia --gpu-threads 2 --keep-fps
 # check your container engine's plumbing:
-#   - podman run --rm --device nvidia.com/gpu=all nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04 nvidia-smi
+#   - podman run --rm --device 'nvidia.com/gpu=all' nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04 nvidia-smi
 #   - docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04 nvidia-smi
 #   - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 #
