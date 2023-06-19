@@ -2,7 +2,8 @@ version: '3.7'
 
 services:
   mimic:
-    image: docker.io/mycroftai/mimic3:latest
+    # image: ghcr.io/mmguero/mimic3:gpu
+    image: ghcr.io/mmguero/mimic3:latest
     ports:
       - "127.0.0.1:59125:59125"
     volumes:
