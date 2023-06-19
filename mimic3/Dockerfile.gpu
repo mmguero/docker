@@ -64,6 +64,9 @@ RUN --mount=type=cache,id=pip-requirements,target=/root/.cache/pip \
 
 WORKDIR /home/mimic3/app
 
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,video
+
 EXPOSE 59125
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/docker-uid-gid-setup.sh"]
