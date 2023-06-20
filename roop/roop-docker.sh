@@ -3,8 +3,8 @@
 #
 # wrapper shell script for roop in a docker image
 #   eg.,
-#   roop-docker.sh -e docker -r nvidia -f face.jpg -t target.mp4 -o outdocker.mp4 -- --gpu-vendor=nvidia --gpu-threads=2 --keep-fps
-#   roop-docker.sh -e podman -d 'nvidia.com/gpu=all' -f face.jpg -t target.mp4 -o output.mp4 -- --gpu-vendor nvidia --gpu-threads 2 --keep-fps
+#   roop-docker.sh -e docker -r nvidia -s source.jpg -t target.mp4 -o output.mp4 -- --execution-provider cuda --execution-threads 2 --keep-fps
+#   roop-docker.sh -e podman -d 'nvidia.com/gpu=all' -s source.jpg -t target.mp4 -o output.mp4 -- --execution-provider cuda --execution-threads 2 --keep-fps
 # check your container engine's plumbing:
 #   - podman run --rm --device 'nvidia.com/gpu=all' nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04 nvidia-smi
 #   - docker run --rm --runtime=nvidia --gpus all nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04 nvidia-smi
@@ -26,22 +26,22 @@ SCRIPT_PATH="$($DIRNAME $($REALPATH -e "${BASH_SOURCE[0]}"))"
 SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
 VERBOSE_FLAG=
-FACE=
+SOURCE=
 TARGET=
 OUTPUT=
 ROOP_IMAGE="${ROOP_IMAGE:-ghcr.io/mmguero/roop:latest}"
 CONTAINER_ENGINE="${CONTAINER_ENGINE:-docker}"
 RUNTIME_ARGS=()
 DEVICE_ARGS=()
-while getopts 'vf:t:o:i:e:r:d:' OPTION; do
+while getopts 'vs:t:o:i:e:r:d:' OPTION; do
   case "$OPTION" in
     v)
       set -x
       VERBOSE_FLAG="-v"
       ;;
 
-    f)
-      FACE="$OPTARG"
+    s)
+      SOURCE="$OPTARG"
       ;;
 
     t)
@@ -75,7 +75,7 @@ while getopts 'vf:t:o:i:e:r:d:' OPTION; do
       ;;
 
     ?)
-      echo "script usage: $(basename $0) [-f face] [-t target] [-o output] (-i <roop image>) (-e <container engine>) (-r <container runtime>) (-d <device,device,device,etc.>)" >&2
+      echo "script usage: $(basename $0) [-s source] [-t target] [-o output] (-i <roop image>) (-e <container engine>) (-r <container runtime>) (-d <device,device,device,etc.>)" >&2
       exit 1
       ;;
   esac
@@ -87,7 +87,7 @@ PUID=$([[ "${CONTAINER_ENGINE}" == "podman" ]] && echo 0 || id -u)
 PGID=$([[ "${CONTAINER_ENGINE}" == "podman" ]] && echo 0 || id -g)
 
 TEMP_DIR=$(mktemp -d -p "$($DIRNAME "${OUTPUT}")" -t roop.XXXXXXXXXX)
-FACE_BASENAME="$(basename "${FACE}")"
+SOURCE_BASENAME="$(basename "${SOURCE}")"
 TARGET_BASENAME="$(basename "${TARGET}")"
 OUT_BASENAME="$(basename "${OUTPUT}")"
 
@@ -100,7 +100,7 @@ containsElement () {
 
 function finish {
   if containsElement "--keep-frames" "${ROOP_RUN_ARGS[@]}"; then
-    rm $VERBOSE_FLAG -f "${TEMP_DIR}/${FACE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}"
+    rm $VERBOSE_FLAG -f "${TEMP_DIR}/${SOURCE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}"
     mv $VERBOSE_FLAG "${TEMP_DIR}"/* "${TEMP_DIR}"/../
     rmdir "${TEMP_DIR}"
   else
@@ -109,7 +109,7 @@ function finish {
 }
 trap finish EXIT
 
-cp $VERBOSE_FLAG "${FACE}" "${TEMP_DIR}/"
+cp $VERBOSE_FLAG "${SOURCE}" "${TEMP_DIR}/"
 cp $VERBOSE_FLAG "${TARGET}" "${TEMP_DIR}/"
 
 "${CONTAINER_ENGINE}" run --rm -t \
@@ -121,7 +121,7 @@ cp $VERBOSE_FLAG "${TARGET}" "${TEMP_DIR}/"
   -w "/data" \
   "${ROOP_IMAGE}" \
   python3 /roop/run.py \
-  -f "/data/${FACE_BASENAME}" \
+  -s "/data/${SOURCE_BASENAME}" \
   -t "/data/${TARGET_BASENAME}" \
   -o "/data/${OUT_BASENAME}" \
   "${ROOP_RUN_ARGS[@]}"

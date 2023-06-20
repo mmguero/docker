@@ -15,7 +15,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 ENV ROOP_URL "https://codeload.github.com/mmguero/roop/tar.gz/main"
 ENV BUFFALO_L_URL "https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip"
-ENV INSWAPPER_128_URL "https://civitai.com/api/download/models/85159"
+ENV INSWAPPER_128_URL "https://huggingface.co/henryruhs/roop/resolve/main/inswapper_128.onnx"
+ENV GFPGAN_URL "https://huggingface.co/henryruhs/roop/resolve/main/GFPGANv1.4.pth"
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
@@ -49,6 +50,7 @@ RUN apt-get -q update && \
       mkdir ./roop && \
       curl -k -sSL "$ROOP_URL" | tar xzvf - -C ./roop --strip-components 1 && \
     curl -fsSL -o /roop/inswapper_128.onnx "${INSWAPPER_128_URL}" && \
+    curl -fsSL -o /roop/GFPGANv1.4.pth "${GFPGAN_URL}" && \
     curl -fsSL -o /tmp/buffalo_l.zip "${BUFFALO_L_URL}" && \
         ln -s -r /roop/inswapper_128.onnx /roop/roopVideoFace_v10.onnx && \
         cd /home/${PUSER}/.insightface/models/buffalo_l && \
