@@ -45,9 +45,8 @@ RUN apt-get -q update && \
       chsh -s /bin/bash ${PUSER} && \
       usermod -a -G sudo ${PUSER} && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    mkdir -p /home/${PUSER}/.insightface/models/buffalo_l && \
+    mkdir -p /roop/models /home/${PUSER}/.insightface/models/buffalo_l && \
     cd / && \
-      mkdir ./roop/models && \
       curl -k -sSL "$ROOP_URL" | tar xzvf - -C ./roop --strip-components 1 && \
     curl -fsSL -o /roop/models/inswapper_128.onnx "${INSWAPPER_128_URL}" && \
     curl -fsSL -o /roop/models/GFPGANv1.4.pth "${GFPGAN_URL}" && \
@@ -73,6 +72,8 @@ RUN apt-get -q update && \
 
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,video
+ENV CUDA_DEVICE_ORDER FASTEST_FIRST
+ENV CUDA_VISIBLE_DEVICES 0
 
 WORKDIR /roop
 
