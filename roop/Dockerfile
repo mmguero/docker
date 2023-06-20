@@ -47,12 +47,12 @@ RUN apt-get -q update && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     mkdir -p /home/${PUSER}/.insightface/models/buffalo_l && \
     cd / && \
-      mkdir ./roop && \
+      mkdir ./roop/models && \
       curl -k -sSL "$ROOP_URL" | tar xzvf - -C ./roop --strip-components 1 && \
-    curl -fsSL -o /roop/inswapper_128.onnx "${INSWAPPER_128_URL}" && \
-    curl -fsSL -o /roop/GFPGANv1.4.pth "${GFPGAN_URL}" && \
+    curl -fsSL -o /roop/models/inswapper_128.onnx "${INSWAPPER_128_URL}" && \
+    curl -fsSL -o /roop/models/GFPGANv1.4.pth "${GFPGAN_URL}" && \
     curl -fsSL -o /tmp/buffalo_l.zip "${BUFFALO_L_URL}" && \
-        ln -s -r /roop/inswapper_128.onnx /roop/roopVideoFace_v10.onnx && \
+        ln -s -r /roop/models/inswapper_128.onnx /roop/models/roopVideoFace_v10.onnx && \
         cd /home/${PUSER}/.insightface/models/buffalo_l && \
         unzip /tmp/buffalo_l.zip -d /home/${PUSER}/.insightface/models/buffalo_l && \
     python3 -m pip install --index-url https://download.pytorch.org/whl/cu118 torch torchvision torchaudio && \
