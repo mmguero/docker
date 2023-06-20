@@ -13,10 +13,19 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-ENV ROOP_URL "https://codeload.github.com/mmguero/roop/tar.gz/main"
-ENV BUFFALO_L_URL "https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip"
+ARG BUFFALO_VER=0.7
+ARG FACEXLIB_DET_VER=0.1.0
+ARG FACEXLIB_PARSENET_VER=0.2.2
+ARG GFPGAN_VER=1.4
+ARG ROOP_BRANCH=main
+ARG ROOP_REPO=mmguero
+
+ENV BUFFALO_L_URL "https://github.com/deepinsight/insightface/releases/download/v${BUFFALO_VER}/buffalo_l.zip"
+ENV FACEXLIB_DET_URL "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth"
+ENV FACEXLIB_PARSENET_URL "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth"
+ENV GFPGAN_URL "https://huggingface.co/henryruhs/roop/resolve/main/GFPGANv${GFPGAN_VER}.pth"
 ENV INSWAPPER_128_URL "https://huggingface.co/henryruhs/roop/resolve/main/inswapper_128.onnx"
-ENV GFPGAN_URL "https://huggingface.co/henryruhs/roop/resolve/main/GFPGANv1.4.pth"
+ENV ROOP_URL "https://codeload.github.com/${ROOP_REPO}/roop/tar.gz/${ROOP_BRANCH}"
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
@@ -45,13 +54,16 @@ RUN apt-get -q update && \
       chsh -s /bin/bash ${PUSER} && \
       usermod -a -G sudo ${PUSER} && \
       echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    mkdir -p /roop/models /home/${PUSER}/.insightface/models/buffalo_l && \
+    mkdir -p /roop/models/gfpgan/weights /home/${PUSER}/.insightface/models/buffalo_l && \
     cd / && \
       curl -k -sSL "$ROOP_URL" | tar xzvf - -C ./roop --strip-components 1 && \
     curl -fsSL -o /roop/models/inswapper_128.onnx "${INSWAPPER_128_URL}" && \
-    curl -fsSL -o /roop/models/GFPGANv1.4.pth "${GFPGAN_URL}" && \
-    curl -fsSL -o /tmp/buffalo_l.zip "${BUFFALO_L_URL}" && \
         ln -s -r /roop/models/inswapper_128.onnx /roop/models/roopVideoFace_v10.onnx && \
+    curl -fsSL -o "/roop/models/gfpgan/GFPGANv${GFPGAN_VER}.pth" "${GFPGAN_URL}" && \
+        ln -s -r "/roop/models/gfpgan/GFPGANv${GFPGAN_VER}.pth" "/roop/models/GFPGANv${GFPGAN_VER}.pth" && \
+    curl -fsSL -o /roop/models/gfpgan/weights/detection_Resnet50_Final.pth "${FACEXLIB_DET_URL}" && \
+    curl -fsSL -o /roop/models/gfpgan/weights/parsing_parsenet.pth "${FACEXLIB_PARSENET_URL}" && \
+    curl -fsSL -o /tmp/buffalo_l.zip "${BUFFALO_L_URL}" && \
         cd /home/${PUSER}/.insightface/models/buffalo_l && \
         unzip /tmp/buffalo_l.zip -d /home/${PUSER}/.insightface/models/buffalo_l && \
     python3 -m pip install --index-url https://download.pytorch.org/whl/cu118 torch torchvision torchaudio && \

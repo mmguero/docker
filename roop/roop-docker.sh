@@ -100,7 +100,7 @@ containsElement () {
 
 function finish {
   if containsElement "--keep-frames" "${ROOP_RUN_ARGS[@]}"; then
-    rm $VERBOSE_FLAG -f "${TEMP_DIR}/${SOURCE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}"
+    rm $VERBOSE_FLAG -f "${TEMP_DIR}/${SOURCE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}" "${TEMP_DIR}"/*.pth
     mv $VERBOSE_FLAG "${TEMP_DIR}"/* "${TEMP_DIR}"/../
     rmdir "${TEMP_DIR}"
   else
@@ -111,6 +111,8 @@ trap finish EXIT
 
 cp $VERBOSE_FLAG "${SOURCE}" "${TEMP_DIR}/"
 cp $VERBOSE_FLAG "${TARGET}" "${TEMP_DIR}/"
+ln -s $VERBOSE_FLAG /roop/models/gfpgan/weights/detection_Resnet50_Final.pth "${TEMP_DIR}/"
+ln -s $VERBOSE_FLAG /roop/models/gfpgan/weights/parsing_parsenet.pth "${TEMP_DIR}/"
 
 "${CONTAINER_ENGINE}" run --rm -t \
   "${RUNTIME_ARGS[@]}" \
