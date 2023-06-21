@@ -8,8 +8,6 @@ ENCODING="utf-8"
 
 [[ -z "$GITHUB_OAUTH_TOKEN" ]] && [[ -n "$GITHUB_TOKEN" ]] && export GITHUB_OAUTH_TOKEN="$GITHUB_TOKEN"
 
-set -x
-
 cd /tmp
 curl -o ./getcroc.sh -sSL "https://getcroc.schollz.com"
 chmod +x ./getcroc.sh
