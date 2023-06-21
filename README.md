@@ -12,6 +12,8 @@
 
 ![debian-stable-slim-build-push-ghcr](https://github.com/mmguero/docker/workflows/debian-stable-slim-build-push-ghcr/badge.svg)
 
+![fetch-build-push-ghcr](https://github.com/mmguero/docker/workflows/fetch-build-push-ghcr/badge.svg)
+
 ![firefox-build-push-ghcr](https://github.com/mmguero/docker/workflows/firefox-build-push-ghcr/badge.svg)
 
 ![forgejo-root-build-push-ghcr](https://github.com/mmguero/docker/workflows/forgejo-root-build-push-ghcr/badge.svg)
