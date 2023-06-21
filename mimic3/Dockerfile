@@ -19,6 +19,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 ARG MIMIC3_BRANCH=master
 ENV MIMIC3_BRANCH $MIMIC3_BRANCH
+ARG MIMIC3_VOICES_LANG=en
+ENV MIMIC3_VOICES_LANG $MIMIC3_VOICES_LANG
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
@@ -30,7 +32,7 @@ RUN --mount=type=cache,id=apt-run,target=/var/cache/apt \
     apt-get update && \
     apt-get install --yes --no-install-recommends \
         build-essential git python3 python3-dev python3-pip python3-venv \
-        ca-certificates libespeak-ng1 tini vim-tiny && \
+        ca-certificates libespeak-ng1 tini vim-tiny jq && \
     sed -i "s/set[[:space:]]*compatible/set nocompatible/g" /etc/vim/vimrc.tiny && \
     groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       useradd -m --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /home/${PUSER} ${PUSER} && \
@@ -58,7 +60,13 @@ WORKDIR /home/mimic3/app
 # Install mimic3
 RUN --mount=type=cache,id=pip-requirements,target=/root/.cache/pip \
     ./install.sh && \
+    mkdir -p /home/${PUSER}/.local/share/mycroft/mimic3/voices && \
+    /home/${PUSER}/app/.venv/bin/python3 -m mimic3_tts.download 2>/dev/null | \
+        jq -r '. |= keys | .[]' | sort | grep "^${MIMIC3_VOICES_LANG}" | \
+        xargs -r -L 1 /home/${PUSER}/app/.venv/bin/python3 -m mimic3_tts.download --output-dir /home/${PUSER}/.local/share/mycroft/mimic3/voices && \
     chown -R ${PUSER}:${PUSER} /home/${PUSER} && \
+    mkdir -p /root/.local/share/mycroft/mimic3 && \
+        ln -s /home/${PUSER}/.local/share/mycroft/mimic3/voices /root/.local/share/mycroft/mimic3/voices && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh
 
 WORKDIR /home/mimic3/app

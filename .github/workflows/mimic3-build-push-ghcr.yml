@@ -1,0 +1,62 @@
+---
+name: mimic3-build-push-ghcr
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'mimic3/**'
+      - '.github/workflows/mimic3-build-push-ghcr.yml'
+  pull_request:
+    paths:
+      - 'mimic3/**'
+      - '.github/workflows/mimic3-build-push-ghcr.yml'
+  workflow_dispatch:
+  repository_dispatch:
+  schedule:
+    - cron: '0 12 15 * *'
+
+jobs:
+
+  build-standard-image:
+    name: Call Docker Build for standard image
+    uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      actions: write
+      packages: write
+      pull-requests: write
+    with:
+      context: ./mimic3
+      file: ./mimic3/Dockerfile
+      cancel-previous-runs: true
+      dockerhub-enable: false
+      ghcr-enable: true
+      image-names: |
+        ghcr.io/${{ github.repository_owner }}/mimic3
+      tag-rules: |
+        type=raw,value=latest,enable={{is_default_branch}}
+        type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
+      platforms: linux/amd64
+
+  build-gpu-image:
+    name: Call Docker Build for nvidia/cuda image
+    uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+    permissions:
+      contents: read
+      actions: write
+      packages: write
+      pull-requests: write
+    with:
+      context: ./mimic3
+      file: ./mimic3/Dockerfile.gpu
+      cancel-previous-runs: false
+      dockerhub-enable: false
+      ghcr-enable: true
+      image-names: |
+        ghcr.io/${{ github.repository_owner }}/mimic3
+      tag-rules: |
+        type=raw,value=gpu,enable={{is_default_branch}}
+        type=raw,value=stable-gpu-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
+      platforms: linux/amd64
