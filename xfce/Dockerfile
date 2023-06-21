@@ -20,6 +20,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       bc \
       bzip2 \
       ca-certificates \
+      ca-certificates-java \
       cpio \
       curl \
       diffutils \
@@ -79,7 +80,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     git clone https://github.com/asdf-vm/asdf.git /etc/skel/.asdf && \
     curl -sSL -o /tmp/localepurge.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0992-localepurge.hook.chroot" && \
       bash /tmp/localepurge.sh && \
-    env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-11-jre-headless && \
+    env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-17-jre-headless && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.cache/*
