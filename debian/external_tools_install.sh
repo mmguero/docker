@@ -138,9 +138,10 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
     ASSET_REGEX="$(echo "$i" | cut -d'|' -f2)"
     OUTPUT_FILE="$(echo "$i" | cut -d'|' -f3)"
     OUTPUT_FILE_PERMS="$(echo "$i" | cut -d'|' -f4)"
+    echo "" >&2
     echo "Downloading asset for $REPO..." >&2
     FETCH_DIR="$(mktemp -d)"
-    /usr/bin/fetch --progress \
+    /usr/bin/fetch --log-level warn \
       --repo="$REPO" \
       --tag=">=0.0.0" \
       --release-asset="$ASSET_REGEX" \
@@ -164,7 +165,7 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
       if [[ -d "$UNPACK_DIR" ]]; then
         find "$UNPACK_DIR" -type f -exec file --mime-type "{}" \; | \
           grep -P ":\s+application/.*executable" | \
-          cut -d: -f 1 | xargs -I XXX -r mv -v "XXX" /usr/bin/
+          cut -d: -f 1 | xargs -I XXX -r mv "XXX" /usr/bin/
         rm -rf "$UNPACK_DIR" "$OUTPUT_FILE"
       fi
     fi
