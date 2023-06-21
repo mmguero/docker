@@ -87,13 +87,13 @@ jobs:
       -
         name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
+        if: always()
         with:
           sarif_file: 'trivy-results.sarif'
       -
         name: Push
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@v2
-        if: always()
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
