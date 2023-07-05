@@ -16,6 +16,13 @@ set -u
 
 ENCODING="utf-8"
 
+containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
 [[ "$(uname -s)" = 'Darwin' ]] && REALPATH=grealpath || REALPATH=realpath
 [[ "$(uname -s)" = 'Darwin' ]] && DIRNAME=gdirname || DIRNAME=dirname
 if ! (type "$REALPATH" && type "$DIRNAME" && type $CONTAINER_ENGINE) > /dev/null; then
@@ -82,6 +89,11 @@ while getopts 'vs:t:o:i:e:r:d:' OPTION; do
 done
 shift "$(($OPTIND -1))"
 ROOP_RUN_ARGS=("$@")
+if containsElement "--keep-frames" "${ROOP_RUN_ARGS[@]}"; then
+  ROOP_EXTRA_ARGS=()
+else
+  ROOP_EXTRA_ARGS=(--keep-frames)
+fi
 
 PUID=$([[ "${CONTAINER_ENGINE}" == "podman" ]] && echo 0 || id -u)
 PGID=$([[ "${CONTAINER_ENGINE}" == "podman" ]] && echo 0 || id -g)
@@ -90,22 +102,20 @@ TEMP_DIR=$(mktemp -d -p "$($DIRNAME "${OUTPUT}")" -t roop.XXXXXXXXXX)
 SOURCE_BASENAME="$(basename "${SOURCE}")"
 TARGET_BASENAME="$(basename "${TARGET}")"
 OUT_BASENAME="$(basename "${OUTPUT}")"
-
-containsElement () {
-  local e match="$1"
-  shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
-  return 1
-}
+if command -v shred >/dev/null 2>&1; then
+  RMCMD=(shred $VERBOSE_FLAG -f --iterations=0 --zero -u)
+else
+  RMCMD=(rm $VERBOSE_FLAG -f)
+fi
 
 function finish {
-  if containsElement "--keep-frames" "${ROOP_RUN_ARGS[@]}"; then
-    rm $VERBOSE_FLAG -f "${TEMP_DIR}/${SOURCE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}" "${TEMP_DIR}"/gfpgan
-    mv $VERBOSE_FLAG "${TEMP_DIR}"/* "${TEMP_DIR}"/../
-    rmdir "${TEMP_DIR}"
-  else
-    rm $VERBOSE_FLAG -rf "${TEMP_DIR}"
-  fi
+  rm $VERBOSE_FLAG -f "${TEMP_DIR}"/gfpgan
+  "${RMCMD[@]}" "${TEMP_DIR}/${SOURCE_BASENAME}" "${TEMP_DIR}/${TARGET_BASENAME}" "${TEMP_DIR}/${OUT_BASENAME}"
+  containsElement "--keep-frames" "${ROOP_RUN_ARGS[@]}" && \
+    mv $VERBOSE_FLAG "${TEMP_DIR}"/* "${TEMP_DIR}"/../ ||
+    ( "${RMCMD[@]}" "${TEMP_DIR}/temp/"*/* && rmdir $VERBOSE_FLAG "${TEMP_DIR}/temp/"* && rmdir $VERBOSE_FLAG "${TEMP_DIR}"/temp )
+  rmdir $VERBOSE_FLAG "${TEMP_DIR}" >/dev/null 2>&1 || "${RMCMD[@]}" "${TEMP_DIR}"/*
+  rmdir $VERBOSE_FLAG "${TEMP_DIR}" >/dev/null 2>&1 || rm -r $VERBOSE_FLAG -f "${TEMP_DIR}"
 }
 trap finish EXIT
 
@@ -125,7 +135,8 @@ ln -s $VERBOSE_FLAG /roop/models/gfpgan "${TEMP_DIR}"/gfpgan
   -s "/data/${SOURCE_BASENAME}" \
   -t "/data/${TARGET_BASENAME}" \
   -o "/data/${OUT_BASENAME}" \
-  "${ROOP_RUN_ARGS[@]}"
+  "${ROOP_RUN_ARGS[@]}" \
+  "${ROOP_EXTRA_ARGS[@]}"
 
 cp $VERBOSE_FLAG "${TEMP_DIR}/${OUT_BASENAME}" "${OUTPUT}"
 
