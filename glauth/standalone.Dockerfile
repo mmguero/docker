@@ -4,7 +4,7 @@
 
 FROM alpine:latest as prep
 
-ARG GLAUTH_RELEASE=v2.1.0
+ARG GLAUTH_RELEASE=v2.2.0
 ENV $GLAUTH_RELEASE $GLAUTH_RELEASE
 
 RUN mkdir -p /app/v2 && \
@@ -21,7 +21,7 @@ RUN mkdir -p /app/v2 && \
 
 FROM gcr.io/distroless/base-debian10 as run
 
-ARG GLAUTH_RELEASE=v2.1.0
+ARG GLAUTH_RELEASE=v2.2.0
 ENV $GLAUTH_RELEASE $GLAUTH_RELEASE
 
 ADD https://raw.githubusercontent.com/glauth/glauth/${GLAUTH_RELEASE}/v2/scripts/docker/start-standalone.sh /app/docker/
