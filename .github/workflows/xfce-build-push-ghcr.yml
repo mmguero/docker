@@ -4,66 +4,97 @@ name: xfce-build-push-ghcr
 on:
   push:
     branches:
-      - 'master'
-    paths:
-      - 'xfce/**'
-      - '.github/workflows/xfce-build-push-ghcr.yml'
+      - 'main'
   pull_request:
-    paths:
-      - 'capa/**'
-      - '.github/workflows/xfce-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
   schedule:
     - cron: '0 12 15 * *'
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/xfce
+  IMAGE_PLATFORM: linux/amd64
+  REPO_CONTEXT: ./xfce
+  REPO_CONTAINERFILE: ./xfce/Dockerfile
+
 jobs:
-
-  build-base-image:
-    name: Call Docker Build for base
-    uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
+  buildpushscan:
+    runs-on: ubuntu-latest
     permissions:
-      contents: read
       actions: write
       packages: write
-      pull-requests: write
-    with:
-      context: ./xfce
-      file: ./xfce/xfce-base.Dockerfile
-      cancel-previous-runs: true
-      dockerhub-enable: false
-      ghcr-enable: true
-      image-names: |
-        ghcr.io/${{ github.repository_owner }}/xfce-base
-      tag-rules: |
-        type=raw,value=latest,enable={{is_default_branch}}
-        type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
-        type=ref,event=pr
-        type=ref,event=branch
-        type=raw,value=gha-${{ github.run_id }}
-      platforms: linux/amd64
-
-  build-plus-image:
-    name: Call Docker Build for plus
-    needs: build-base-image
-    uses: mmguero-dev/docker-build-workflow/.github/workflows/reusable-docker-build.yaml@main
-    permissions:
       contents: read
-      actions: write
-      packages: write
-      pull-requests: write
-    with:
-      context: ./xfce
-      file: ./xfce/Dockerfile
-      cancel-previous-runs: false
-      dockerhub-enable: false
-      ghcr-enable: true
-      image-names: |
-        ghcr.io/${{ github.repository_owner }}/xfce
-      tag-rules: |
-        type=raw,value=latest,enable={{is_default_branch}}
-        type=raw,value=stable-{{date 'YYYYMMDDHHmmss'}},enable={{is_default_branch}}
-        type=ref,event=pr
-        type=ref,event=branch
-        type=raw,value=gha-${{ github.run_id }}
-      platforms: linux/amd64
+      security-events: write
+    steps:
+      -
+        name: Cancel previous run in progress
+        id: cancel-previous-runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          ignore_sha: true
+          all_but_latest: true
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Checkout
+        id: repo-checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        id: setup-qemu
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Log in to registry
+        id: registry-login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build base image
+        id: build-base-image
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ env.REPO_CONTEXT }}
+          file: ${{ env.REPO_CONTAINERFILE }}
+          push: true
+          target: base
+          tags: ${{ env.IMAGE_NAME }}:base
+          build-args: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          platforms: ${{ env.IMAGE_PLATFORM }}
+      -
+        name: Build plus image
+        id: build-plus-image
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ env.REPO_CONTEXT }}
+          file: ${{ env.REPO_CONTAINERFILE }}
+          push: true
+          target: plus
+          tags: ${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          platforms: ${{ env.IMAGE_PLATFORM }}
+      -
+        name: Run Trivy vulnerability scanner
+        id: trivy-scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          scanners: 'vuln'
+          image-ref: ${{ env.IMAGE_NAME }}:latest
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          vuln-type: 'os,library'
+          hide-progress: true
+          ignore-unfixed: true
+          exit-code: '0'
+      -
+        name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'

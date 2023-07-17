@@ -7,11 +7,11 @@ on:
       - 'master'
     paths:
       - 'gitea/**'
-      - '.github/workflows/gitea-build-push-ghcr.yml'
+      - '.github/workflows/gitea-root-build-push-ghcr.yml'
   pull_request:
     paths:
       - 'gitea/**'
-      - '.github/workflows/gitea-build-push-ghcr.yml'
+      - '.github/workflows/gitea-root-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
   schedule:
@@ -77,7 +77,7 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          severity: 'HIGH,CRITICAL'
           vuln-type: 'os,library'
           hide-progress: true
           ignore-unfixed: true

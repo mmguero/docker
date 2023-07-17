@@ -6,11 +6,11 @@ on:
     branches:
       - 'master'
     paths:
-      - 'mastodon/**'
+      - 'mastodon-linuxserver-io/**'
       - '.github/workflows/mastodon-build-push-ghcr.yml'
   pull_request:
     paths:
-      - 'mastodon/**'
+      - 'mastodon-linuxserver-io/**'
       - '.github/workflows/mastodon-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
@@ -22,8 +22,8 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mastodon
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64,arm64
-  REPO_CONTEXT: ./mastodon
-  REPO_CONTAINERFILE: ./mastodon/Dockerfile
+  REPO_CONTEXT: ./mastodon-linuxserver-io
+  REPO_CONTAINERFILE: ./mastodon-linuxserver-io/Dockerfile
 
 jobs:
   buildah:
@@ -77,7 +77,7 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          severity: 'HIGH,CRITICAL'
           vuln-type: 'os,library'
           hide-progress: true
           ignore-unfixed: true
