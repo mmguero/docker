@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/boringproxy
   IMAGE_TAG: latest
-  IMAGE_ARCH: amd64,arm64,arm/v7,arm/v6
+  IMAGE_ARCH: amd64,arm64,armhf
   REPO_CONTEXT: ./boringproxy
   REPO_CONTAINERFILE: ./boringproxy/Dockerfile
 
