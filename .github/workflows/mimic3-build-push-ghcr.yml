@@ -2,20 +2,20 @@
 name: mimic3-build-push-ghcr
 
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'mimic3/**'
-      - '.github/workflows/mimic3-build-push-ghcr.yml'
-  pull_request:
-    paths:
-      - 'mimic3/**'
-      - '.github/workflows/mimic3-build-push-ghcr.yml'
   workflow_dispatch:
-  repository_dispatch:
-  schedule:
-    - cron: '0 12 15 * *'
+  # repository_dispatch:
+  # push:
+  #   branches:
+  #     - 'master'
+  #   paths:
+  #     - 'mimic3/**'
+  #     - '.github/workflows/mimic3-build-push-ghcr.yml'
+  # pull_request:
+  #   paths:
+  #     - 'mimic3/**'
+  #     - '.github/workflows/mimic3-build-push-ghcr.yml'
+  # schedule:
+  #   - cron: '0 12 15 * *'
 
 env:
   REGISTRY: ghcr.io
