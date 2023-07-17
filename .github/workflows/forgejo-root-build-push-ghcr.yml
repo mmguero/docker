@@ -20,7 +20,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/forgejo
-  IMAGE_TAG: latest
+  IMAGE_TAG: root
   IMAGE_ARCH: amd64,arm64
   REPO_CONTEXT: ./forgejo
   REPO_CONTAINERFILE: ./forgejo/Dockerfile
