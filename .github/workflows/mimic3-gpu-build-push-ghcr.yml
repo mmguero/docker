@@ -1,29 +1,29 @@
 ---
-name: opensearch-build-push-ghcr
+name: mimic3-gpu-build-push-ghcr
 
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'opensearch/**'
-      - '.github/workflows/opensearch-build-push-ghcr.yml'
-  pull_request:
-    paths:
-      - 'opensearch/**'
-      - '.github/workflows/opensearch-build-push-ghcr.yml'
   workflow_dispatch:
-  repository_dispatch:
-  schedule:
-    - cron: '0 12 15 * *'
+  # repository_dispatch:
+  # push:
+  #   branches:
+  #     - 'master'
+  #   paths:
+  #     - 'mimic3/**'
+  #     - '.github/workflows/mimic3-gpu-build-push-ghcr.yml'
+  # pull_request:
+  #   paths:
+  #     - 'mimic3/**'
+  #     - '.github/workflows/mimic3-gpu-build-push-ghcr.yml'
+  # schedule:
+  #   - cron: '0 12 15 * *'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/opensearch
-  IMAGE_TAG: latest
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/mimic3
+  IMAGE_TAG: gpu
   IMAGE_ARCH: amd64
-  REPO_CONTEXT: ./opensearch
-  REPO_CONTAINERFILE: ./opensearch/Dockerfile
+  REPO_CONTEXT: ./mimic3
+  REPO_CONTAINERFILE: ./mimic3/Dockerfile.gpu
 
 jobs:
   buildah:

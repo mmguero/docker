@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fetch
   IMAGE_TAG: latest
-  IMAGE_ARCH: amd64,arm64,arm32v7
+  IMAGE_ARCH: amd64,arm64,armhf
   REPO_CONTEXT: ./fetch
   REPO_CONTAINERFILE: ./fetch/Dockerfile
 
