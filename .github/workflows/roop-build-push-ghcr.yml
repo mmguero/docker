@@ -2,20 +2,20 @@
 name: roop-build-push-ghcr
 
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'roop/**'
-      - '.github/workflows/roop-build-push-ghcr.yml'
-  pull_request:
-    paths:
-      - 'roop/**'
-      - '.github/workflows/roop-build-push-ghcr.yml'
   workflow_dispatch:
-  repository_dispatch:
-  schedule:
-    - cron: '0 12 15 * *'
+  # repository_dispatch:
+  # push:
+  #   branches:
+  #     - 'master'
+  #   paths:
+  #     - 'roop/**'
+  #     - '.github/workflows/roop-build-push-ghcr.yml'
+  # pull_request:
+  #   paths:
+  #     - 'roop/**'
+  #     - '.github/workflows/roop-build-push-ghcr.yml'
+  # schedule:
+  #   - cron: '0 12 15 * *'
 
 jobs:
   build-image:
