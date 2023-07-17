@@ -68,6 +68,9 @@ jobs:
           context: ${{ env.REPO_CONTEXT }}
           containerfiles: ${{ env.REPO_CONTAINERFILE }}
           archs: ${{ env.IMAGE_ARCH }}
+          build-args: |
+            TARGETARCH=${{ env.IMAGE_ARCH }}
+            TARGETVARIANT=
       -
         name: Run Trivy vulnerability scanner
         id: trivy-scan
