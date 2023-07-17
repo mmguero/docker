@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/boringproxy
   IMAGE_TAG: latest
-  IMAGE_ARCH: amd64,arm64,armv7
+  IMAGE_ARCH: amd64,arm64,arm32v7
   REPO_CONTEXT: ./boringproxy
   REPO_CONTAINERFILE: ./boringproxy/Dockerfile
 
@@ -67,8 +67,6 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           context: ${{ env.REPO_CONTEXT }}
           containerfiles: ${{ env.REPO_CONTAINERFILE }}
-          build-args: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           archs: ${{ env.IMAGE_ARCH }}
       -
         name: Run Trivy vulnerability scanner
