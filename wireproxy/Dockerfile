@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine AS go-build
+FROM golang:1-alpine AS go-build
 
 RUN apk --no-cache add --update git gettext libintl && \
     git clone https://github.com/octeep/wireproxy.git && \
