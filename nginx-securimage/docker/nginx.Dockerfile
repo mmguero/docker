@@ -13,7 +13,7 @@ RUN mkdir -p "$WEBROOT" && \
     cd "$WEBROOT" && \
     rm -f ./test.html && \
     mkdir ./securimage && \
-    curl -ksSL "https://www.phpcaptcha.org/latest.tar.gz" | tar xzvf - -C ./securimage --strip-components 1 && \
+    curl -ksSL "https://github.com/dapphp/securimage/tarball/master" | tar xzvf - -C ./securimage --strip-components 1 && \
     curl -ksSL -o /tmp/story.zip "https://html5up.net/story/download" && \
     unzip /tmp/story.zip -d "$WEBROOT" && \
     rm -f /tmp/story.zip "$WEBROOT"/index*html "$WEBROOT"/README.txt
