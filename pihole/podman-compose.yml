@@ -10,8 +10,12 @@ services:
     expose:
       - "5300/udp"
       - "5300/tcp"
+    cap_add:
+      - NET_ADMIN
     environment:
       TZ: 'America/Denver'
+    security_opt:
+      - label:disable
     volumes:
       - './etc-dnscrypt-proxy:/config'
     dns:
@@ -30,22 +34,23 @@ services:
       - "53:53/udp"
       # - "80:80/tcp"
       # - "443:443/tcp"
+    cap_add:
+      - NET_ADMIN
     environment:
       TZ: 'America/Denver'
       WEBPASSWORD: 'password'
       DNS1: "172.25.0.2#5300"
       DNS2: "no"
-      # DNS_FQDN_REQUIRED: 'false'
-      # DNS_BOGUS_PRIV: 'false'
-      # ServerIP: '192.168.0.216'
       DNSMASQ_LISTENING: 'all'
       DHCP_ACTIVE: 'false'
       RATE_LIMIT: '0/0'
+    security_opt:
+      - label:disable
     volumes:
-       - './etc-pihole/:/etc/pihole/'
-       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-       # run `touch ./var-log/pihole.log` and `touch ./var-log/FTL.log` first unless you like errors
-       - './var-log/:/var/log/pihole/'
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      # run `touch ./var-log/pihole.log` and `touch ./var-log/FTL.log` first unless you like errors
+      - './var-log/:/var/log/pihole/'
     dns:
       - 1.1.1.1
     restart: always
@@ -53,8 +58,7 @@ services:
       - dnscrypt
 
 networks:
+  # podman network create --driver=bridge --subnet 172.25.0.0/24 pihole_net
   pihole_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.25.0.0/24
+    name: pihole_net
+    external: true
