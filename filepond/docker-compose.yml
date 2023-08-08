@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  upload:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/mmguero/filepond-nginx:latest
+    restart: "no"
+    stdin_open: false
+    tty: true
+    hostname: upload
+    networks:
+      - default
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "127.0.0.1:8000:80"
+    volumes:
+      - ./upload/files:/var/www/upload/server/php/files:rw
+      - ./upload/tmp:/var/www/upload/server/php/tmp:rw
+      - ./upload/variants:/var/www/upload/server/php/variants:rw
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 60s
+
+networks:
+  default:
+    external: false
