@@ -1,12 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<!-- Force latest IE rendering engine or ChromeFrame if installed -->
-<!--[if IE]>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<![endif]-->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
     <link href="filepond/dist/filepond.css" rel="stylesheet">
     <link href="@jcubic/tagger/tagger.css" rel="stylesheet">
@@ -37,73 +34,73 @@
 
     <!-- FilePond init script -->
     <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            FilePond.registerPlugin(
+                FilePondPluginFileMetadata,
+                FilePondPluginFileRename,
+                FilePondPluginFileValidateSize,
+                FilePondPluginFileValidateType
+            );
 
-    FilePond.registerPlugin(
-        FilePondPluginFileMetadata,
-        FilePondPluginFileRename,
-        FilePondPluginFileValidateSize,
-        FilePondPluginFileValidateType
-    );
+            FilePond.setOptions({
+                maxFileSize: '50000MB',
+                server: 'server/php/',
+                allowPaste: false,
+                allowRemove: true,
+                allowRevert: true,
+                allowFileMetadata: true,
+                credits: false,
+                acceptedFileTypes: [
+                    'application/gzip',
+                    'application/octet-stream',
+                    'application/vnd.tcpdump.pcap',
+                    'application/x-7z-compressed',
+                    'application/x-bzip2',
+                    'application/x-cpio',
+                    'application/x-gzip',
+                    'application/x-lzip',
+                    'application/x-lzma',
+                    'application/x-pcapng',
+                    'application/x-rar-compressed',
+                    'application/x-tar',
+                    'application/x-xz',
+                    'application/zip'
+                ],
+            });
 
-    FilePond.setOptions({
-        maxFileSize: '50000MB',
-        server: 'server/php/',
-        allowPaste: false,
-        allowRemove: true,
-        allowRevert: true,
-        allowFileMetadata: true,
-        credits: false,
-        acceptedFileTypes: [
-            'application/gzip',
-            'application/octet-stream',
-            'application/vnd.tcpdump.pcap',
-            'application/x-7z-compressed',
-            'application/x-bzip2',
-            'application/x-cpio',
-            'application/x-gzip',
-            'application/x-lzip',
-            'application/x-lzma',
-            'application/x-pcapng',
-            'application/x-rar-compressed',
-            'application/x-tar',
-            'application/x-xz',
-            'application/zip'
-        ],
-    });
+            // Turn a text input into a tags field
+            var tagme = tagger(document.querySelector('input[name="tags"]'), {
+                allow_duplicates: false,
+                allow_spaces: true,
+                completion: {
+                    list: [],
+                    delay: 400,
+                    min_length: 2
+                },
+                tag_limit: 16,
+                add_on_blur: true,
+                link: function(name) {
+                    return false;
+                },
+                filter: (name) => name,
+            });
 
-    // Turn a text input into a tags field
-    var tagme = tagger(document.querySelector('input[name="tags"]'), {
-        allow_duplicates: false,
-        allow_spaces: true,
-        completion: {
-            list: [],
-            delay: 400,
-            min_length: 2
-        },
-        tag_limit: 16,
-        add_on_blur: true,
-        link: function(name) {
-            return false;
-        },
-        filter: (name) => name,
-    });
+            // Turn a file input into a file pond
+            var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
 
-    // Turn a file input into a file pond
-    var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
-
-    pond.on("addfile", function(error, file) {
-      if (error) {
-        return;
-      }
-      file.setMetadata('fileInfo', {
-        filenameWithoutExtension: file.filenameWithoutExtension,
-        fileExtension: file.fileExtension,
-        fileType: file.fileType,
-        fileSize: file.fileSize
-      });
-      file.setMetadata('tags', []);
-    });
-
+            pond.on("addfile", function(error, file) {
+              if (error) {
+                return;
+              }
+              file.setMetadata('file', {
+                basename: file.filenameWithoutExtension,
+                ext: file.fileExtension,
+                type: file.fileType,
+                size: file.fileSize
+              });
+              file.setMetadata('tags', tagme._tags);
+            });
+        })
     </script>
 
 </body>
