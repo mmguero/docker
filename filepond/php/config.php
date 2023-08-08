@@ -13,20 +13,6 @@ const METADATA_FILENAME = '.metadata';
 
 // allowed file formats, if empty all files allowed
 const ALLOWED_FILE_FORMATS = array(
-    'application/gzip',
-    'application/octet-stream',
-    'application/vnd.tcpdump.pcap',
-    'application/x-7z-compressed',
-    'application/x-bzip2',
-    'application/x-cpio',
-    'application/x-gzip',
-    'application/x-lzip',
-    'application/x-lzma',
-    'application/x-pcapng',
-    'application/x-rar-compressed',
-    'application/x-tar',
-    'application/x-xz',
-    'application/zip'
 );
 
 if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0755);

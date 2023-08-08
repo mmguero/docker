@@ -11,7 +11,8 @@ RUN apt-get -q update && \
       filepond-plugin-file-validate-size \
       filepond-plugin-file-validate-type \
       filepond-plugin-file-metadata \
-      filepond-plugin-file-rename
+      filepond-plugin-file-rename \
+      @jcubic/tagger
 
 FROM debian:12-slim AS runtime
 
@@ -49,6 +50,7 @@ COPY --from=npmget /usr/local/lib/node_modules/filepond-plugin-file-validate-siz
 COPY --from=npmget /usr/local/lib/node_modules/filepond-plugin-file-validate-type /var/www/upload/filepond-plugin-file-validate-type
 COPY --from=npmget /usr/local/lib/node_modules/filepond-plugin-file-metadata /var/www/upload/filepond-plugin-file-metadata
 COPY --from=npmget /usr/local/lib/node_modules/filepond-plugin-file-rename /var/www/upload/filepond-plugin-file-rename
+COPY --from=npmget /usr/local/lib/node_modules/@jcubic /var/www/upload/@jcubic
 
 RUN apt-get -q update && \
     apt-get -y -q --no-install-recommends upgrade && \

@@ -9,23 +9,26 @@
     <meta name="viewport" content="width=device-width">
     <title>File Upload</title>
     <link href="filepond/dist/filepond.css" rel="stylesheet">
+    <link href="@jcubic/tagger/tagger.css" rel="stylesheet">
     <style>
-        /* FilePond will automatically fill up all available horizontal space, it's best to limit it in some way */
-        form {
-            max-width:48em;
+        .tagger + .tagger {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
+    <input type="text" name="tags"/>
+    <br>
 
     <form action="server/php/submit.php" method="post" enctype="multipart/form-data">
 
         <input type="file" name="filepond[]" multiple>
-
-        <button type="submit">Submit</button>
+        <br>
+        <button type="submit">Commit</button>
 
     </form>
 
+    <script src="@jcubic/tagger/tagger.js"></script>
     <script src="filepond/dist/filepond.js"></script>
     <script src="filepond-plugin-file-rename/dist/filepond-plugin-file-rename.js"></script>
     <script src="filepond-plugin-file-metadata/dist/filepond-plugin-file-metadata.js"></script>
@@ -44,11 +47,62 @@
 
     FilePond.setOptions({
         maxFileSize: '50000MB',
-        server: 'server/php/'
+        server: 'server/php/',
+        allowPaste: false,
+        allowRemove: true,
+        allowRevert: true,
+        allowFileMetadata: true,
+        credits: false,
+        acceptedFileTypes: [
+            'application/gzip',
+            'application/octet-stream',
+            'application/vnd.tcpdump.pcap',
+            'application/x-7z-compressed',
+            'application/x-bzip2',
+            'application/x-cpio',
+            'application/x-gzip',
+            'application/x-lzip',
+            'application/x-lzma',
+            'application/x-pcapng',
+            'application/x-rar-compressed',
+            'application/x-tar',
+            'application/x-xz',
+            'application/zip'
+        ],
+    });
+
+    // Turn a text input into a tags field
+    var tagme = tagger(document.querySelector('input[name="tags"]'), {
+        allow_duplicates: false,
+        allow_spaces: true,
+        completion: {
+            list: [],
+            delay: 400,
+            min_length: 2
+        },
+        tag_limit: 16,
+        add_on_blur: true,
+        link: function(name) {
+            return false;
+        },
+        filter: (name) => name,
     });
 
     // Turn a file input into a file pond
-    var pond = FilePond.create(document.querySelector('input[type="file"]'));
+    var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
+
+    pond.on("addfile", function(error, file) {
+      if (error) {
+        return;
+      }
+      file.setMetadata('fileInfo', {
+        filenameWithoutExtension: file.filenameWithoutExtension,
+        fileExtension: file.fileExtension,
+        fileType: file.fileType,
+        fileSize: file.fileSize
+      });
+      file.setMetadata('tags', []);
+    });
 
     </script>
 
