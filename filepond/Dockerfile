@@ -87,7 +87,7 @@ RUN apt-get -q update && \
 
 ADD nginx/sites-available/default /etc/nginx/sites-available/default
 ADD php/php.ini /etc/php/$PHP_VERSION/fpm/php.ini
-ADD php/config.php /var/www/upload/server/php/config.php
+ADD php/*.php /var/www/upload/server/php/
 ADD site/index.html /var/www/upload/index.html
 ADD supervisord.conf /supervisord.conf
 

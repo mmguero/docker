@@ -88,6 +88,10 @@
             // Turn a file input into a file pond
             var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
 
+            pond.on("initfile", function(file) {
+              file.setMetadata('tags', tagme._tags);
+            });
+
             pond.on("addfile", function(error, file) {
               if (error) {
                 return;
@@ -98,8 +102,8 @@
                 type: file.fileType,
                 size: file.fileSize
               });
-              file.setMetadata('tags', tagme._tags);
             });
+
         })
     </script>
 
