@@ -23,7 +23,7 @@ env:
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64
   REPO_CONTEXT: ./filepond
-  REPO_CONTAINERFILE: ./filepond/Dockerfile
+  REPO_CONTAINERFILE: Dockerfile
 
 jobs:
   buildah:
