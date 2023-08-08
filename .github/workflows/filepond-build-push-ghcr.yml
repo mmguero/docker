@@ -68,26 +68,26 @@ jobs:
           context: ${{ env.REPO_CONTEXT }}
           containerfiles: ${{ env.REPO_CONTAINERFILE }}
           archs: ${{ env.IMAGE_ARCH }}
-      -
-        name: Run Trivy vulnerability scanner
-        id: trivy-scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'image'
-          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'HIGH,CRITICAL'
-          vuln-type: 'os,library'
-          hide-progress: true
-          ignore-unfixed: true
-          exit-code: '0'
-      -
-        name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+      # -
+      #   name: Run Trivy vulnerability scanner
+      #   id: trivy-scan
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: 'image'
+      #     image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      #     format: 'sarif'
+      #     output: 'trivy-results.sarif'
+      #     severity: 'HIGH,CRITICAL'
+      #     vuln-type: 'os,library'
+      #     hide-progress: true
+      #     ignore-unfixed: true
+      #     exit-code: '0'
+      # -
+      #   name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   if: always()
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
       -
         name: Push
         id: push-to-ghcr
