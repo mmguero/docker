@@ -8,13 +8,14 @@ server {
 
     root /var/www/upload;
     index index.php index.html;
+    autoindex off;
 
-    location ^~ /server/php/files {
+    location ^~ /server/php/(files|tmp|variants) {
         deny all;
         return 404;
     }
 
-    location ~ \.php$ {
+    location ~ (\.php|/server/php/)$ {
         include snippets/fastcgi-php.conf;
         fastcgi_buffers 16 64k;
         fastcgi_buffer_size 256k;
