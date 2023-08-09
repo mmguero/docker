@@ -42,6 +42,12 @@ ENV PHP_VERSION $PHP_VERSION
 ARG FILEPOND_SERVER_BRANCH=master
 ENV FILEPOND_SERVER_BRANCH $FILEPOND_SERVER_BRANCH
 
+ENV SUPERCRONIC_VERSION "0.2.26"
+ENV SUPERCRONIC_URL "https://github.com/aptible/supercronic/releases/download/v$SUPERCRONIC_VERSION/supercronic-linux-amd64"
+ENV SUPERCRONIC "supercronic-linux-amd64"
+ENV SUPERCRONIC_SHA1SUM "7a79496cf8ad899b99a719355d4db27422396735"
+ENV SUPERCRONIC_CRONTAB "/etc/crontab"
+
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/service_check_passthrough.sh /usr/local/bin/service_check_passthrough.sh
 
@@ -67,6 +73,12 @@ RUN apt-get -q update && \
       nginx-light \
       rsync \
       tini && \
+    curl -fsSLO "$SUPERCRONIC_URL" && \
+      echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - && \
+      chmod +x "$SUPERCRONIC" && \
+      mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" && \
+      ln -sr "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic && \
+    touch ${SUPERCRONIC_CRONTAB} && \
     mkdir -p /run/php \
              /var/www/upload/server/php/files \
              /var/www/upload/server/php/tmp \
