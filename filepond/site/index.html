@@ -50,8 +50,8 @@
 
         <input type="text" name="tags"/>
         <br>
+        <button type="submit" id="commit_button" class="button button_rounded">Commit Files</button>
         <input type="file" name="filepond[]" multiple>
-        <button type="submit" class="button button_rounded">Commit</button>
 
     </form>
 
@@ -63,8 +63,12 @@
     <script src="filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 
     <script>
-
         window.addEventListener("DOMContentLoaded", function () {
+
+            const form_button = document.getElementById("commit_button");
+            form_button.disabled = true;
+            form_button.style.backgroundColor = '#cccccc';
+            form_button.style.color = '#666666';
 
             FilePond.registerPlugin(
                 FilePondPluginFileMetadata,
@@ -102,6 +106,17 @@
             // Turn a file input into a file pond
             var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
 
+            pond.on('addfilestart', (file) => {
+                form_button.disabled = true;
+                form_button.style.backgroundColor = '#cccccc';
+                form_button.style.color = '#666666';
+            });
+            pond.on('processfiles', () => {
+                form_button.disabled = false;
+                form_button.style.backgroundColor = '#369763';
+                form_button.style.color = '#ffffff';
+            });
+
             // Turn a text input into a tags field
             var tagme = tagger(document.querySelector('input[name="tags"]'), {
                 allow_duplicates: false,
@@ -124,12 +139,23 @@
             form.addEventListener("submit", setFileTags);
             function setFileTags(e) {
                 const files = pond.getFiles();
-                valid = ((files) && (files.length > 0));
+                valid = ((files) && (files.length > 0) && (!form_button.disabled));
                 if (!valid) {
                     e.preventDefault();
                 }
                 return valid;
             }
+
+            function checkSubmitEnabler() {
+                const files = pond.getFiles();
+                const isLoading = files.filter(x=>x.status !== 5).length !== 0;
+                if ((files.length > 0) && (!isLoading)) {
+                    form_button.disabled = false;
+                    form_button.style.backgroundColor = '#369763';
+                    form_button.style.color = '#ffffff';
+                }
+            }
+            setInterval(checkSubmitEnabler, 5000);
 
         })
     </script>
