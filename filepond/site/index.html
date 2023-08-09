@@ -14,11 +14,10 @@
     </style>
 </head>
 <body>
-    <input type="text" name="tags"/>
-    <br>
+    <form id="commit_files" action="server/php/submit.php" method="post" enctype="multipart/form-data">
 
-    <form action="server/php/submit.php" method="post" enctype="multipart/form-data">
-
+        <input type="text" name="tags"/>
+        <br>
         <input type="file" name="filepond[]" multiple>
         <br>
         <button type="submit">Commit</button>
@@ -72,18 +71,6 @@
             // Turn a file input into a file pond
             var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
 
-            pond.on("addfile", function(error, file) {
-              if (error) {
-                return;
-              }
-              file.setMetadata('file', {
-                basename: file.filenameWithoutExtension,
-                ext: file.fileExtension,
-                type: file.fileType,
-                size: file.fileSize
-              });
-            });
-
             // Turn a text input into a tags field
             var tagme = tagger(document.querySelector('input[name="tags"]'), {
                 allow_duplicates: false,
@@ -102,22 +89,15 @@
                 filter: (name) => name,
             });
 
-            const tagInput = document.querySelector('input[name="tags"]');
-            tagInput.value = '';
-            tagInput.addEventListener('input', tagInputHandler);
-            function tagInputHandler(e) {
-                // adjust tags for existing files
+            const form = document.getElementById("commit_files");
+            form.addEventListener("submit", setFileTags);
+            function setFileTags(e) {
                 const files = pond.getFiles();
-                files.forEach(function (file, index) {
-                    file.setMetadata('tags', tagme._tags);
-                    console.log(file.getMetadata());
-                });
-                // ensure newly added files will get the tags we want
-                FilePond.setOptions({
-                    fileMetadataObject: {
-                        'tags': tagme._tags,
-                    },
-                });
+                valid = ((files) && (files.length > 0));
+                if (!valid) {
+                    e.preventDefault();
+                }
+                return valid;
             }
 
         })

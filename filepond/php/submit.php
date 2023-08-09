@@ -90,12 +90,8 @@ function handle_transfer_ids_post($ids) {
         if (!$transfer) continue;
 
         $new_name_prefix = '';
-        $metadata = $transfer->getMetadata();
-        if ($metadata) {
-            $metadata_contents = json_decode(FilePond\read_file_contents($metadata['tmp_name']));
-            if (property_exists($metadata_contents, 'tags') && (count($metadata_contents->tags) > 0)) {
-                $new_name_prefix = implode(',', $metadata_contents->tags) . ",USERTAG,";
-            }
+        if (isset($_POST["tags"]) && (strlen($_POST["tags"]) > 0)) {
+            $new_name_prefix = $_POST["tags"] . ",USERTAG,";
         }
         
         $files = $transfer->getFiles(defined('TRANSFER_PROCESSOR') ? TRANSFER_PROCESSOR : null);
