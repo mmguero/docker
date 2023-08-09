@@ -8,8 +8,40 @@
     <link href="filepond/dist/filepond.css" rel="stylesheet">
     <link href="@jcubic/tagger/tagger.css" rel="stylesheet">
     <style>
+        .tagger > ul > li:not(.tagger-new) > :first-child {
+            background: #369763 !important;
+            border: 1px none #369763 !important;
+            border-radius: 12px !important;
+        }
+        .tagger > ul > li:not(.tagger-new) > span,
+        .tagger > ul > li:not(.tagger-new) > a > span {
+            color: white !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+        }
+        .tagger > ul > li:not(.tagger-new) a,
+        .tagger > ul > li:not(.tagger-new) a:visited {
+            color: white !important;
+        }
+        .tagger {
+            border-radius: 12px !important;
+        }
         .tagger + .tagger {
             margin-top: 10px;
+        }
+        .button {
+          background-color: #369763;
+          border: none;
+          color: white;
+          padding: 10px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 14px;
+          margin: 4px 2px;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+        }
+        .button_rounded {
+            border-radius: 12px;
         }
     </style>
 </head>
@@ -19,8 +51,7 @@
         <input type="text" name="tags"/>
         <br>
         <input type="file" name="filepond[]" multiple>
-        <br>
-        <button type="submit">Commit</button>
+        <button type="submit" class="button button_rounded">Commit</button>
 
     </form>
 
