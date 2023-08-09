@@ -32,9 +32,10 @@
     <script src="filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
     <script src="filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 
-    <!-- FilePond init script -->
     <script>
+
         window.addEventListener("DOMContentLoaded", function () {
+
             FilePond.registerPlugin(
                 FilePondPluginFileMetadata,
                 FilePondPluginFileRename,
@@ -68,29 +69,8 @@
                 ],
             });
 
-            // Turn a text input into a tags field
-            var tagme = tagger(document.querySelector('input[name="tags"]'), {
-                allow_duplicates: false,
-                allow_spaces: true,
-                completion: {
-                    list: [],
-                    delay: 400,
-                    min_length: 2
-                },
-                tag_limit: 16,
-                add_on_blur: true,
-                link: function(name) {
-                    return false;
-                },
-                filter: (name) => name,
-            });
-
             // Turn a file input into a file pond
             var pond = FilePond.create(document.querySelector('input[name="filepond[]"]'));
-
-            pond.on("initfile", function(file) {
-              file.setMetadata('tags', tagme._tags);
-            });
 
             pond.on("addfile", function(error, file) {
               if (error) {
@@ -103,6 +83,42 @@
                 size: file.fileSize
               });
             });
+
+            // Turn a text input into a tags field
+            var tagme = tagger(document.querySelector('input[name="tags"]'), {
+                allow_duplicates: false,
+                allow_spaces: true,
+                completion: {
+                    list: [],
+                    delay: 400,
+                    min_length: 2
+                },
+                tag_limit: 16,
+                wrap: true,
+                add_on_blur: true,
+                link: function(name) {
+                    return false;
+                },
+                filter: (name) => name,
+            });
+
+            const tagInput = document.querySelector('input[name="tags"]');
+            tagInput.value = '';
+            tagInput.addEventListener('input', tagInputHandler);
+            function tagInputHandler(e) {
+                // adjust tags for existing files
+                const files = pond.getFiles();
+                files.forEach(function (file, index) {
+                    file.setMetadata('tags', tagme._tags);
+                    console.log(file.getMetadata());
+                });
+                // ensure newly added files will get the tags we want
+                FilePond.setOptions({
+                    fileMetadataObject: {
+                        'tags': tagme._tags,
+                    },
+                });
+            }
 
         })
     </script>
