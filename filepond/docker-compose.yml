@@ -13,14 +13,12 @@ services:
     networks:
       - default
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
     ports:
       - "127.0.0.1:8000:80"
     volumes:
-      - ./upload/files:/var/www/upload/server/php/files:rw
-      - ./upload/tmp:/var/www/upload/server/php/tmp:rw
-      - ./upload/variants:/var/www/upload/server/php/variants:rw
+      - ./upload:/var/www/upload/server/php/files:rw
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost"]
       interval: 30s

@@ -61,18 +61,18 @@ COPY --from=npmget /usr/local/lib/node_modules/@jcubic /var/www/upload/@jcubic
 RUN apt-get -q update && \
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages install --no-install-recommends \
-      curl \
       ca-certificates \
-      supervisor \
-      vim-tiny \
+      curl \
       file \
       less \
-      php$PHP_VERSION \
-      php$PHP_VERSION-fpm \
-      php$PHP_VERSION-apcu \
       nginx-light \
+      php$PHP_VERSION \
+      php$PHP_VERSION-apcu \
+      php$PHP_VERSION-fpm \
       rsync \
-      tini && \
+      supervisor \
+      tini \
+      vim-tiny && \
     curl -fsSLO "$SUPERCRONIC_URL" && \
       echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - && \
       chmod +x "$SUPERCRONIC" && \
@@ -80,15 +80,16 @@ RUN apt-get -q update && \
       ln -sr "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic && \
     touch ${SUPERCRONIC_CRONTAB} && \
     mkdir -p /run/php \
-             /var/www/upload/server/php/files \
-             /var/www/upload/server/php/tmp \
-             /var/www/upload/server/php/variants \
+             /var/www/upload/server/php/files/tmp \
+             /var/www/upload/server/php/files/variants \
              /tmp/filepond-server && \
     cd /tmp && \
       curl -sSL "https://github.com/pqina/filepond-server-php/archive/${FILEPOND_SERVER_BRANCH}.tar.gz" | tar xzvf - -C ./filepond-server --strip-components 1 && \
       rsync -a --include="*/" --include="*.php" --exclude="*" ./filepond-server/ /var/www/upload/server/php/ && \
     ln -sr /var/www/upload /var/www/upload/upload && \
-    chmod 775 /var/www/upload/server/php/files && \
+    chmod 775 /var/www/upload/server/php/files \
+              /var/www/upload/server/php/files/tmp \
+              /var/www/upload/server/php/files/variants && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh \
               /usr/local/bin/service_check_passthrough.sh \
               /var /var/www /var/www/upload \
