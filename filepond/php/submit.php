@@ -108,14 +108,6 @@ function handle_transfer_ids_post($ids) {
         FilePond\remove_transfer_directory(TRANSFER_DIR, $id);
     }
 
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        $return_to = $_SERVER['HTTP_REFERER'];
-        console_log("referrer page", true);
-    } else {
-        $return_to = "/upload";
-        console_log("fallback", true);
-    }
-    console_log($return_to, true);
-    # header("Location: ". $return_to);
-
+    $return_to = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/upload';
+    header("Location: ". $return_to);
 }
