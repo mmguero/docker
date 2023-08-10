@@ -1,4 +1,4 @@
-FROM golang:1-bookworm as build
+FROM golang:1.18 as build
 
 ADD https://github.com/pufferffish/wireproxy/archive/master.tar.gz /usr/src/wireproxy.tar.gz
 
@@ -8,7 +8,7 @@ RUN mkdir -p /usr/src/wireproxy && \
     cd ./wireproxy && \
     make
 
-FROM debian:12-slim AS runtime
+FROM debian:11-slim AS runtime
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
