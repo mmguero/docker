@@ -1,11 +1,14 @@
-FROM golang:1-alpine AS go-build
+FROM golang:1-bookworm as build
 
-RUN apk --no-cache add --update git gettext libintl && \
-    git clone https://github.com/octeep/wireproxy.git && \
+ADD https://github.com/pufferffish/wireproxy/archive/master.tar.gz /usr/src/wireproxy.tar.gz
+
+RUN mkdir -p /usr/src/wireproxy && \
+    cd /usr/src && \
+    tar xzvf ./wireproxy.tar.gz -C ./wireproxy --strip-components 1 && \
     cd ./wireproxy && \
-    go build ./cmd/wireproxy
+    make
 
-FROM alpine:latest
+FROM debian:12-slim AS runtime
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -30,19 +33,17 @@ ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gi
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY config.env /etc/wireproxy/config.env
 
-RUN apk update --no-cache && \
-    apk upgrade --no-cache && \
-    apk --no-cache add \
-      bash \
-      libintl \
-      shadow && \
-    addgroup -g ${DEFAULT_GID} ${PGROUP} && \
-      adduser -D -H -u ${DEFAULT_UID} -h /var/www/html -s /sbin/nologin -G ${PGROUP} -g ${PUSER} ${PUSER} && \
+RUN apt-get -q update && \
+    apt-get -y -q --no-install-recommends upgrade && \
+    apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages install --no-install-recommends \
+      bash gettext-base rsync && \
+    groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
+      useradd --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --no-create-home --home /var/www/html -s /sbin/nologin ${PUSER} && \
+      usermod -a -G tty ${PUSER} && \
       chown -R ${PUSER}:${PGROUP} /etc/wireproxy && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh /usr/local/bin/entrypoint.sh
 
-COPY --from=go-build /go/wireproxy/wireproxy /usr/bin/
-COPY --from=go-build /usr/bin/envsubst /usr/bin/envsubst
+COPY --from=build /usr/src/wireproxy/wireproxy /usr/bin/wireproxy
 
 VOLUME [ "/etc/wireproxy"]
 
