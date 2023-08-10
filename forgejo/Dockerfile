@@ -1,4 +1,4 @@
-FROM codeberg.org/forgejo/forgejo:1.18.0-rc1-1
+FROM codeberg.org/forgejo/forgejo:1.20.2-0
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
