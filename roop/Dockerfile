@@ -23,8 +23,8 @@ ARG ROOP_REPO=mmguero
 ENV BUFFALO_L_URL "https://github.com/deepinsight/insightface/releases/download/v${BUFFALO_VER}/buffalo_l.zip"
 ENV FACEXLIB_DET_URL "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth"
 ENV FACEXLIB_PARSENET_URL "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth"
-ENV GFPGAN_URL "https://huggingface.co/henryruhs/roop/resolve/main/GFPGANv${GFPGAN_VER}.pth"
-ENV INSWAPPER_128_URL "https://huggingface.co/henryruhs/roop/resolve/main/inswapper_128.onnx"
+ENV GFPGAN_URL "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv${GFPGAN_VER}.pth"
+ENV INSWAPPER_128_URL "https://huggingface.co/facefusion/models/resolve/main/inswapper_128.onnx"
 ENV ROOP_URL "https://codeload.github.com/${ROOP_REPO}/roop/tar.gz/${ROOP_BRANCH}"
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
