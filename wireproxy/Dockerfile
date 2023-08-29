@@ -1,10 +1,8 @@
-FROM golang:1.18 as build
+FROM golang:1.20 as build
 
-ADD https://github.com/pufferffish/wireproxy/archive/master.tar.gz /usr/src/wireproxy.tar.gz
-
-RUN mkdir -p /usr/src/wireproxy && \
+RUN mkdir -p /usr/src && \
     cd /usr/src && \
-    tar xzvf ./wireproxy.tar.gz -C ./wireproxy --strip-components 1 && \
+    git clone --recurse-submodules --shallow-submodules --single-branch --depth 1 https://github.com/pufferffish/wireproxy && \
     cd ./wireproxy && \
     make
 
