@@ -43,6 +43,7 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
   if [[ "$DEB_ARCH" =~ ^arm ]]; then
     if [[ "$LINUX_CPU" == "aarch64" ]]; then
       ASSETS=(
+        "https://github.com/antonmedv/fx|^fx_linux_arm64$|/usr/bin/fx|755"
         "https://github.com/aptible/supercronic|^supercronic-linux-arm64$|/usr/bin/supercronic|755"
         "https://github.com/boringproxy/boringproxy|^boringproxy-linux-arm64$|/usr/bin/boringproxy|755"
         "https://github.com/darkhz/rclone-tui|^rclone-tui_.+_Linux_arm64\.tar\.gz$|/tmp/rclone-tui\.tar\.gz"
@@ -105,6 +106,7 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
     fi
   else
     ASSETS=(
+      "https://github.com/antonmedv/fx|^fx_linux_arm64$|/usr/bin/fx|755"
       "https://github.com/aptible/supercronic|^supercronic-linux-amd64$|/usr/bin/supercronic|755"
       "https://github.com/boringproxy/boringproxy|^boringproxy-linux-x86_64$|/usr/bin/boringproxy|755"
       "https://github.com/darkhz/rclone-tui|^rclone-tui_.+_Linux_x86_64\.tar\.gz$|/tmp/rclone-tui\.tar\.gz"
