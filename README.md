@@ -22,8 +22,6 @@
 
 ![gitea-root-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-root-build-push-ghcr/badge.svg)
 
-![glauth-build-push-ghcr](https://github.com/mmguero/docker/workflows/glauth-build-push-ghcr/badge.svg)
-
 ![lossless-cut-build-push-ghcr](https://github.com/mmguero/docker/workflows/lossless-cut-build-push-ghcr/badge.svg)
 
 ![mariadb-build-push-ghcr](https://github.com/mmguero/docker/workflows/mariadb-build-push-ghcr/badge.svg)

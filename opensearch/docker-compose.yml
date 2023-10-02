@@ -8,7 +8,7 @@ x-process-variables: &process-variables
 services:
 
   glauth:
-    image: ghcr.io/mmguero/glauth:standalone
+    image: docker.io/glauth/glauth:latest
     restart: "unless-stopped"
     # x-podman:
     #   uidmaps:
