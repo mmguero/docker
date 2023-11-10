@@ -33,7 +33,11 @@ services:
       CROC_PORT_NON_SEQUENTIAL : 'false'
       CROC_PASS : ''
       CROC_AUTOSTART : 'false'
+      HOSTYOSELF_AUTOSTART : 'false'
+      HOSTYOSELF_PORT : 8010
+      HOSTYOSELF_URL : 'https://hostyoself.example.org'
     ports:
       - "0.0.0.0:4001:4001/tcp"
+      - "0.0.0.0:8010:8010/tcp"
       - "0.0.0.0:9009-9013:9009-9013/tcp"
     restart: unless-stopped

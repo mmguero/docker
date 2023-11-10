@@ -68,6 +68,8 @@ RUN  apt-get update && \
     mkdir -p /var/log/supervisor && \
   curl -sSL -o /tmp/croc.deb "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
     dpkg -i /tmp/croc.deb && \
+  curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
+    dpkg -i /tmp/hostyoself.deb && \
   apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
       autoconf \
       automake \
@@ -148,6 +150,13 @@ ARG CROC_AUTOSTART=false
 ENV CROC_AUTOSTART $CROC_AUTOSTART
 ARG CROC_PASS=
 ENV CROC_PASS $CROC_PASS
+
+ARG HOSTYOSELF_AUTOSTART=false
+ARG HOSTYOSELF_PORT=8010
+ARG HOSTYOSELF_URL="https://hostyoself.example.org"
+ENV HOSTYOSELF_AUTOSTART $HOSTYOSELF_AUTOSTART
+ENV HOSTYOSELF_PORT $HOSTYOSELF_PORT
+ENV HOSTYOSELF_URL $HOSTYOSELF_URL
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
