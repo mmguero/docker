@@ -1,4 +1,4 @@
-FROM ctfd/ctfd:3.5.0
+FROM ctfd/ctfd:3.6.0
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
