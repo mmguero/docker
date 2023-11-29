@@ -19,7 +19,7 @@ fi
 SCRIPT_PATH="$($DIRNAME $($REALPATH -e "${BASH_SOURCE[0]}"))"
 pushd "$SCRIPT_PATH" >/dev/null 2>&1
 
-docker-compose exec opensearch-node1 /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
+${CONTAINER_ENGINE:-docker} compose exec opensearch-node1 /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
     -cd /usr/share/opensearch/config/opensearch-security/ \
     -icl -nhnv \
     -cacert /usr/share/opensearch/config/root-ca.pem \
