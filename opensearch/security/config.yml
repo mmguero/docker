@@ -39,8 +39,8 @@ config:
             bind_dn: cn=binddn,dc=nein,dc=local
             password: "r3@d0n!y"
             userbase: ou=users,dc=nein,dc=local
-            usersearch: (cn={0})
-            username_attribute: cn
+            usersearch: (uid={0})
+            username_attribute: uid
     authz:
       ldap_roles:
         description: "Authorize using LDAP"
@@ -59,15 +59,14 @@ config:
             bind_dn: cn=binddn,dc=nein,dc=local
             password: "r3@d0n!y" 
             userbase: ou=users,dc=nein,dc=local
-            usersearch: (cn={0})
-            username_attribute: cn
+            usersearch: (uid={0})
+            username_attribute: uid
+            rolebase: ou=groups,dc=nein,dc=local
+            rolesearch: (memberUid={1})
+            userroleattribute: null
+            userrolename: none
+            rolename: ou
+            resolve_nested_roles: true
             skip_users:
               - admin
               - kibanaserver
-            rolebase: ou=groups,dc=nein,dc=local
-            rolename: cn
-            rolesearch_enabled: false
-            rolesearch: null
-            userroleattribute: null
-            userrolename: ou
-            resolve_nested_roles: false
