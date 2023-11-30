@@ -7,7 +7,7 @@ if ! command -v "$REALPATH" >/dev/null 2>&1; then
 fi
 
 ENGINE="${CONTAINER_ENGINE:-docker}"
-IMAGE="ghcr.io/mmguero/boringproxy:latest"
+IMAGE="oci.guero.top/boringproxy:latest"
 TRUSTED_CA=""
 CERTS_DIR=""
 DB_DIR="$(pwd)"

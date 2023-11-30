@@ -4,7 +4,7 @@ services:
   unifi:
     build:
       context: .
-    image: ghcr.io/mmguero/unifi:latest
+    image: oci.guero.top/unifi:latest
     restart: "unless-stopped"
     volumes:
       - ./config:/config:rw

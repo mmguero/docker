@@ -33,7 +33,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/xfce'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/xfce:base'
+LABEL org.opencontainers.image.title='oci.guero.top/xfce:base'
 LABEL org.opencontainers.image.description='Dockerized XFCE with my own special blend of herbs and spices'
 
 RUN apt-get update && apt-mark hold iptables && \
@@ -109,7 +109,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/xfce'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/xfce:latest'
+LABEL org.opencontainers.image.title='oci.guero.top/xfce:latest'
 LABEL org.opencontainers.image.description='Dockerized XFCE with my own special blend of herbs and spices'
 
 # liberally steal some package lists and config scripts from my live USB image setup one of my other repos

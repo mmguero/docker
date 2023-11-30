@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/mariadb'
+LABEL org.opencontainers.image.title='oci.guero.top/mariadb'
 LABEL org.opencontainers.image.description='Dockerized MariaDB'
 
 ARG DEFAULT_UID=999

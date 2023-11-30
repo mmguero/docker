@@ -6,7 +6,7 @@ version: "3.9"
 
 services:
   serverless-registry-proxy:
-    image: ghcr.io/mmguero/gcr-proxy:latest
+    image: oci.guero.top/gcr-proxy:latest
     restart: unless-stopped
     container_name: serverless-registry-proxy
     ports:

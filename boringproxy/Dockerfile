@@ -11,7 +11,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/boringproxy'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/boringproxy'
+LABEL org.opencontainers.image.title='oci.guero.top/boringproxy'
 LABEL org.opencontainers.image.description='Dockerized boringproxy'
 
 ARG DEFAULT_UID=1000

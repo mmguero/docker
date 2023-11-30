@@ -29,7 +29,7 @@ services:
       - default
 
   opensearch-node1:
-    image: ghcr.io/mmguero/opensearch:latest
+    image: oci.guero.top/opensearch:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -87,7 +87,7 @@ services:
       - default
 
   opensearch-node2:
-    image: ghcr.io/mmguero/opensearch:latest
+    image: oci.guero.top/opensearch:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -149,7 +149,7 @@ services:
       - default
 
   opensearch-node3:
-    image: ghcr.io/mmguero/opensearch:latest
+    image: oci.guero.top/opensearch:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -211,7 +211,7 @@ services:
       - default
 
   opensearch-node4:
-    image: ghcr.io/mmguero/opensearch:latest
+    image: oci.guero.top/opensearch:latest
     build:
       context: .
       dockerfile: Dockerfile

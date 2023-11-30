@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/mmguero/filepond-nginx:latest
+    image: oci.guero.top/filepond-nginx:latest
     restart: "no"
     stdin_open: false
     tty: true

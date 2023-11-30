@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IMAGE="${GIMP_IMAGE:-ghcr.io/mmguero/gimp:latest}"
+IMAGE="${GIMP_IMAGE:-oci.guero.top/gimp:latest}"
 ENGINE="${CONTAINER_ENGINE:-docker}"
 if [[ "$ENGINE" == "podman" ]]; then
   CONTAINER_PUID=0

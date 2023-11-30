@@ -47,7 +47,7 @@ services:
       - /usr/share/fonts:/usr/share/fonts/host:z
 
   nginx-ldap:
-    image: ghcr.io/mmguero/nginx-ldap:latest
+    image: oci.guero.top/nginx-ldap:latest
     container_name: nginx-ldap
     hostname: nginx-ldap
     restart: unless-stopped

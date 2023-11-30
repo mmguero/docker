@@ -1,12 +1,12 @@
-FROM debian:bookworm-slim
+FmaROM debian:bookworm-slim
 
-# x11docker --alsa $(find /dev/snd/ -type c | sed 's/^/--share /') ghcr.io/mmguero/audacity
+# x11docker --alsa $(find /dev/snd/ -type c | sed 's/^/--share /') oci.guero.top/audacity
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/audacity'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/audacity'
+LABEL org.opencontainers.image.title='oci.guero.top/audacity'
 LABEL org.opencontainers.image.description='Dockerized Audacity (X11)'
 
 ENV DEBIAN_FRONTEND noninteractive

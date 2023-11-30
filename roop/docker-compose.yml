@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   roop:
-    image: ghcr.io/mmguero/roop:latest
+    image: oci.guero.top/roop:latest
     build:
       context: .
       dockerfile: Dockerfile

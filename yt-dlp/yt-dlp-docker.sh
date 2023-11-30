@@ -16,4 +16,4 @@ $ENGINE run -i -t --rm \
   -e PGID=$CONTAINER_PGID \
   -v "$DIR:$DIR:rw" \
   -w "$DIR" \
-  ghcr.io/mmguero/yt-dlp "$@"
+  oci.guero.top/yt-dlp "$@"

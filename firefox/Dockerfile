@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/firefox'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='ghcr.io/mmguero/firefox'
+LABEL org.opencontainers.image.title='oci.guero.top/firefox'
 LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
 
 #    function firefoxd() {
@@ -52,7 +52,7 @@ LABEL org.opencontainers.image.description='Dockerized Firefox (X11)'
 #        $GPU_DEVICES \
 #        --group-add $(getent group audio | cut -d: -f3) \
 #        --name firefox \
-#        ghcr.io/mmguero/firefox "$@"
+#        oci.guero.top/firefox "$@"
 #    }
 
 ENV DEBIAN_FRONTEND noninteractive

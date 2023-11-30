@@ -2,7 +2,7 @@
 
 ENCODING="utf-8"
 
-IMAGE="${CAPA_IMAGE:-ghcr.io/mmguero/capa:latest}"
+IMAGE="${CAPA_IMAGE:-oci.guero.top/capa:latest}"
 ENGINE="${CONTAINER_ENGINE:-docker}"
 
 IN_FILE="$1"

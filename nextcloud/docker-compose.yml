@@ -20,7 +20,7 @@ services:
       - proxy
 
   nextcloud:
-    image: ghcr.io/mmguero/nextcloud:latest
+    image: oci.guero.top/nextcloud:latest
     build:
       context: .
       dockerfile: docker/Dockerfile
