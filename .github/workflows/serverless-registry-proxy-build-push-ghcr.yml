@@ -22,6 +22,8 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/gcr-proxy
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64,arm64
+  REPO_CONTEXT: ./serverless-registry-proxy
+  REPO_CONTAINERFILE: ./serverless-registry-proxy/Dockerfile
 
 jobs:
   buildah:
@@ -45,8 +47,9 @@ jobs:
         id: repo-checkout
         uses: actions/checkout@v3
         with:
-          name: ahmetb/serverless-registry-proxy
-          ref: master
+          repository: ahmetb/serverless-registry-proxy
+          submodules: recursive
+          path: ./serverless-registry-proxy
       -
         name: Set up QEMU
         id: setup-qemu
