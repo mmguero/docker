@@ -1,4 +1,4 @@
-FmaROM debian:bookworm-slim
+FROM debian:bookworm-slim
 
 # x11docker --alsa $(find /dev/snd/ -type c | sed 's/^/--share /') oci.guero.top/audacity
 
