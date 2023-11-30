@@ -1,0 +1,17 @@
+version: "3.9"
+
+# Serverless reverse proxy for exposing container registries (GCR, Docker Hub, Artifact Registry etc) on custom domains.
+# https://github.com/ahmetb/serverless-registry-proxy
+# https://cloud.google.com/blog/topics/developers-practitioners/hack-your-own-custom-domains-container-registry
+
+services:
+  serverless-registry-proxy:
+    image: ghcr.io/mmguero/gcr-proxy:latest
+    restart: unless-stopped
+    container_name: serverless-registry-proxy
+    ports:
+      - "127.0.0.1:80:80"
+    environment:
+      REGISTRY_HOST : 'ghcr.io'
+      REPO_PREFIX : 'username'
+      PORT : 80
