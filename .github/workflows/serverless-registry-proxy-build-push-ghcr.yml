@@ -65,7 +65,7 @@ jobs:
       -
         name: Build image
         id: build-image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.REPO_CONTEXT }}
           file: ${{ env.REPO_CONTAINERFILE }}
