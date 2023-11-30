@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/gcr-proxy
   IMAGE_TAG: latest
-  IMAGE_PLATFORM: linux/amd64,linux/arm64
+  IMAGE_PLATFORMS: linux/amd64,linux/arm64
   REPO_CONTEXT: ./serverless-registry-proxy
   REPO_CONTAINERFILE: ./serverless-registry-proxy/Dockerfile
 
@@ -45,7 +45,7 @@ jobs:
       -
         name: Checkout
         id: repo-checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ahmetb/serverless-registry-proxy
           submodules: recursive
@@ -53,17 +53,21 @@ jobs:
       -
         name: Set up QEMU
         id: setup-qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Buildx
+        id: setup-qemu
+        uses: docker/setup-qemu-action@v3
       -
         name: Log in to registry
         id: registry-login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
-        name: Build image
+        name: Build image amd64
         id: build-image
         uses: docker/build-push-action@v5
         with:
@@ -71,7 +75,7 @@ jobs:
           file: ${{ env.REPO_CONTAINERFILE }}
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          platforms: ${{ env.IMAGE_PLATFORM }}
+          platforms: ${{ env.IMAGE_PLATFORMS }}
       -
         name: Run Trivy vulnerability scanner
         id: trivy-scan
