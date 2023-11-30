@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/gcr-proxy
   IMAGE_TAG: latest
-  IMAGE_ARCH: amd64,arm64
+  IMAGE_ARCH: amd64
   REPO_CONTEXT: ./serverless-registry-proxy
   REPO_CONTAINERFILE: ./serverless-registry-proxy/Dockerfile
 
