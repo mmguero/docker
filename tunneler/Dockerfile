@@ -11,6 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
 ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
+COPY --from=ghcr.io/mmguero-dev/gostatic --chmod=755 /goStatic /usr/bin/goStatic
 
 RUN  apt-get update && \
      apt-get install --no-install-recommends -qy \
@@ -47,7 +48,9 @@ RUN  apt-get update && \
       python3-twisted \
       socat \
       stunnel4 \
-      tcpd && \
+      tcpd \
+      tree \
+      && \
   cd /tmp && \
     mkdir -p ./udptunnel && \
     tar xvf ./udptunnel.tar.gz -C ./udptunnel --strip-components 1 && \
@@ -92,6 +95,7 @@ RUN  apt-get update && \
 ADD supervisord.conf /etc/supervisord.conf
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
+ADD bash_support_functions.sh /etc/profile.d/
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
