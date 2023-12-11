@@ -35,7 +35,7 @@ config:
             verify_hostnames: false
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - 10.9.0.215:6360
+            - 192.168.10.123:6360
             bind_dn: uid=bind,ou=people,dc=local,dc=lan
             password: "r3@d0n!y"
             userbase: ou=people,dc=local,dc=lan
@@ -55,7 +55,7 @@ config:
             verify_hostnames: false
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - 10.9.0.215:6360
+            - 192.168.10.123:6360
             bind_dn: uid=bind,ou=people,dc=local,dc=lan
             password: "r3@d0n!y" 
             userbase: ou=people,dc=local,dc=lan
