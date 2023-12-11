@@ -7,9 +7,8 @@ _meta:
 all_access:
   reserved: false
   backend_roles:
-  - "admin"
-  - "Administrator"
-  description: "Maps admin to all_access"
+  - "administrators"
+  description: "Maps administrators to all_access"
 
 own_index:
   reserved: false
@@ -21,23 +20,22 @@ kibana_user:
   reserved: false
   backend_roles:
   - "kibanauser"
-  - "Developers"
-  - "Service"
-  description: "Maps kibanauser to kibana_user"
+  - "developers"
+  - "service"
 
 readall:
   reserved: false
   backend_roles:
   - "readall"
-  - "Developers"
-  - "Service"
+  - "developers"
+  - "service"
 
 manage_snapshots:
   reserved: false
   backend_roles:
   - "snapshotrestore"
-  - "Developers"
-  - "Service"
+  - "developers"
+  - "service"
 
 kibana_server:
   reserved: true

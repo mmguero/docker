@@ -35,10 +35,10 @@ config:
             verify_hostnames: false
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - glauth:636
-            bind_dn: cn=binddn,dc=nein,dc=local
+            - 10.9.0.215:6360
+            bind_dn: uid=bind,ou=people,dc=local,dc=lan
             password: "r3@d0n!y"
-            userbase: ou=users,dc=nein,dc=local
+            userbase: ou=people,dc=local,dc=lan
             usersearch: (uid={0})
             username_attribute: uid
     authz:
@@ -55,17 +55,17 @@ config:
             verify_hostnames: false
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
-            - glauth:636
-            bind_dn: cn=binddn,dc=nein,dc=local
+            - 10.9.0.215:6360
+            bind_dn: uid=bind,ou=people,dc=local,dc=lan
             password: "r3@d0n!y" 
-            userbase: ou=users,dc=nein,dc=local
+            userbase: ou=people,dc=local,dc=lan
             usersearch: (uid={0})
             username_attribute: uid
-            rolebase: ou=groups,dc=nein,dc=local
-            rolesearch: (memberUid={1})
+            rolebase: ou=groups,dc=local,dc=lan
+            rolesearch: (member={0})
             userroleattribute: null
             userrolename: none
-            rolename: ou
+            rolename: cn
             resolve_nested_roles: true
             skip_users:
               - admin

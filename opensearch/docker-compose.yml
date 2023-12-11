@@ -7,26 +7,8 @@ x-process-variables: &process-variables
 
 services:
 
-  glauth:
-    image: docker.io/glauth/glauth:latest
-    restart: "unless-stopped"
-    # x-podman:
-    #   uidmaps:
-    #     - 0:1000:1
-    #     - 1000:1000:1
-    #   gidmaps:
-    #     - 0:1000:1
-    #     - 1000:1000:1
-    ports:
-      - "127.0.0.1:389:389"
-      - "127.0.0.1:5555:5555"
-      - "0.0.0.0:636:636"
-    volumes:
-      - ./glauth.cfg:/app/config/config.cfg:ro
-      - ./certs/glauth-key.pem:/glauth-key.pem:ro
-      - ./certs/glauth.pem:/glauth.pem:ro
-    networks:
-      - default
+  # rather than build-in an LDAP server here, see ../lldap in the
+  #   same parent repository as this project and just run that
 
   opensearch-node1:
     image: oci.guero.top/opensearch:latest

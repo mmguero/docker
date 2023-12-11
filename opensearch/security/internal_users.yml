@@ -10,7 +10,7 @@ admin:
   hash: "$2y$12$qi5zOIrpHaDn.iNck9YXXuq.05DLu9TCTn7MpQ0hdiqLCmYmE/U0W"
   reserved: true
   backend_roles:
-  - "admin"
+  - "administrators"
   description: "Demo admin user"
 
 kibanaserver:
