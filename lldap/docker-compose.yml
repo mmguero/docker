@@ -1,0 +1,31 @@
+version: "3"
+
+# LDAPTLS_REQCERT=never ldapsearch -LLL -H "ldaps://localhost:6360" -D "uid=admin,ou=people,dc=local,dc=lan" -w 'xxxxxxxxxxxxxxxx' -b "dc=local,dc=lan"
+
+services:
+  lldap:
+    image: lldap/lldap:stable
+    ports:
+      # For LDAP
+      - "127.0.0.1:3890:3890"
+      # For LDAPS (if LLDAP_LDAPS_OPTIONS__ENABLED=true)
+      - "127.0.0.1:6360:6360"
+      # For the web front-end
+      - "127.0.0.1:17170:17170"
+    networks:
+      - default
+    volumes:
+      - ./certs/cert.pem:/certs/cert.pem:ro
+      - ./certs/key.pem:/certs/key.pem:ro
+      - ./data:/data:rw
+    env_file:
+     - .env
+    environment:
+      - LLDAP_LDAPS_OPTIONS__ENABLED=true
+      - LLDAP_LDAPS_OPTIONS__CERT_FILE=/certs/cert.pem
+      - LLDAP_LDAPS_OPTIONS__KEY_FILE=/certs/key.pem
+
+networks:
+  default:
+    external: false
+
