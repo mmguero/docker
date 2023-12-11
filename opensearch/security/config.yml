@@ -64,9 +64,9 @@ config:
             rolebase: ou=groups,dc=local,dc=lan
             rolesearch: (member={0})
             userroleattribute: null
-            userrolename: none
+            userrolename: disabled
             rolename: cn
-            resolve_nested_roles: true
+            resolve_nested_roles: false
             skip_users:
               - admin
               - kibanaserver
