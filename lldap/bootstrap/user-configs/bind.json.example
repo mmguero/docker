@@ -4,6 +4,7 @@
   "password": "xxxxxxxx",
   "displayName": "LDAP Service Account",
   "groups": [
-    "service"
+    "service",
+    "lldap_strict_readonly"
   ]
 }

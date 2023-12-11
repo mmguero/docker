@@ -1,0 +1,11 @@
+{
+  "id": "sikari",
+  "email": "sikari@nerve.gov",
+  "password": "zzzzzzzz",
+  "displayName": "Shinji Ikari",
+  "firstName": "Shinji",
+  "lastName": "Ikari",
+  "groups": [
+    "lldap_admin"
+  ]
+}
