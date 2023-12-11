@@ -18,12 +18,15 @@ services:
       - ./certs/cert.pem:/certs/cert.pem:ro
       - ./certs/key.pem:/certs/key.pem:ro
       - ./data:/data:rw
+      - ./bootstrap:/bootstrap:ro
     env_file:
      - .env
     environment:
       - LLDAP_LDAPS_OPTIONS__ENABLED=true
       - LLDAP_LDAPS_OPTIONS__CERT_FILE=/certs/cert.pem
       - LLDAP_LDAPS_OPTIONS__KEY_FILE=/certs/key.pem
+      - USER_CONFIGS_DIR=/bootstrap/user-configs
+      - GROUP_CONFIGS_DIR=/bootstrap/group-configs
 
 networks:
   default:
