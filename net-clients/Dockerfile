@@ -17,6 +17,7 @@ RUN apk add --no-cache \
         file \
         git \
         iproute2 \
+        jo \
         jq \
         moreutils \
         mosh \

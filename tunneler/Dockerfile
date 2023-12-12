@@ -26,6 +26,7 @@ RUN  apt-get update && \
       iproute2 \
       iptables \
       iputils-ping \
+      jo \
       jq \
       libcap-dev \
       libcap2-bin \

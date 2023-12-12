@@ -136,6 +136,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       git \
       gnome-themes-extra \
       gnupg2 \
+      jo \
       jq \
       keepassxc \
       less \
