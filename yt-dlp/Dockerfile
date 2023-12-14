@@ -29,8 +29,7 @@ RUN apk add --update --no-cache bash curl shadow py3-pip && \
         python3-dev \
         py3-setuptools \
         py3-wheel && \
-    python3 -m ensurepip && \
-    python3 -m pip install --no-cache --break-system-packages yt-dlp && \
+    python3 -m pip install --break-system-packages --no-cache yt-dlp && \
     apk del .build-deps && \
     chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     addgroup -g ${DEFAULT_GID} ${PGROUP} && \
