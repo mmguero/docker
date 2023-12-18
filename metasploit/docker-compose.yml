@@ -1,0 +1,31 @@
+version: '3'
+services:
+  ms:
+    image: metasploitframework/metasploit-framework:latest
+    environment:
+      MSF_UID: 0
+      MSF_GID: 0
+      DATABASE_URL: postgres://postgres@db:5432/msf?pool=200&timeout=5
+      HOME: /home/msf
+    depends_on:
+      - db
+    ports:
+      - 127.0.0.1:4444:4444
+    command:
+        - tail
+        - -f
+        - /dev/null
+    volumes:
+      - ./msf4:/home/msf/.msf4
+    tty: true
+
+  db:
+    image: postgres:10-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+volumes:
+  pg_data:
+    driver: local
