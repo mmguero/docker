@@ -80,22 +80,6 @@ EOF
   openssl x509 -req -in node${NODENUM}.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out node${NODENUM}.pem -days 730 -extensions req_ext -extfile node${NODENUM}.ext
 done
 
-# ldap server cert
-openssl genrsa -out ldap-key-temp.pem 2048
-openssl pkcs8 -inform PEM -outform PEM -in ldap-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out ldap-key.pem
-openssl req -new -key ldap-key.pem -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=ldap.dns.a-record" -out ldap.csr
-cat <<EOF > ldap.ext
-[ req ]
-req_extensions = req_ext
-
-[ req_ext ]
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = ldap.dns.a-record
-EOF
-openssl x509 -req -in ldap.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out ldap.pem -days 730 -extensions req_ext -extfile ldap.ext
-
 # Client cert
 openssl genrsa -out client-key-temp.pem 2048
 openssl pkcs8 -inform PEM -outform PEM -in client-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out client-key.pem
@@ -121,7 +105,4 @@ rm node*.ext
 rm client-key-temp.pem
 rm client.csr
 rm client.ext
-rm ldap-key-temp.pem
-rm ldap.csr
-rm ldap.ext
 chmod 600 *.pem
