@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  fluentd:
+    image: fluentd-test:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./conf:/fluentd/etc
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - default
+
+networks:
+  default:
+    external: false

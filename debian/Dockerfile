@@ -31,6 +31,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         detox \
         direnv \
         dtrx \
+        expect \
         file \
         git \
         gpg \
