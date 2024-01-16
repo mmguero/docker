@@ -9,34 +9,16 @@ x-process-variables: &process-variables
   # PUSER_PRIV_DROP : 'false'
 
 x-auth-variables: &auth-variables
-  # authentication method: encrypted HTTP basic authentication ('true') vs LDAP ('false')
-  # vs unauthenticated ('no_authentication')
+  # Authentication is handled by CTFd, not nginx
   NGINX_BASIC_AUTH : 'no_authentication'
-  # NGINX LDAP (NGINX_BASIC_AUTH=false) can support LDAP, LDAPS, or LDAP+StartTLS.
-  #   For StartTLS, set NGINX_LDAP_TLS_STUNNEL=true to issue the StartTLS command
-  #   and use stunnel to tunnel the connection.
-  NGINX_LDAP_TLS_STUNNEL : 'false'
-  # stunnel will require and verify certificates for StartTLS when one or more
-  # trusted CA certificate files are placed in the ./nginx/ca-trust directory.
-  # For additional security, hostname or IP address checking of the associated
-  # CA certificate(s) can be enabled by providing these values.
-  NGINX_LDAP_TLS_STUNNEL_CHECK_HOST : ''
-  NGINX_LDAP_TLS_STUNNEL_CHECK_IP : ''
-  NGINX_LDAP_TLS_STUNNEL_VERIFY_LEVEL : 2
-  # Whether or not nginx should use HTTPS. This is almost CERTAINLY what you want.
-  # The only case you may want to set this to false is if you're using another
-  # reverse proxy in front of NGINX. Even if set to 'false', NGINX will still
-  # listen on port 443 (it just won't be encrypted). If you change this, you'll
-  # probably want to change "0.0.0.0:443:443" to something like
-  # "127.0.0.1:80:443" in the ports section for the nginx-ldap service and
-  # change "https://" to "http://" in its healthcheck.
+  # TLS is enabled
   NGINX_SSL : 'true'
 
 services:
-  nginx-ldap:
+  nginx:
     image: oci.guero.top/nginx-ldap:latest
-    container_name: nginx-ldap
-    hostname: nginx-ldap
+    container_name: nginx
+    hostname: nginx
     restart: unless-stopped
     environment:
       << : *process-variables
@@ -50,8 +32,6 @@ services:
       - "0.0.0.0:80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/nginx_ldap.conf:/etc/nginx/nginx_ldap.conf:ro
-      - ./nginx/htpasswd:/etc/nginx/.htpasswd:ro
       - ./nginx/ca-trust:/etc/nginx/ca-trust:ro
       - ./nginx/certs:/etc/nginx/certs:ro
       - ./nginx/certs/dhparam.pem:/etc/nginx/dhparam/dhparam.pem:ro
@@ -85,6 +65,8 @@ services:
       - db
     networks:
       - default
+    # ports:
+    #   - "127.0.0.1:8000:8000"
 
   db:
     image: oci.guero.top/mariadb:latest
