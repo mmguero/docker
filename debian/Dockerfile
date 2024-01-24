@@ -43,6 +43,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         lz4 \
         moreutils \
         ncat \
+        ncdu \
         netcat-openbsd \
         openssh-client \
         procps \

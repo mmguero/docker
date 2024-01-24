@@ -115,6 +115,7 @@ LABEL org.opencontainers.image.description='Dockerized XFCE with my own special 
 # liberally steal some package lists and config scripts from my live USB image setup one of my other repos
 #   https://github.com/mmguero/deblive/
 ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/bookworm/config"
+ARG GITHUB_TOKEN
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
 
@@ -124,6 +125,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       bash \
       bc \
       bzip2 \
+      build-essential \
       ca-certificates \
       ca-certificates-java \
       cpio \
@@ -171,13 +173,18 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
       done; \
     done && \
+    install -d -m 0755 /etc/apt/keyrings && \
+      curl -fsSL -o /etc/apt/keyrings/packages.mozilla.org.asc https://packages.mozilla.org/apt/repo-signing-key.gpg && \
+      gpg -n -q --import --import-options import-show /etc/apt/keyrings/packages.mozilla.org.asc | awk '/pub/{getline; gsub(/^ +| +$/,""); print "\n"$0"\n"}' && \
+      echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" > /etc/apt/sources.list.d/mozilla.list && \
+      apt-get -q update && \
+      env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q firefox && \
     curl -sSL -o /tmp/sublime.deb "$(curl -sSL "https://www.sublimetext.com/3"|grep "sublime-text_build-3.*$(dpkg --print-architecture).deb\"" | sed 's/[[:space:]]*<a href="//' | sed 's/">.*//')" && \
       env DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/sublime.deb && \
     curl -sSL -o /tmp/install_pip_pkgs.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0169-pip-installs.hook.chroot" && \
       bash /tmp/install_pip_pkgs.sh && \
-    curl -sSL -o /tmp/install_firefox.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0168-firefox-install.hook.chroot" && \
-      bash /tmp/install_firefox.sh && \
     curl -sSL -o /tmp/install_custom_bins.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0911-custom-binaries.hook.chroot" && \
+      ( [ -n "${GITHUB_TOKEN}" ] && export GITHUB_TOKEN || true ) && \
       bash /tmp/install_custom_bins.sh && \
     curl -sSL -o /tmp/setup_skel.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0998-skel-setup.hook.chroot" && \
       bash /tmp/setup_skel.sh && \
