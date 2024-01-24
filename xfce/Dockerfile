@@ -154,6 +154,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       procps \
       psmisc \
       pv \
+      python3-dev \
       python3-pip \
       python3-setuptools \
       python3-wheel \
@@ -169,7 +170,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       xxdiff \
       xz-utils && \
     for CATEGORY in apps multimedia net; do \
-      for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot" | grep -Pvi "abiword|audac(ious|ity)|brasero|bridge-utils|cdparanoia|cheese|gimp|gnumeric|handbrake|libdvd-pkg|motion|open(jdk|vpn)|pidgin|purple|resolvconf|sshuttle|(t|wire)shark|ufw|wireguard"); do \
+      for PACKAGE in $(curl -sSL "$PACKAGE_CATEGORY_URL_PREFIX/package-lists/$CATEGORY.list.chroot" | grep -Pvi "abiword|audac(ious|ity)|brasero|bridge-utils|cdparanoia|cheese|firefox|gimp|gnumeric|handbrake|libdvd-pkg|motion|open(jdk|vpn)|pidgin|purple|resolvconf|sshuttle|(t|wire)shark|ufw|wireguard"); do \
         env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -q "$PACKAGE"; \
       done; \
     done && \
@@ -193,7 +194,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     git clone https://github.com/asdf-vm/asdf.git /etc/skel/.asdf && \
     curl -sSL -o /tmp/localepurge.sh "$PACKAGE_CATEGORY_URL_PREFIX/hooks/normal/0992-localepurge.hook.chroot" && \
       bash /tmp/localepurge.sh && \
-    env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-17-jre-headless && \
+    env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove openjdk-17-jre-headless python3-dev build-essential && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y autoremove && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.cache/*
