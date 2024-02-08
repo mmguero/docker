@@ -36,9 +36,9 @@ config:
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
             - 192.168.10.123:6360
-            bind_dn: uid=bind,ou=people,dc=local,dc=lan
-            password: "r3@d0n!y"
-            userbase: ou=people,dc=local,dc=lan
+            bind_dn: uid=bind,ou=people,dc=example,dc=org
+            password: "p@55w0rd"
+            userbase: ou=people,dc=example,dc=org
             usersearch: (uid={0})
             username_attribute: uid
     authz:
@@ -56,12 +56,12 @@ config:
             pemtrustedcas_filepath: /usr/share/opensearch/config/root-ca.pem
             hosts:
             - 192.168.10.123:6360
-            bind_dn: uid=bind,ou=people,dc=local,dc=lan
-            password: "r3@d0n!y" 
-            userbase: ou=people,dc=local,dc=lan
+            bind_dn: uid=bind,ou=people,dc=example,dc=org
+            password: "p@55w0rd"
+            userbase: ou=people,dc=example,dc=org
             usersearch: (uid={0})
             username_attribute: uid
-            rolebase: ou=groups,dc=local,dc=lan
+            rolebase: ou=groups,dc=example,dc=org
             rolesearch: (member={0})
             userroleattribute: null
             userrolename: disabled

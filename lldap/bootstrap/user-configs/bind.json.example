@@ -1,6 +1,6 @@
 {
   "id": "bind",
-  "email": "bind@local.lan",
+  "email": "bind@example.org",
   "password": "xxxxxxxx",
   "displayName": "LDAP Service Account",
   "groups": [
