@@ -13,7 +13,7 @@ ENV TERM xterm
 ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
 COPY --from=ghcr.io/mmguero-dev/gostatic --chmod=755 /goStatic /usr/bin/goStatic
 
-RUN  apt-get update && \
+RUN  set -x && apt-get update && \
      apt-get install --no-install-recommends -qy \
       autoconf \
       automake \
@@ -70,8 +70,9 @@ RUN  apt-get update && \
     make install && \
   pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
-  curl -sSL -o /tmp/croc.deb "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
-    dpkg -i /tmp/croc.deb && \
+  curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.tar\.gz)" | tar -xzf - croc && \
+    chmod 755 ./croc && \
+    mv ./croc /usr/bin && \
   curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
     dpkg -i /tmp/hostyoself.deb && \
   apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
