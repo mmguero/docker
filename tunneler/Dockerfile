@@ -19,7 +19,6 @@ RUN  apt-get update -yqq && \
       ca-certificates \
       curl \
       dnsutils \
-      gcc \
       iproute2 \
       iptables \
       iputils-ping \
