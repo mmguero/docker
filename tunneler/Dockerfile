@@ -10,8 +10,9 @@ LABEL org.opencontainers.image.description='Dockerized Tunneling Services'
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 
-ADD https://codeload.github.com/rfc1036/udptunnel/tar.gz/master /tmp/udptunnel.tar.gz
 COPY --from=ghcr.io/mmguero-dev/gostatic --chmod=755 /goStatic /usr/bin/goStatic
+COPY --from=ghcr.io/mmguero/wireproxy --chmod=755 /usr/bin/wireproxy /usr/bin/wireproxy
+COPY --from=ghcr.io/mmguero/wireproxy --chmod=644 /etc/wireproxy/config.env /etc/wireproxy/config.env
 
 RUN  set -x && apt-get update && \
      apt-get install --no-install-recommends -qy \
@@ -52,14 +53,6 @@ RUN  set -x && apt-get update && \
       tcpd \
       tree \
       && \
-  cd /tmp && \
-    mkdir -p ./udptunnel && \
-    tar xvf ./udptunnel.tar.gz -C ./udptunnel --strip-components 1 && \
-    cd ./udptunnel && \
-    make && \
-    make install && \
-    mkdir -p /usr/local/share/udptunnel/ && \
-    cp -r ./examples/* /usr/local/share/udptunnel/ && \
   pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
   cd /tmp && \
@@ -104,7 +97,6 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
       usermod -a -G tty ${PUSER} && \
-    sed -i "s/nobody/$PUSER/g" /usr/local/share/udptunnel/* && \
     chmod 775 /var/log/supervisor && \
       chown root:$PGROUP /var/log/supervisor && \
     chown root:$PGROUP /bin/nc.openbsd && \
@@ -122,9 +114,7 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     chown root:$PGROUP /usr/bin/stunnel4 && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel4 && \
     chown root:$PGROUP /usr/sbin/netsniff-ng && \
-      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng && \
-    chown root:$PGROUP /usr/local/sbin/udptunnel && \
-      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/local/sbin/udptunnel
+      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng
 
 ENV PATH="/usr/local/sbin:/usr/sbin:${PATH}"
 
