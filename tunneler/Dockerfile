@@ -60,16 +60,9 @@ RUN  set -x && apt-get update && \
     make install && \
     mkdir -p /usr/local/share/udptunnel/ && \
     cp -r ./examples/* /usr/local/share/udptunnel/ && \
-  cd /tmp && \
-    mkdir -p ./tcpcrypt && \
-    curl -sSL "https://github.com/scslab/tcpcrypt/archive/refs/tags/v0.5.tar.gz" | tar xzvf - -C ./tcpcrypt --strip-components 1 && \
-    cd ./tcpcrypt && \
-    ./bootstrap.sh && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
   pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
+  cd /tmp && \
   curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.tar\.gz)" | tar -xzf - croc && \
     chmod 755 ./croc && \
     mv ./croc /usr/bin && \
@@ -128,8 +121,6 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel3 && \
     chown root:$PGROUP /usr/bin/stunnel4 && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel4 && \
-    chown root:$PGROUP /usr/bin/tcpcryptd && \
-      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/tcpcryptd && \
     chown root:$PGROUP /usr/sbin/netsniff-ng && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng && \
     chown root:$PGROUP /usr/local/sbin/udptunnel && \
