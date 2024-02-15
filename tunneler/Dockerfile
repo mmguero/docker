@@ -14,12 +14,8 @@ COPY --from=ghcr.io/mmguero-dev/gostatic --chmod=755 /goStatic /usr/bin/goStatic
 COPY --from=ghcr.io/mmguero/wireproxy --chmod=755 /usr/bin/wireproxy /usr/bin/wireproxy
 COPY --from=ghcr.io/mmguero/wireproxy --chmod=644 /etc/wireproxy/config.env /etc/wireproxy/config.env
 
-RUN  set -x && apt-get update && \
-     apt-get install --no-install-recommends -qy \
-      autoconf \
-      automake \
-      autotools-dev \
-      build-essential \
+RUN  apt-get update -yqq && \
+     apt-get install --no-install-recommends -yq \
       ca-certificates \
       curl \
       dnsutils \
@@ -29,21 +25,12 @@ RUN  set -x && apt-get update && \
       iputils-ping \
       jo \
       jq \
-      libcap-dev \
       libcap2-bin \
-      libnetfilter-conntrack-dev \
-      libnetfilter-queue-dev \
-      libnfnetlink-dev \
-      libpcap-dev \
-      libssl-dev \
-      libtool \
-      libtool-bin \
       net-tools \
       netcat-openbsd \
       netsniff-ng \
       openbsd-inetd \
       openssl \
-      pkg-config \
       procps \
       pv \
       python3-pip \
@@ -61,24 +48,9 @@ RUN  set -x && apt-get update && \
     mv ./croc /usr/bin && \
   curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
     dpkg -i /tmp/hostyoself.deb && \
-  apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages --purge remove \
-      autoconf \
-      automake \
-      autotools-dev \
-      build-essential \
-      gcc \
-      libc6-dev \
-      libcap-dev \
-      libcrypt-dev \
-      libgcc-10-dev \
-      libnsl-dev \
-      libssl-dev \
-      libtirpc-dev \
-      linux-libc-dev \
-      pkg-config && \
-    apt-get -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  sed -i 's/\$/$WIREPROXY_/g' /etc/wireproxy/config.env && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD supervisord.conf /etc/supervisord.conf
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
@@ -114,7 +86,9 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
     chown root:$PGROUP /usr/bin/stunnel4 && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/stunnel4 && \
     chown root:$PGROUP /usr/sbin/netsniff-ng && \
-      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng
+      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_IPC_LOCK+eip CAP_SYS_ADMIN+eip' /usr/sbin/netsniff-ng && \
+    chown root:$PGROUP /usr/bin/wireproxy && \
+      setcap 'CAP_NET_BIND_SERVICE+eip' /usr/bin/wireproxy
 
 ENV PATH="/usr/local/sbin:/usr/sbin:${PATH}"
 
@@ -144,6 +118,32 @@ ARG HOSTYOSELF_URL="https://hostyoself.example.org"
 ENV HOSTYOSELF_AUTOSTART $HOSTYOSELF_AUTOSTART
 ENV HOSTYOSELF_PORT $HOSTYOSELF_PORT
 ENV HOSTYOSELF_URL $HOSTYOSELF_URL
+
+ARG WIREPROXY_AUTOSTART=false
+ENV WIREPROXY_AUTOSTART $WIREPROXY_AUTOSTART
+ARG WIREPROXY_ALLOWED_IPS=
+ARG WIREPROXY_CONF=/etc/wireproxy/config.env
+ARG WIREPROXY_DNS=
+ARG WIREPROXY_ENDPOINT_ADDRESS=
+ARG WIREPROXY_ENDPOINT_KEY=
+ARG WIREPROXY_KEEPALIVE=0
+ARG WIREPROXY_LOCAL_ADDRESS=
+ARG WIREPROXY_LOCAL_KEY=
+ARG WIREPROXY_MTU=1420
+ARG WIREPROXY_PRESHARED_KEY=
+ARG WIREPROXY_SOCKS_ADDRESS=
+ENV WIREPROXY_ALLOWED_IPS $WIREPROXY_ALLOWED_IPS
+ENV WIREPROXY_CONF $WIREPROXY_CONF
+ENV WIREPROXY_DNS $WIREPROXY_DNS
+ENV WIREPROXY_ENDPOINT_ADDRESS $WIREPROXY_ENDPOINT_ADDRESS
+ENV WIREPROXY_ENDPOINT_KEY $WIREPROXY_ENDPOINT_KEY
+ENV WIREPROXY_KEEPALIVE $WIREPROXY_KEEPALIVE
+ENV WIREPROXY_LOCAL_ADDRESS $WIREPROXY_LOCAL_ADDRESS
+ENV WIREPROXY_LOCAL_KEY $WIREPROXY_LOCAL_KEY
+ENV WIREPROXY_MTU $WIREPROXY_MTU
+ENV WIREPROXY_PRESHARED_KEY $WIREPROXY_PRESHARED_KEY
+ENV WIREPROXY_SOCKS_ADDRESS $WIREPROXY_SOCKS_ADDRESS
+
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
