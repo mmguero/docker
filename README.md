@@ -12,7 +12,11 @@
 
 ![debian-stable-slim-build-push-ghcr](https://github.com/mmguero/docker/workflows/debian-stable-slim-build-push-ghcr/badge.svg)
 
+![fakemachine-build-push-ghcr](https://github.com/mmguero/docker/workflows/fakemachine-build-push-ghcr/badge.svg)
+
 ![fetch-build-push-ghcr](https://github.com/mmguero/docker/workflows/fetch-build-push-ghcr/badge.svg)
+
+![filepond-build-push-ghcr](https://github.com/mmguero/docker/workflows/filepond-build-push-ghcr/badge.svg)
 
 ![firefox-build-push-ghcr](https://github.com/mmguero/docker/workflows/firefox-build-push-ghcr/badge.svg)
 
@@ -71,12 +75,14 @@
 
 [espejo](https://github.com/mmguero/espejo) ![espejo-build-push-ghcr](https://github.com/mmguero/espejo/workflows/espejo-build-push-ghcr/badge.svg)
 
+[goStatic](https://github.com/mmguero/gostatic) ![gostatic-build-push-ghcr](https://github.com/mmguero/gostatic/workflows/gostatic-build-push-ghcr/badge.svg)
+
 [mirotalk](https://github.com/mmguero/mirotalk) ![mirotalk-build-push-ghcr](https://github.com/mmguero/mirotalk/workflows/mirotalk-build-push-ghcr/badge.svg)
 
 [monkeyplug](https://github.com/mmguero/monkeyplug) ![monkeyplug-build-push-ghcr](https://github.com/mmguero/monkeyplug/workflows/monkeyplug-build-push-ghcr/badge.svg)
 
-[montag](https://github.com/mmguero/montag) ![montag-build-push-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-ghcr/badge.svg) ![montag-build-push-arm32v7-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-arm32v7-ghcr/badge.svg)
+[montag](https://github.com/mmguero/montag) ![montag-build-push-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-ghcr/badge.svg)
 
 [nginx-ldap](https://github.com/mmguero/nginx-ldap) ![nginx-ldap-build-push-ghcr](https://github.com/mmguero/nginx-ldap/workflows/nginx-ldap-build-push-ghcr/badge.svg)
 
-[zeek-docker](https://github.com/mmguero/zeek-docker) ![zeek-build-push-ghcr](https://github.com/mmguero/zeek-docker/workflows/zeek-build-push-ghcr/badge.svg)
+[zeek-docker](https://github.com/mmguero/zeek-docker) ![zeek-build-push-latest-ghcr](https://github.com/mmguero/zeek-docker/workflows/zeek-build-push-latest-ghcr/badge.svg)
