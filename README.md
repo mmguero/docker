@@ -50,7 +50,7 @@
 
 ![redis-build-push-ghcr](https://github.com/mmguero/docker/workflows/redis-build-push-ghcr/badge.svg)
 
-![serverless-registry-proxy-build-push-ghcr](https://github.com/mmguero/docker/workflows/serverless-registry-proxy-build-push-ghcr.svg)
+![serverless-registry-proxy-build-push-ghcr](https://github.com/mmguero/docker/workflows/serverless-registry-proxy-build-push-ghcr/badge.svg)
 
 ![signal-build-push-ghcr](https://github.com/mmguero/docker/workflows/signal-build-push-ghcr/badge.svg)
 
