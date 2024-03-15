@@ -32,6 +32,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         direnv \
         dtrx \
         expect \
+        f3 \
         file \
         git \
         gpg \
