@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: whoami-pod
+  name: whoami-pod
+spec:
+  containers:
+  - env:
+    image: docker.io/traefik/whoami:latest
+    name: whoami
+    ports:
+    - containerPort: 80
+      hostIP: 127.0.0.1
+      hostPort: 40002
+

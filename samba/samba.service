@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=%h/services/share
+After=network.target
+
+[Service]
+WorkingDirectory=%h/services/share
+ExecStart=podman kube play --network="slirp4netns:port_handler=slirp4netns" --wait --replace samba-pod.yaml
+ExecStop=podman kube play --down --force samba-pod.yaml
+Restart=always
+
+[Install]
+WantedBy=default.target

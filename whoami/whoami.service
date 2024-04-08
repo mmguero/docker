@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=%h/services/whoami
+After=network.target
+
+[Service]
+WorkingDirectory=%h/services/whoami
+ExecStart=podman kube play --network=pasta --wait --replace whoami-pod.yaml
+ExecStop=podman kube play --down --force whoami-pod.yaml
+Restart=always
+
+[Install]
+WantedBy=default.target

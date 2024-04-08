@@ -1,4 +1,4 @@
-# my misc. docker configs
+# my misc. config for docker/podman/kubernetes
 
 ## this repository
 
@@ -65,7 +65,7 @@
 ![ytdlp-build-push-ghcr](https://github.com/mmguero/docker/workflows/ytdlp-build-push-ghcr/badge.svg)
 
 
-## other repositories' docker images
+## other repositories' container images
 
 [cleanvid](https://github.com/mmguero/cleanvid) ![cleanvid-build-push-ghcr](https://github.com/mmguero/cleanvid/workflows/cleanvid-build-push-ghcr/badge.svg)
 

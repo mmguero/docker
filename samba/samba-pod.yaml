@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: share-samba-1-pod
+  name: share-samba-1-pod
+spec:
+  containers:
+  - args:
+    - -s
+    - Public;/public;yes;no;yes;guest
+    - -u
+    - guest;transfer
+    - -p
+    - -r
+    env:
+    - name: GROUPID
+      value: "0"
+    - name: TZ
+      value: America/Denver
+    - name: USERID
+      value: "0"
+    image: docker.io/dperson/samba:latest
+    name: share-samba-1
+    ports:
+    - containerPort: 139
+      hostIP: 0.0.0.0
+      hostPort: 139
+    - containerPort: 445
+      hostIP: 0.0.0.0
+      hostPort: 445
+    - containerPort: 137
+      hostIP: 0.0.0.0
+      hostPort: 137
+      protocol: UDP
+    - containerPort: 138
+      hostIP: 0.0.0.0
+      hostPort: 138
+      protocol: UDP
+    securityContext:
+      readOnlyRootFilesystem: true
+    volumeMounts:
+    - mountPath: /public
+      name: home-user-Public-host-0
+    - mountPath: /tmp
+      name: tmp-1
+    - mountPath: /var/lib/samba
+      name: var-lib-samba-pvc
+    - mountPath: /var/log/samba
+      name: var-log-samba-pvc
+    - mountPath: /etc
+      name: etc-pvc
+    - mountPath: /run/samba
+      name: run-samba-pvc
+    - mountPath: /var/cache/samba
+      name: var-cache-samba-pvc
+  volumes:
+  - hostPath:
+      path: /home/user/Public
+      type: Directory
+    name: home-user-Public-host-0
+  - emptyDir:
+      medium: Memory
+    name: tmp-1
+  - name: var-lib-samba-pvc
+    persistentVolumeClaim:
+      claimName: var-lib-samba
+  - name: var-log-samba-pvc
+    persistentVolumeClaim:
+      claimName: var-log-samba
+  - name: etc-pvc
+    persistentVolumeClaim:
+      claimName: etc
+  - name: run-samba-pvc
+    persistentVolumeClaim:
+      claimName: run-samba
+  - name: var-cache-samba-pvc
+    persistentVolumeClaim:
+      claimName: var-cache-samba
+
