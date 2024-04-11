@@ -10,20 +10,13 @@ else
   CONTAINER_PGID=$(id -g)
 fi
 
-GPU_DEVICES=$( \
-    echo "$( \
-        find /dev -maxdepth 1 -regextype posix-extended -iregex '.+/nvidia([0-9]|ctl)' \
-            | grep --color=never '.' \
-          || echo '/dev/dri'\
-      )" \
-      | sed -E "s/^/--device /" \
-  )
-
 if [[ ! -d "$HOME/.config/GIMP" ]]; then
   TMP_CONTAINER_ID="$($ENGINE run --detach --rm --entrypoint=sleep "$IMAGE" infinity)"
   mkdir -p "$HOME/.config"
   $ENGINE cp $TMP_CONTAINER_ID:/home/gimp/.config/GIMP "$HOME/.config"/
   $ENGINE stop $TMP_CONTAINER_ID
+  find "$HOME/.config/GIMP" -type d -exec chmod 700 "{}" \;
+  find "$HOME/.config/GIMP" -type f -exec chmod 600 "{}" \;
 fi
 
 mkdir -p "$HOME/.fonts" "$HOME/.local/share/fonts" "$HOME/.config/GIMP"
@@ -46,6 +39,8 @@ if [[ "$(realpath "$DOCS_FOLDER")" == "$(realpath "$HOME")" ]]; then
   exit 1
 fi
 
+# TODO: detect how to handle --gpus all?
+
 $ENGINE run -d --rm \
   -v /dev/shm:/dev/shm \
   -v /etc/localtime:/etc/localtime:ro \
@@ -64,7 +59,6 @@ $ENGINE run -d --rm \
   -e PGID=$CONTAINER_PGID \
   -e PUID=$CONTAINER_PUID \
   --device /dev/input \
-  $GPU_DEVICES \
   --name gimp-$(date -u +%s) \
   "$IMAGE" \
   --no-splash "$@"
