@@ -1,0 +1,6 @@
+services:
+  whoami:
+    image: "docker.io/traefik/whoami:latest"
+    network_mode: "pasta"
+    ports:
+      - "127.0.0.1:40002:80/tcp"
