@@ -39,7 +39,9 @@ if [[ "$(realpath "$DOCS_FOLDER")" == "$(realpath "$HOME")" ]]; then
   exit 1
 fi
 
-# TODO: detect how to handle --gpus all?
+# remember, if you're using NVIDIA you need to do
+#   sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+# to update the CDI specification after a driver update
 
 $ENGINE run -d --rm \
   -v /dev/shm:/dev/shm \
@@ -59,6 +61,7 @@ $ENGINE run -d --rm \
   -e PGID=$CONTAINER_PGID \
   -e PUID=$CONTAINER_PUID \
   --device /dev/input \
+  --gpus all \
   --name gimp-$(date -u +%s) \
   "$IMAGE" \
   --no-splash "$@"
