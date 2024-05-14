@@ -1,0 +1,67 @@
+networks:
+  pihole_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.18.0.0/24"
+        # - subnet: "fd00::/64"
+
+services:
+  dnscrypt-proxy:
+    container_name: dnscrypt-proxy
+    image: klutchell/dnscrypt-proxy:main
+    user: nobody
+    environment:
+      TZ: 'America/Denver'
+    networks:
+      pihole_net:
+        ipv4_address: "172.18.0.2"
+        # ipv6_address: "fd00::2"
+    expose:
+      - "53/udp"
+      - "53/tcp"
+    volumes:
+      # - "./dnscrypt-proxy/config/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml:ro"
+      - "./dnscrypt-proxy/config/dnscrypt-proxy-ipv4-only.toml:/config/dnscrypt-proxy.toml:ro"
+    restart: always
+    healthcheck:
+      test: ["CMD", "dnsprobe", "google.com", "127.0.0.1:53"]
+      interval: 720s
+      timeout: 5s
+      retries: 2
+      start_period: 30s
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      pihole_net:
+        ipv4_address: "172.18.0.3"
+        # ipv6_address: "fd00::3"
+    ports:
+      # include any other IPs here as well (for VPN interfaces, etc.)
+      - "53:53/tcp"
+      - "53:53/udp"
+      # - "80:80/tcp"
+      # - "443:443/tcp"
+    environment:
+      TZ: 'America/Denver'
+      WEBPASSWORD: 'password'
+      DNS1: "172.18.0.2#53"
+      DNS2: "no"
+      # DNS_FQDN_REQUIRED: 'false'
+      # DNS_BOGUS_PRIV: 'false'
+      # ServerIP: '192.168.0.216'
+      DNSMASQ_LISTENING: 'all'
+      DHCP_ACTIVE: 'false'
+      RATE_LIMIT: '0/0'
+    volumes:
+       - './pihole/etc/pihole/:/etc/pihole/'
+       - './pihole/etc/dnsmasq.d/:/etc/dnsmasq.d/'
+       # run `touch ./pihole/var/log/pihole.log` and `touch ./pihole/var/log/FTL.log` first unless you like errors
+       - './pihole/var/log/:/var/log/pihole/'
+    dns:
+      - 1.1.1.1
+    restart: always
+    depends_on:
+      - dnscrypt-proxy
