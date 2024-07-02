@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   smtp4dev:
     image: rnwood/smtp4dev:latest
@@ -10,10 +8,13 @@ services:
       - 80
       - 25
       - 143
+    # ports:
+    #   - "127.0.0.1:25123:80"
     volumes:
-        - smtp4dev-data:/smtp4dev
+      - smtp4dev-data:/smtp4dev
     environment:
       - ServerOptions__TlsMode=None
+      - ServerOptions__DisableIPv6=true
 
   stunnel-smtp:
     image: oci.guero.top/stunnel:latest

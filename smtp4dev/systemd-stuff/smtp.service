@@ -1,0 +1,14 @@
+[Unit]
+AssertPathExists=/run/user/%U/podman/podman.sock
+AssertPathExists=%h/services/smtp4dev
+After=network.target
+
+[Service]
+WorkingDirectory=%h/services/smtp4dev
+Environment="DOCKER_HOST=unix:///run/user/%U/podman/podman.sock"
+ExecStart=%h/.asdf/shims/podman-compose -f docker-compose.yml up --no-color --abort-on-container-exit
+ExecStop=%h/.asdf/shims/podman-compose -f docker-compose.yml down
+Restart=always
+
+[Install]
+WantedBy=default.target

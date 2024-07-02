@@ -78,6 +78,7 @@ pushd "$CERT_DIR" >/dev/null 2>&1
 if [[ -r "$CRT_NAME" ]] && [[ -r "$KEY_NAME" ]] && [[ -r "$CA_NAME" ]]; then
 
   cat "$CRT_NAME" "$KEY_NAME" > "$PEM_NAME"
+  chmod 600 "$PEM_NAME"
 
   if [[ -n "$OUTPUT_DIR" ]] && [[ -d "$OUTPUT_DIR" ]]; then
     cp -v "$CRT_NAME" "$KEY_NAME" "$PEM_NAME" "$CA_NAME" "$OUTPUT_DIR"/
@@ -90,7 +91,8 @@ if [[ -r "$CRT_NAME" ]] && [[ -r "$KEY_NAME" ]] && [[ -r "$CA_NAME" ]]; then
   if [[ -n "$RESTART_COMPOSE" ]] && "$RESTART_COMPOSE" --version >/dev/null 2>&1 && [[ -f "$RESTART_COMPOSE_FILE" ]]; then
     pushd "$($DIRNAME $($REALPATH -e "$RESTART_COMPOSE_FILE"))"
     "$RESTART_COMPOSE" down
-    "$RESTART_COMPOSE" up -d
+    # systemd will restart the service
+    # "$RESTART_COMPOSE" up -d
   fi
 
   popd >/dev/null 2>&1
@@ -101,3 +103,4 @@ else
   popd >/dev/null 2>&1
   exit 1
 fi
+

@@ -1,0 +1,12 @@
+[Unit]
+AssertPathExists=%h/services/smtp4dev/certs-orig
+
+[Service]
+WorkingDirectory=%h/services/smtp4dev/certs-orig
+ExecStart=%h/.local/bin/step ca renew --daemon --exec "%h/services/smtp4dev/smtp_new_cert_restart.sh -v -d %h/services/smtp4dev/certs-orig -o %h/services/smtp4dev/certs -b smtp -a %h/services/smtp4dev/certs-orig/ca.crt -r  %h/.asdf/shims/podman-compose -f %h/services/smtp4dev/docker-compose.yml" --force smtp.crt smtp.key
+Restart=always
+PrivateTmp=false
+NoNewPrivileges=false
+
+[Install]
+WantedBy=default.target
