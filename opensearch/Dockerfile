@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch:2.11.0
+FROM opensearchproject/opensearch:2.16.0
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
