@@ -23,7 +23,7 @@ env:
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64
   REPO_CONTEXT: ./opensearch
-  REPO_CONTAINERFILE: ./opensearch/opensearch-dashboards.Dockerfile
+  REPO_CONTAINERFILE: ./opensearch/dashboards.Dockerfile
 
 jobs:
   buildah:
