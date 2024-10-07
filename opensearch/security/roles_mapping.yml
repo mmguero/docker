@@ -8,6 +8,9 @@ all_access:
   reserved: false
   backend_roles:
   - "administrators"
+  # uncomment this for TESTING ONLY to give all users all access (don't be stupid, though)
+  # users:
+  # - "*"
   description: "Maps administrators to all_access"
 
 own_index:
