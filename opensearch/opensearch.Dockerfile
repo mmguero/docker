@@ -7,6 +7,7 @@ ENV DEFAULT_GID $DEFAULT_GID
 ENV PUID $DEFAULT_UID
 ENV PUSER "opensearch"
 ENV PGROUP "opensearch"
+ENV PUSER_CHOWN "/usr/share/opensearch/data"
 ENV PUSER_PRIV_DROP true
 
 ENV TERM xterm
@@ -40,6 +41,8 @@ RUN export BINARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') 
 
 VOLUME ["/var/local/ca-trust"]
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/docker-uid-gid-setup.sh"]
+ENTRYPOINT ["/usr/bin/tini", \
+            "--", \
+            "/usr/local/bin/docker-uid-gid-setup.sh"]
 
 CMD ["/usr/share/opensearch/opensearch-docker-entrypoint.sh"]
