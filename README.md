@@ -20,11 +20,11 @@
 
 ![firefox-build-push-ghcr](https://github.com/mmguero/docker/workflows/firefox-build-push-ghcr/badge.svg)
 
-![forgejo-root-build-push-ghcr](https://github.com/mmguero/docker/workflows/forgejo-root-build-push-ghcr/badge.svg)
+![forgejo-build-push-ghcr](https://github.com/mmguero/docker/workflows/forgejo-build-push-ghcr/badge.svg)
 
 ![gimp-build-push-ghcr](https://github.com/mmguero/docker/workflows/gimp-build-push-ghcr/badge.svg)
 
-![gitea-root-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-root-build-push-ghcr/badge.svg)
+![gitea-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-build-push-ghcr/badge.svg)
 
 ![lossless-cut-build-push-ghcr](https://github.com/mmguero/docker/workflows/lossless-cut-build-push-ghcr/badge.svg)
 
@@ -36,15 +36,17 @@
 
 ![mimic3-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-build-push-ghcr/badge.svg)
 
-![net-clients-build-push-ghcr](https://github.com/mmguero/docker/workflows/net-clients-build-push-ghcr/badge.svg)
+![mimic3-gpu-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-gpu-build-push-ghcr/badge.svg)
 
-![nextcloud-build-push-arm32v7-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-arm32v7-ghcr/badge.svg)
+![net-clients-build-push-ghcr](https://github.com/mmguero/docker/workflows/net-clients-build-push-ghcr/badge.svg)
 
 ![nextcloud-build-push-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-ghcr/badge.svg)
 
 ![nginx-securimage-build-push-ghcr](https://github.com/mmguero/docker/workflows/nginx-securimage-build-push-ghcr/badge.svg)
 
 ![opensearch-build-push-ghcr](https://github.com/mmguero/docker/workflows/opensearch-build-push-ghcr/badge.svg)
+
+![opensearch-dashboards-build-push-ghcr](https://github.com/mmguero/docker/workflows/opensearch-dashboards-build-push-ghcr/badge.svg)
 
 ![postgres-build-push-ghcr](https://github.com/mmguero/docker/workflows/postgres-build-push-ghcr/badge.svg)
 
@@ -64,7 +66,6 @@
 
 ![ytdlp-build-push-ghcr](https://github.com/mmguero/docker/workflows/ytdlp-build-push-ghcr/badge.svg)
 
-
 ## other repositories' container images
 
 [cleanvid](https://github.com/mmguero/cleanvid) ![cleanvid-build-push-ghcr](https://github.com/mmguero/cleanvid/workflows/cleanvid-build-push-ghcr/badge.svg)
@@ -79,7 +80,7 @@
 
 [mirotalk](https://github.com/mmguero/mirotalk) ![mirotalk-build-push-ghcr](https://github.com/mmguero/mirotalk/workflows/mirotalk-build-push-ghcr/badge.svg)
 
-[monkeyplug](https://github.com/mmguero/monkeyplug) ![monkeyplug-build-push-ghcr](https://github.com/mmguero/monkeyplug/workflows/monkeyplug-build-push-ghcr/badge.svg)
+[monkeyplug](https://github.com/mmguero/monkeyplug) ![monkeyplug-build-push-vosk-ghcr](https://github.com/mmguero/monkeyplug/workflows/monkeyplug-build-push-vosk-ghcr/badge.svg) ![monkeyplug-build-push-vosk-ghcr](https://github.com/mmguero/monkeyplug/workflows/monkeyplug-build-push-vosk-ghcr/badge.svg)
 
 [montag](https://github.com/mmguero/montag) ![montag-build-push-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-ghcr/badge.svg)
 
