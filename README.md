@@ -36,8 +36,6 @@
 
 ![mimic3-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-build-push-ghcr/badge.svg)
 
-![mimic3-gpu-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-gpu-build-push-ghcr/badge.svg)
-
 ![net-clients-build-push-ghcr](https://github.com/mmguero/docker/workflows/net-clients-build-push-ghcr/badge.svg)
 
 ![nextcloud-build-push-ghcr](https://github.com/mmguero/docker/workflows/nextcloud-build-push-ghcr/badge.svg)
