@@ -249,7 +249,6 @@ services:
     container_name: opensearch-dashboards
     ports:
       - 0.0.0.0:5601:5601
-    restart: "unless-stopped"
     environment:
       << : *process-variables
       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]'
