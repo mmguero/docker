@@ -1,5 +1,5 @@
 ---
-name: opensearch-build-push-ghcr
+name: opensearch-dashboards-build-push-ghcr
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
       - 'master'
     paths:
       - 'opensearch/**'
-      - '.github/workflows/opensearch-build-push-ghcr.yml'
+      - '.github/workflows/opensearch-dashboards-build-push-ghcr.yml'
   pull_request:
     paths:
       - 'opensearch/**'
-      - '.github/workflows/opensearch-build-push-ghcr.yml'
+      - '.github/workflows/opensearch-dashboards-build-push-ghcr.yml'
   workflow_dispatch:
   repository_dispatch:
   schedule:
@@ -19,11 +19,11 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/opensearch
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/opensearch-dashboards
   IMAGE_TAG: latest
   IMAGE_ARCH: amd64
   REPO_CONTEXT: ./opensearch
-  REPO_CONTAINERFILE: ./opensearch/opensearch.Dockerfile
+  REPO_CONTAINERFILE: ./opensearch/opensearch-dashboards.Dockerfile
 
 jobs:
   buildah:
