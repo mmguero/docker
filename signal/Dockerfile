@@ -48,4 +48,6 @@ USER $SIGNAL_USER
 
 WORKDIR /opt/Signal
 
-CMD [ "./signal-desktop", "--no-sandbox" ]
+ENTRYPOINT [ "/opt/Signal/signal-desktop"]
+
+CMD [ "--no-sandbox" ]
