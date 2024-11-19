@@ -9,7 +9,7 @@ services:
   #   same parent repository as this project and just run that
 
   opensearch-node1:
-    image: oci.guero.top/opensearch:latest
+    image: oci.guero.org/opensearch:latest
     # userns_mode: keep-id
     build:
       context: .
@@ -64,7 +64,7 @@ services:
       - default
 
   opensearch-node2:
-    image: oci.guero.top/opensearch:latest
+    image: oci.guero.org/opensearch:latest
     # userns_mode: keep-id
     build:
       context: .
@@ -122,7 +122,7 @@ services:
       - default
 
   opensearch-node3:
-    image: oci.guero.top/opensearch:latest
+    image: oci.guero.org/opensearch:latest
     # userns_mode: keep-id
     build:
       context: .
@@ -180,7 +180,7 @@ services:
       - default
 
   opensearch-node4:
-    image: oci.guero.top/opensearch:latest
+    image: oci.guero.org/opensearch:latest
     # userns_mode: keep-id
     build:
       context: .
@@ -238,7 +238,7 @@ services:
       - default
 
   opensearch-dashboards:
-    image: oci.guero.top/opensearch-dashboards:latest
+    image: oci.guero.org/opensearch-dashboards:latest
     # userns_mode: keep-id
     build:
       context: .

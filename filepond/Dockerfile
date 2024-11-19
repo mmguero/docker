@@ -20,7 +20,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/filepond'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='oci.guero.top/filepond-nginx'
+LABEL org.opencontainers.image.title='oci.guero.org/filepond-nginx'
 LABEL org.opencontainers.image.description='FilePond with NGINX and PHP'
 
 ARG DEFAULT_UID=33

@@ -7,7 +7,7 @@ version: '3'
 
 services:
   web:
-    image: oci.guero.top/nginx-securimage:latest
+    image: oci.guero.org/nginx-securimage:latest
     container_name: nginx-securimage
     build:
       context: .

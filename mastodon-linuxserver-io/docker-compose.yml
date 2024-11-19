@@ -3,7 +3,7 @@ version: "2.1"
 services:
 
   mastodon:
-    image: oci.guero.top/mastodon:latest
+    image: oci.guero.org/mastodon:latest
     build:
       context: .
       dockerfile: Dockerfile

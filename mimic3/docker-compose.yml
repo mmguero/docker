@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
   mimic:
-    # image: oci.guero.top/mimic3:gpu
-    image: oci.guero.top/mimic3:latest
+    # image: oci.guero.org/mimic3:gpu
+    image: oci.guero.org/mimic3:latest
     ports:
       - "127.0.0.1:59125:59125"
     volumes:

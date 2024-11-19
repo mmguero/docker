@@ -70,5 +70,5 @@ else
     $GPU_DEVICES \
     --group-add $(getent group audio | cut -d: -f3) \
     --name firefox \
-    oci.guero.top/firefox "$@"
+    oci.guero.org/firefox "$@"
 fi

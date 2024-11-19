@@ -17,7 +17,7 @@ services:
       - ServerOptions__DisableIPv6=true
 
   stunnel-smtp:
-    image: oci.guero.top/stunnel:latest
+    image: oci.guero.org/stunnel:latest
     hostname: stunnel-smtp
     container_name: stunnel-smtp
     restart: unless-stopped
@@ -35,7 +35,7 @@ services:
       - smtp4dev
 
   stunnel-imap:
-    image: oci.guero.top/stunnel:latest
+    image: oci.guero.org/stunnel:latest
     hostname: stunnel-imap
     container_name: stunnel-imap
     restart: unless-stopped
@@ -53,7 +53,7 @@ services:
       - smtp4dev
 
   stunnel-http:
-    image: oci.guero.top/stunnel:latest
+    image: oci.guero.org/stunnel:latest
     hostname: stunnel-http
     container_name: stunnel-http
     restart: unless-stopped

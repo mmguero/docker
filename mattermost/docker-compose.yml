@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: docker/postgres.Dockerfile
-    image: oci.guero.top/postgres:14-alpine
+    image: oci.guero.org/postgres:14-alpine
     environment:
       << : *process-variables
       POSTGRES_USER: ${POSTGRES_USER}
@@ -40,7 +40,7 @@ services:
     build:
       context: .
       dockerfile: docker/mattermost.Dockerfile
-    image: oci.guero.top/mattermost-server:latest
+    image: oci.guero.org/mattermost-server:latest
     environment:
       << : *process-variables
       POSTGRES_USER: ${POSTGRES_USER}

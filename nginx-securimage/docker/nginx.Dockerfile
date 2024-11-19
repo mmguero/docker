@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/nginx-securimage'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='oci.guero.top/nginx-securimage'
+LABEL org.opencontainers.image.title='oci.guero.org/nginx-securimage'
 LABEL org.opencontainers.image.description='Dockerized NGINX with Securimage PHP Captcha'
 
 ENV WEBROOT /var/www/html

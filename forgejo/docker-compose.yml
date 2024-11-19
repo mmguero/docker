@@ -15,7 +15,7 @@ services:
     #   (may need to manually chown .ssh directory upon startup?)
     #
     # podman (rootless):
-    image: oci.guero.top/forgejo:root
+    image: oci.guero.org/forgejo:root
     #
     build:
       context: .

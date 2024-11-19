@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker/tree/master/gimp'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='oci.guero.top/gimp'
+LABEL org.opencontainers.image.title='oci.guero.org/gimp'
 LABEL org.opencontainers.image.description='Dockerized GIMP (X11)'
 
 ENV DEBIAN_FRONTEND noninteractive

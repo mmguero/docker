@@ -14,7 +14,7 @@ services:
     #   (may need to manually chown .ssh directory upon startup?)
     #
     # podman (rootless):
-    image: oci.guero.top/gitea:root
+    image: oci.guero.org/gitea:root
     #
     build:
       context: .

@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: oci.guero.top/tunneler:latest
+    image: oci.guero.org/tunneler:latest
     container_name: tunneler
     ulimits:
       memlock:

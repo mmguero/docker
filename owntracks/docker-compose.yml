@@ -16,7 +16,7 @@ services:
       - ./store:/store:rw
 
   nginx:
-    image: oci.guero.top/nginx-ldap:latest
+    image: oci.guero.org/nginx-ldap:latest
     container_name: nginx
     hostname: nginx
     restart: "no"

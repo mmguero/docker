@@ -19,6 +19,6 @@ $ENGINE run -i -t --rm \
   "${UID_ARGS[@]}" \
   -v "$TEMP_DIR:/tmp/$TEMP_DIR_BASENAME:rw" \
   -w "/tmp/$TEMP_DIR_BASENAME" \
-  oci.guero.top/fetch "$@" "/tmp/$TEMP_DIR_BASENAME"
+  oci.guero.org/fetch "$@" "/tmp/$TEMP_DIR_BASENAME"
 
 mv "$TEMP_DIR"/* ./ >/dev/null 2>&1 || true

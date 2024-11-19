@@ -16,7 +16,7 @@ x-auth-variables: &auth-variables
 
 services:
   nginx:
-    image: oci.guero.top/nginx-ldap:latest
+    image: oci.guero.org/nginx-ldap:latest
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       start_period: 120s
 
   ctfd:
-    image: oci.guero.top/ctfd:latest
+    image: oci.guero.org/ctfd:latest
     container_name: ctfd
     hostname: ctfd
     restart: unless-stopped
@@ -69,7 +69,7 @@ services:
     #   - "127.0.0.1:8000:8000"
 
   db:
-    image: oci.guero.top/mariadb:latest
+    image: oci.guero.org/mariadb:latest
     container_name: db
     hostname: db
     restart: unless-stopped
@@ -86,7 +86,7 @@ services:
     command: [mysqld, --user=mysql, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
-    image: oci.guero.top/redis:latest
+    image: oci.guero.org/redis:latest
     container_name: cache
     hostname: cache
     restart: unless-stopped

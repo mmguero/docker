@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: oci.guero.top/wireproxy:latest
+    image: oci.guero.org/wireproxy:latest
     container_name: wireproxy
     environment:
       << : *process-variables

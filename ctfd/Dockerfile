@@ -4,7 +4,7 @@ LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
 LABEL org.opencontainers.image.url='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
-LABEL org.opencontainers.image.title='oci.guero.top/ctfd'
+LABEL org.opencontainers.image.title='oci.guero.org/ctfd'
 LABEL org.opencontainers.image.description='Dockerized CTFd'
 
 ARG DEFAULT_UID=1001
