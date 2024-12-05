@@ -1,0 +1,50 @@
+services:
+  musescore:
+    image: oci.guero.org/musescore-web:latest
+    container_name: musescore
+    hostname: musescore
+    restart: "no"
+    environment:
+      USER_ID : 1000
+      GROUP_ID : 1000
+      WEB_AUDIO : 1
+      WEB_AUTHENTICATION : 0
+      SECURE_CONNECTION : 0
+      VNC_LISTENING_PORT : -1
+      WEB_LISTENING_PORT : 5800
+    networks:
+      - default
+
+  nginx:
+    image: oci.guero.org/nginx-ldap:latest
+    container_name: nginx
+    hostname: nginx
+    restart: "no"
+    environment:
+      PUID : 1000
+      PGID : 1000
+      NGINX_BASIC_AUTH : 'true'
+      NGINX_SSL : 'false'
+    depends_on:
+      - musescore
+    networks:
+      - default
+    ports:
+      - "127.0.0.1:5800:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx_ldap.conf:/etc/nginx/nginx_ldap.conf:ro
+      - ./nginx/htpasswd:/etc/nginx/htpasswd:ro
+      - ./nginx/ca-trust:/etc/nginx/ca-trust:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/certs/dhparam.pem:/etc/nginx/dhparam/dhparam.pem:ro
+    healthcheck:
+      test: ["CMD", "curl", "--insecure", "--silent", "http://localhost:443"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+
+networks:
+  default:
+    external: false
