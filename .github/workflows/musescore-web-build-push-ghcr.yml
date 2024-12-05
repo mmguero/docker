@@ -21,7 +21,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/musescore-web
   IMAGE_TAG: latest
-  IMAGE_ARCH: amd64
+  IMAGE_ARCH: amd64,arm64
   REPO_CONTEXT: ./musescore-web
   REPO_CONTAINERFILE: ./musescore-web/Dockerfile
 
