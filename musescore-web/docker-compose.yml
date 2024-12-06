@@ -30,6 +30,9 @@ services:
     hostname: musescore-files
     restart: "no"
     user: "1000:1000"
+    # userns_mode: "keep-id"
+    # x-podman:
+    #   in_pod: false
     cap_drop:
       - ALL
     cap_add:
