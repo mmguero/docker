@@ -201,3 +201,13 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
 fi # dashboards is running
 
 echo "Success" >&2
+
+# example command to insert some data:
+#
+# curl -k --config /var/local/curlrc/.creds.curlrc -sSL -XPOST -H 'Content-Type: application/json' \
+#   "https://opensearch-node1:9200/ecs-$(date -u +'%Y%m%d')/_doc" -d"
+# {
+#   \"event.action\": \"login\",
+#   \"event.result\": \"success\",
+#   \"@timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')\"
+# }"
