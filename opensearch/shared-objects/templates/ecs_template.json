@@ -1,5 +1,6 @@
 {
   "index_patterns" : ["ecs-*"],
+  "priority": 500,
   "composed_of": [
     "ecs_agent",
     "ecs_base",
