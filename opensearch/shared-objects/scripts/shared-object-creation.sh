@@ -207,7 +207,10 @@ echo "Success" >&2
 # curl -k --config /var/local/curlrc/.creds.curlrc -sSL -XPOST -H 'Content-Type: application/json' \
 #   "https://opensearch-node1:9200/ecs-$(date -u +'%Y%m%d')/_doc" -d"
 # {
-#   \"event.action\": \"login\",
-#   \"event.result\": \"success\",
-#   \"@timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')\"
+#  \"dns.answers.type\": \"CNAME\",
+#  \"dns.question.name\": \"www.example.com\",
+#  \"dns.question.registered_domain\": \"www.example.com\",
+#  \"event.action\": \"CNAME\",
+#  \"event.result\": \"Success\",
+#  \"@timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')\"
 # }"
