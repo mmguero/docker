@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch-dashboards:2.17.1
+FROM opensearchproject/opensearch-dashboards:2.18.0
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
@@ -13,7 +13,7 @@ ENV TERM xterm
 ENV TINI_VERSION v0.19.0
 ENV TINI_URL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini
 
-ENV OSD_TRANSFORM_VIS_VERSION 2.17.1
+ENV OSD_TRANSFORM_VIS_VERSION 2.18.0
 
 USER root
 
