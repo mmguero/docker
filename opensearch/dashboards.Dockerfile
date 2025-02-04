@@ -25,7 +25,8 @@ ADD https://github.com/lguillaud/osd_transform_vis/releases/download/$OSD_TRANSF
 
 RUN export BINARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') && \
     yum upgrade -y && \
-    yum install -y curl-minimal psmisc findutils util-linux openssl jq rsync python3 zip unzip && \
+    yum install -y curl-minimal psmisc findutils util-linux openssl jq rsync python3 python3-pip zip unzip && \
+    python3 -m pip install --no-compile --no-cache-dir mmguero requests[security] && \
     curl -sSLf -o /usr/bin/tini "${TINI_URL}-${BINARCH}" && \
     usermod -a -G tty ${PUSER} && \
     cd /tmp && \
