@@ -5,12 +5,13 @@ shopt -s nocasematch
 
 DASHB_URL=${DASHBOARDS_URL:-"https://localhost:5601"}
 INDEX_PATTERN=${DEFAULT_INDEX_PATTERN:-"ecs-*"}
+TEMPLATE_NAME=${DEFAULT_TEMPLATE_NAME:-"ecs_template"}
 INDEX_TIME_FIELD=${INDEX_TIME_FIELD:-"@timestamp"}
 DARK_MODE=${DASHBOARDS_DARKMODE:-"true"}
 
 TEMPLATES_DIR="/opt/templates"
-TEMPLATE_FILE_ORIG="$TEMPLATES_DIR/ecs_template.json"
-TEMPLATE_FILE="/data/init/ecs_template.json"
+TEMPLATE_FILE_ORIG="$TEMPLATES_DIR/$TEMPLATE_NAME.json"
+TEMPLATE_FILE="/data/init/$TEMPLATE_NAME.json"
 
 STARTUP_IMPORT_PERFORMED_FILE=/tmp/shared-objects-created
 
@@ -54,7 +55,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
 
   # get the previous stored template hash (if any) to avoid importing if it's already been imported
   set +e
-  TEMPLATE_HASH_OLD="$(curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET -H "Content-Type: application/json" "$OPENSEARCH_URL_TO_USE/_index_template/ecs_template" 2>/dev/null | jq --raw-output '.index_templates[]|select(.name=="ecs_template")|.index_template._meta.hash' 2>/dev/null)"
+  TEMPLATE_HASH_OLD="$(curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET -H "Content-Type: application/json" "$OPENSEARCH_URL_TO_USE/_index_template/$TEMPLATE_NAME" 2>/dev/null | jq --raw-output ".index_templates[]|select(.name==\"$TEMPLATE_NAME\")|.index_template._meta.hash" 2>/dev/null)"
   set -e
 
   # proceed only if the current template HASH doesn't match the previously imported one, or if there
@@ -83,7 +84,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
       done
     fi
 
-    echo "Importing ecs_template ($TEMPLATE_HASH)..."
+    echo "Importing $TEMPLATE_NAME ($TEMPLATE_HASH)..."
 
     if [[ -f "$TEMPLATE_FILE_ORIG_TMP" ]] && [[ ! -f "$TEMPLATE_FILE" ]]; then
       cp "$TEMPLATE_FILE_ORIG_TMP" "$TEMPLATE_FILE"
@@ -98,13 +99,13 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
 
     # load ecs_template containing field type mappings
     curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" \
-      "$OPENSEARCH_URL_TO_USE/_index_template/ecs_template" -d "@$TEMPLATE_FILE" 2>&1
+      "$OPENSEARCH_URL_TO_USE/_index_template/$TEMPLATE_NAME" -d "@$TEMPLATE_FILE" 2>&1
 
     # import other templates as well
     for i in "$TEMPLATES_IMPORT_DIR"/*.json; do
       TEMP_BASENAME="$(basename "$i")"
       TEMP_FILENAME="${TEMP_BASENAME%.*}"
-      if [[ "$TEMP_FILENAME" != "ecs_template" ]]; then
+      if [[ "$TEMP_FILENAME" != "$TEMPLATE_NAME" ]]; then
         echo "Importing template \"$TEMP_FILENAME\"..."
         curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" \
           "$OPENSEARCH_URL_TO_USE/_index_template/$TEMP_FILENAME" -d "@$i" 2>&1
@@ -114,7 +115,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
     TEMPLATES_IMPORTED=true
 
   else
-    echo "ecs_template ($TEMPLATE_HASH) already exists at \"${OPENSEARCH_URL_TO_USE}\""
+    echo "$TEMPLATE_NAME ($TEMPLATE_HASH) already exists at \"${OPENSEARCH_URL_TO_USE}\""
   fi # TEMPLATE_HASH check
 
   rm -rf "${TEMPLATES_IMPORT_DIR}"
@@ -194,6 +195,8 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
     -H "$XSRF_HEADER:true" -H 'Content-type:application/json'
 
   touch "${STARTUP_IMPORT_PERFORMED_FILE}"
+
+  index-refresh.py -i "$INDEX_PATTERN" -t "$TEMPLATE_NAME" --unassigned
 
 fi # dashboards is running
 
