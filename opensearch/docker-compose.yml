@@ -57,6 +57,12 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./.creds.curlrc
+        target: /var/local/curlrc/.creds.curlrc
+        read_only: true
     ports:
       - 0.0.0.0:9200:9200
       - 127.0.0.1:9600:9600
@@ -115,6 +121,12 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./.creds.curlrc
+        target: /var/local/curlrc/.creds.curlrc
+        read_only: true
     ports:
       - 127.0.0.1:9202:9200
       - 127.0.0.1:9602:9600
@@ -173,6 +185,12 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./.creds.curlrc
+        target: /var/local/curlrc/.creds.curlrc
+        read_only: true
     ports:
       - 127.0.0.1:9203:9200
       - 127.0.0.1:9603:9600
@@ -231,6 +249,12 @@ services:
       - ./security/roles.yml:/usr/share/opensearch/config/opensearch-security/roles.yml:ro
       - ./security/roles_mapping.yml:/usr/share/opensearch/config/opensearch-security/roles_mapping.yml:ro
       - ./security/tenants.yml:/usr/share/opensearch/config/opensearch-security/tenants.yml:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./.creds.curlrc
+        target: /var/local/curlrc/.creds.curlrc
+        read_only: true
     ports:
       - 127.0.0.1:9204:9200
       - 127.0.0.1:9604:9600
@@ -258,6 +282,12 @@ services:
       - ./certs/client.pem:/usr/share/opensearch-dashboards/config/client.pem:ro
       - ./certs/root-ca.pem:/usr/share/opensearch-dashboards/config/root-ca.pem:ro
       - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./.creds.curlrc
+        target: /var/local/curlrc/.creds.curlrc
+        read_only: true
     networks:
       - default
 

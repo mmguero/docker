@@ -49,7 +49,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
   TEMPLATE_FILE_ORIG_TMP="$(echo "$TEMPLATE_FILE_ORIG" | sed "s@$TEMPLATES_DIR@$TEMPLATES_IMPORT_DIR@")"
 
   # calculate combined SHA sum of all templates to save as _meta.hash to determine if
-  # we need to do this import (mostly useful for the secondary loop)
+  # we need to do this import
   TEMPLATE_HASH="$(find "$ECS_TEMPLATES_DIR"/composable "$TEMPLATES_IMPORT_DIR" -type f -name "*.json" -size +2c 2>/dev/null | sort | xargs -r cat | sha256sum | awk '{print $1}')"
 
   # get the previous stored template hash (if any) to avoid importing if it's already been imported
@@ -96,7 +96,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
       cp -f "$TEMPLATE_FILE_TEMP" "$TEMPLATE_FILE" && \
       rm -f "$TEMPLATE_FILE_TEMP"
 
-    # load ecs_template containing field type mappings (merged from /opt/templates/ecs_template.json to /data/init/ecs_template.json on startup)
+    # load ecs_template containing field type mappings
     curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" \
       "$OPENSEARCH_URL_TO_USE/_index_template/ecs_template" -d "@$TEMPLATE_FILE" 2>&1
 
@@ -114,7 +114,7 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
     TEMPLATES_IMPORTED=true
 
   else
-    echo "ecs_template ($TEMPLATE_HASH) already exists ($LOOP) at \"${OPENSEARCH_URL_TO_USE}\""
+    echo "ecs_template ($TEMPLATE_HASH) already exists at \"${OPENSEARCH_URL_TO_USE}\""
   fi # TEMPLATE_HASH check
 
   rm -rf "${TEMPLATES_IMPORT_DIR}"
@@ -128,28 +128,14 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
   #     if they already exist (http result code 409)
   echo "Importing index pattern..."
 
-  # Save off any custom field formatting prior to an overwrite
-  FIELD_FORMAT_MAP_FILE_TEMP="$(mktemp)"
-  ( curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XGET -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
-         "$DASHB_URL/api/saved_objects/index-pattern/${INDEX_PATTERN}" 2>/dev/null | \
-         jq -r '.attributes.fieldFormatMap' 2>/dev/null | \
-         jq -c 'with_entries(.value.params.parsedUrl? = null | del(.value.params.parsedUrl))' 2>/dev/null | \
-         jq '@json' >"$FIELD_FORMAT_MAP_FILE_TEMP" 2>/dev/null ) || true
-  FIELD_FORMAT_MAP_FILE_SIZE=$(stat -c%s "$FIELD_FORMAT_MAP_FILE_TEMP")
-
-  # Create index pattern (preserving custom field formatting)
+  # Create index pattern
   INDEX_PATTERN_FILE_TEMP="$(mktemp)"
   echo "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"$INDEX_TIME_FIELD\"}}" > "$INDEX_PATTERN_FILE_TEMP"
-  if (( $FIELD_FORMAT_MAP_FILE_SIZE > 64 )); then
-    echo "Preserving existing field formatting for \"$INDEX_PATTERN\"..."
-    jq --slurpfile fieldFormatMap "$FIELD_FORMAT_MAP_FILE_TEMP" '.attributes.fieldFormatMap = $fieldFormatMap[0]' "$INDEX_PATTERN_FILE_TEMP" > "$INDEX_PATTERN_FILE_TEMP".new && \
-      mv "$INDEX_PATTERN_FILE_TEMP".new "$INDEX_PATTERN_FILE_TEMP"
-  fi
   echo "Creating index pattern \"$INDEX_PATTERN\"..."
   curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
     "$DASHB_URL/api/saved_objects/index-pattern/${INDEX_PATTERN}?overwrite=${TEMPLATES_IMPORTED}" \
     -d @"$INDEX_PATTERN_FILE_TEMP" 2>&1
-  rm -f "$INDEX_PATTERN_FILE_TEMP" "$FIELD_FORMAT_MAP_FILE_TEMP"
+  rm -f "$INDEX_PATTERN_FILE_TEMP"
 
   echo "Setting default index pattern..."
 
