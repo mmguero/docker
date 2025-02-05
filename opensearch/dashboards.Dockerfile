@@ -38,6 +38,7 @@ RUN export BINARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') 
         /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin install file:///tmp/transformVis.zip --allow-root && \
         rm -rf /tmp/transformVis /tmp/opensearch-dashboards && \
     mkdir -p /opt/ecs /data/init && \
+      # download ECS (Elastic Common Schema) templates and massage them so they'll import correctly into OpenSearch
       cd /opt && \
       curl -sSL "$(curl -sSL "$ECS_RELEASES_URL" | jq '.tarball_url' | tr -d '"')" | tar xzf - -C ./ecs --strip-components 1 && \
       mv /opt/ecs/generated/elasticsearch /opt/ecs-templates && \
@@ -48,7 +49,8 @@ RUN export BINARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') 
       find /opt/ecs-templates-os -name "*.json" -exec sed -i 's/\("type"[[:space:]]*:[[:space:]]*\)"flattened"/\1"nested"/' "{}" \; && \
       find /opt/ecs-templates-os -name "*.json" -exec sed -i 's/\("type"[[:space:]]*:[[:space:]]*\)"number"/\1"long"/' "{}" \; && \
       find /opt/ecs-templates-os -name "*.json" -exec bash -c "jq 'walk(if type == \"object\" and has(\"synthetic_source_keep\") then del(.synthetic_source_keep) else . end)' \"{}\" > \"{}\".new && mv \"{}\".new \"{}\"" \; && \
-      find /opt/ecs-templates-os -name "*.json" -exec bash -c "jq 'walk(if type == \"object\" and .type == \"nested\" then empty else . end)' \"{}\" > \"{}\".new && mv \"{}\".new \"{}\"" \; && \
+      # BUG: OpenSearch Security Analytics will not create a detector if the "nested" field type is in the index template/pattern
+      # find /opt/ecs-templates-os -name "*.json" -exec bash -c "jq 'walk(if type == \"object\" and .type == \"nested\" then empty else . end)' \"{}\" > \"{}\".new && mv \"{}\".new \"{}\"" \; && \
       rm -rf /opt/ecs && \
     mkdir -p /var/local/ca-trust && \
     chown --silent -R ${PUSER}:${PGROUP} /usr/share/opensearch-dashboards /var/local/ca-trust /opt/ecs-templates-os /data/init && \
