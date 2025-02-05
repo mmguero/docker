@@ -13,8 +13,6 @@ TEMPLATES_DIR="/opt/templates"
 TEMPLATE_FILE_ORIG="$TEMPLATES_DIR/$TEMPLATE_NAME.json"
 TEMPLATE_FILE="/data/init/$TEMPLATE_NAME.json"
 
-STARTUP_IMPORT_PERFORMED_FILE=/tmp/shared-objects-created
-
 if [[ -n "$OPENSEARCH_HOSTS" ]]; then
   readarray -t OPENSEARCH_ARRAY < <(echo "$OPENSEARCH_HOSTS" | jq -r '.[]')
   OPENSEARCH_URL_TO_USE="${OPENSEARCH_ARRAY[0]}"
@@ -123,80 +121,32 @@ if curl "${CURL_CONFIG_PARAMS[@]}" -fsSL -XGET "$DASHB_URL/api/status" ; then
   # end Templates
   #############################################################################################################################
 
-  #############################################################################################################################
-  # Index pattern(s)
-  #   - Only set overwrite=true if we actually updated the templates above, otherwise overwrite=false and fail silently
-  #     if they already exist (http result code 409)
-  echo "Importing index pattern..."
+  # #############################################################################################################################
+  # # Index pattern(s)
+  # #   - Only set overwrite=true if we actually updated the templates above, otherwise overwrite=false and fail silently
+  # #     if they already exist (http result code 409)
+  # echo "Importing index pattern..."
 
-  # Create index pattern
-  INDEX_PATTERN_FILE_TEMP="$(mktemp)"
-  echo "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"$INDEX_TIME_FIELD\"}}" > "$INDEX_PATTERN_FILE_TEMP"
-  echo "Creating index pattern \"$INDEX_PATTERN\"..."
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
-    "$DASHB_URL/api/saved_objects/index-pattern/${INDEX_PATTERN}?overwrite=${TEMPLATES_IMPORTED}" \
-    -d @"$INDEX_PATTERN_FILE_TEMP" 2>&1
-  rm -f "$INDEX_PATTERN_FILE_TEMP"
+  # # Create index pattern
+  # INDEX_PATTERN_FILE_TEMP="$(mktemp)"
+  # echo "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"$INDEX_TIME_FIELD\"}}" > "$INDEX_PATTERN_FILE_TEMP"
+  # echo "Creating index pattern \"$INDEX_PATTERN\"..."
+  # curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
+  #   "$DASHB_URL/api/saved_objects/index-pattern/${INDEX_PATTERN}?overwrite=${TEMPLATES_IMPORTED}" \
+  #   -d @"$INDEX_PATTERN_FILE_TEMP" 2>&1
+  # rm -f "$INDEX_PATTERN_FILE_TEMP"
 
-  echo "Setting default index pattern..."
+  # echo "Setting default index pattern..."
 
-  # Make it the default index
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
-    "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings/defaultIndex" \
-    -d"{\"value\":\"$INDEX_PATTERN\"}"
+  # # Make it the default index
+  # curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL -XPOST -H "Content-Type: application/json" -H "$XSRF_HEADER: anything" \
+  #   "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings/defaultIndex" \
+  #   -d"{\"value\":\"$INDEX_PATTERN\"}"
 
-  # end Index pattern
-  #############################################################################################################################
+  # # end Index pattern
+  # #############################################################################################################################
 
-  #############################################################################################################################
-  # OpenSearch Tweaks
-  #   - TODO: only do these if they've NEVER been done before?
-  echo "Updating UI settings..."
-
-  # set dark theme (or not)
-  [[ "$DARK_MODE" == "true" ]] && DARK_MODE_ARG='{"value":true}' || DARK_MODE_ARG='{"value":false}'
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPOST "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings/theme:darkMode" \
-    -H "$XSRF_HEADER:true" -H 'Content-type:application/json' -d "$DARK_MODE_ARG" || true
-
-  # set default query time range
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPOST "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings" \
-    -H "$XSRF_HEADER:true" -H 'Content-type:application/json' \
-    -d '{"changes":{"timepicker:timeDefaults":"{\n  \"from\": \"now-24h\",\n  \"to\": \"now\",\n  \"mode\": \"quick\"}"}}' || true
-
-  # turn off telemetry
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPOST "$DASHB_URL/api/telemetry/v2/optIn" \
-    -H "$XSRF_HEADER:true" -H 'Content-type:application/json' \
-    -d '{"enabled":false}' || true
-
-  # pin filters by default
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPOST "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings/filters:pinnedByDefault" \
-      -H "$XSRF_HEADER:true" -H 'Content-type:application/json' \
-      -d '{"value":true}' || true
-
-  # enable in-session storage
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPOST "$DASHB_URL/api/$DASHBOARDS_URI_PATH/settings/state:storeInSessionStorage" \
-    -H "$XSRF_HEADER:true" -H 'Content-type:application/json' \
-    -d '{"value":true}' || true
-
-  echo "UI settings updates complete!"
-
-  # end OpenSearch Tweaks
-  #############################################################################################################################
-
-  # OpenSearch Create Initial Indices
-
-  curl "${CURL_CONFIG_PARAMS[@]}" -w "\n" -fsSL \
-    -XPUT "$OPENSEARCH_URL_TO_USE/${INDEX_PATTERN%?}initial" \
-    -H "$XSRF_HEADER:true" -H 'Content-type:application/json'
-
-  touch "${STARTUP_IMPORT_PERFORMED_FILE}"
-
-  index-refresh.py -i "$INDEX_PATTERN" -t "$TEMPLATE_NAME" --unassigned
+  # index-refresh.py -i "$INDEX_PATTERN" -t "$TEMPLATE_NAME" --unassigned
 
 fi # dashboards is running
 
