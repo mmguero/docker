@@ -1,4 +1,4 @@
-FROM mariadb:10-jammy
+FROM mariadb:11-noble
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -31,4 +31,4 @@ WORKDIR /home/mysql
 
 ENTRYPOINT ["/usr/bin/docker-uid-gid-setup.sh", "/usr/local/bin/docker-entrypoint.sh"]
 
-CMD ["mysqld"]
+CMD ["mariadb"]

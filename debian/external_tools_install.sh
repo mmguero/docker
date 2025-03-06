@@ -8,11 +8,6 @@ ENCODING="utf-8"
 
 [[ -z "$GITHUB_OAUTH_TOKEN" ]] && [[ -n "$GITHUB_TOKEN" ]] && export GITHUB_OAUTH_TOKEN="$GITHUB_TOKEN"
 
-cd /tmp
-curl -o ./getcroc.sh -sSL "https://getcroc.schollz.com"
-chmod +x ./getcroc.sh
-./getcroc.sh -p /usr/bin
-
 DEB_ARCH=$(dpkg --print-architecture)
 LINUX_CPU=$(uname -m)
 
@@ -51,13 +46,14 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
         "https://github.com/FiloSottile/age|^age-v.+-linux-arm64\.tar\.gz$|/tmp/age.tar.gz"
         "https://github.com/gabrie30/ghorg|^ghorg_.+_Linux_arm64\.tar\.gz$|/tmp/ghorg.tar.gz"
         "https://github.com/mikefarah/yq|^yq_linux_arm64$|/usr/bin/yq|755"
-        "https://github.com/neilotoole/sq|^sq-.+arm64-arm64\.tar\.gz$|/tmp/sq.tar.gz"
+        "https://github.com/neilotoole/sq|^sq.+linux-arm64\.tar\.gz$|/tmp/sq.tar.gz"
         "https://github.com/nektos/act|^act_Linux_arm64\.tar\.gz$|/tmp/act.tar.gz"
         "https://github.com/peco/peco|^peco_linux_arm64\.tar\.gz$|/tmp/peco.tar.gz"
         "https://github.com/projectdiscovery/httpx|^httpx_.+_linux_arm64\.zip$|/tmp/httpx.zip"
         "https://github.com/pufferffish/wireproxy|^wireproxy_linux_arm64\.tar\.gz$|/tmp/wireproxy.tar.gz"
         "https://github.com/rclone/rclone|^rclone-v.+-linux-arm64\.zip$|/tmp/rclone.zip"
         "https://github.com/sachaos/viddy|^viddy-.+-linux-arm64\.tar\.gz$|/tmp/viddy.tar.gz"
+        "https://github.com/schollz/croc|^croc_.+_Linux-ARM64\.tar\.gz$|/tmp/croc.tar.gz"
         "https://github.com/schollz/hostyoself|^hostyoself_.+_Linux-ARM64\.tar\.gz$|/tmp/hostyoself.tar.gz"
         "https://github.com/sharkdp/bat|^bat-v.+-aarch64-unknown-linux-gnu\.tar\.gz$|/tmp/bat.tar.gz"
         "https://github.com/sharkdp/fd|^fd-v.+-aarch64-unknown-linux-gnu\.tar\.gz$|/tmp/fd.tar.gz"
@@ -80,6 +76,7 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
         "https://github.com/projectdiscovery/httpx|^httpx_.+_linux_armv6\.zip$|/tmp/httpx.zip"
         "https://github.com/pufferffish/wireproxy|^wireproxy_linux_arm\.tar\.gz$|/tmp/wireproxy.tar.gz"
         "https://github.com/rclone/rclone|^rclone-v.+-linux-arm\.zip$|/tmp/rclone.zip"
+        "https://github.com/schollz/croc|^croc_.+_Linux-ARM\.tar\.gz$|/tmp/croc.tar.gz"
         "https://github.com/schollz/hostyoself|^hostyoself_.+_Linux-ARM\.tar\.gz$|/tmp/hostyoself.tar.gz"
         "https://github.com/sharkdp/bat|^bat-v.+-arm-unknown-linux-musleabihf\.tar\.gz$|/tmp/bat.tar.gz"
         "https://github.com/sharkdp/fd|^fd-v.+-arm-unknown-linux-musleabihf\.tar\.gz$|/tmp/fd.tar.gz"
@@ -100,6 +97,7 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
         "https://github.com/projectdiscovery/httpx|^httpx_.+_linux_armv6\.zip$|/tmp/httpx.zip"
         "https://github.com/pufferffish/wireproxy|^wireproxy_linux_arm\.tar\.gz$|/tmp/wireproxy.tar.gz"
         "https://github.com/rclone/rclone|^rclone-v.+-linux-arm-v7\.zip$|/tmp/rclone.zip"
+        "https://github.com/schollz/croc|^croc_.+_Linux-ARM\.tar\.gz$|/tmp/croc.tar.gz"
         "https://github.com/schollz/hostyoself|^hostyoself_.+_Linux-ARM\.tar\.gz$|/tmp/hostyoself.tar.gz"
         "https://github.com/sharkdp/bat|^bat-v.+-arm-unknown-linux-musleabihf\.tar\.gz$|/tmp/bat.tar.gz"
         "https://github.com/sharkdp/fd|^fd-v.+-arm-unknown-linux-musleabihf\.tar\.gz$|/tmp/fd.tar.gz"
@@ -119,13 +117,14 @@ if /usr/bin/fetch --version >/dev/null 2>&1; then
       "https://github.com/gabrie30/ghorg|^ghorg_.+_Linux_x86_64\.tar\.gz$|/tmp/ghorg.tar.gz"
       "https://github.com/jez/as-tree|^as-tree-.+-linux\.zip$|/tmp/as-tree.zip"
       "https://github.com/mikefarah/yq|^yq_linux_amd64$|/usr/bin/yq|755"
-      "https://github.com/neilotoole/sq|^sq-.+amd64-amd64\.tar\.gz$|/tmp/sq.tar.gz"
+      "https://github.com/neilotoole/sq|^sq.+linux-amd64\.tar\.gz$|/tmp/sq.tar.gz"
       "https://github.com/nektos/act|^act_Linux_x86_64\.tar\.gz$|/tmp/act.tar.gz"
       "https://github.com/peco/peco|^peco_linux_amd64\.tar\.gz$|/tmp/peco.tar.gz"
       "https://github.com/projectdiscovery/httpx|^httpx_.+_linux_amd64\.zip$|/tmp/httpx.zip"
       "https://github.com/pufferffish/wireproxy|^wireproxy_linux_amd64\.tar\.gz$|/tmp/wireproxy.tar.gz"
       "https://github.com/rclone/rclone|^rclone-v.+-linux-amd64\.zip$|/tmp/rclone.zip"
       "https://github.com/sachaos/viddy|^viddy-.+-linux-x86_64\.tar\.gz$|/tmp/viddy.tar.gz"
+      "https://github.com/schollz/croc|^croc_.+_Linux-64bit\.tar\.gz$|/tmp/croc.tar.gz"
       "https://github.com/schollz/hostyoself|^hostyoself_.+_Linux-64bit\.tar\.gz$|/tmp/hostyoself.tar.gz"
       "https://github.com/sharkdp/bat|^bat-v.+-x86_64-unknown-linux-gnu\.tar\.gz$|/tmp/bat.tar.gz"
       "https://github.com/sharkdp/fd|^fd-v.+-x86_64-unknown-linux-gnu\.tar\.gz$|/tmp/fd.tar.gz"

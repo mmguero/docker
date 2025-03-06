@@ -38,6 +38,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         gpg \
         iproute2 \
         iputils-ping \
+        jc \
         jo \
         jq \
         less \

@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -26,8 +26,7 @@ ENV MOLPOPGEN_URL "https://codeload.github.com/molpopgen/gimp_scripts/tar.gz/mas
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 
-RUN sed -i "s/bullseye main/bullseye main contrib non-free/g" /etc/apt/sources.list && \
-    apt-get -q update && \
+RUN apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
       curl \
       gimp \

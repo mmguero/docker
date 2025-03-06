@@ -1,11 +1,8 @@
-version: '3'
-
 services:
-
-  bitwarden:
-    image: bitwardenrs/server:testing
-    container_name: bitwarden
-    hostname: bitwarden
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    hostname: vaultwarden
     environment:
       WEBSOCKET_ENABLED: 'false' # Required to use websockets
       SIGNUPS_ALLOWED: 'true'    # set to false to disable signups
@@ -21,12 +18,12 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.bitwarden.rule=Host(`bitwarden.example.org`)"
-      - "traefik.http.routers.bitwarden.entrypoints=websecure"
-      - "traefik.http.routers.bitwarden.tls.certresolver=myresolver"
+      - "traefik.http.routers.vaultwarden.rule=Host(`vaultwarden.example.org`)"
+      - "traefik.http.routers.vaultwarden.entrypoints=websecure"
+      - "traefik.http.routers.vaultwarden.tls.certresolver=myresolver"
 
 networks:
   proxy:
-    external:
-      name: traefik-proxy
+    name: traefik-proxy
+    external: true
 

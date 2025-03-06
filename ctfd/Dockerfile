@@ -1,4 +1,4 @@
-FROM ctfd/ctfd:3.7.3
+FROM ctfd/ctfd:3.7.6
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -7,8 +7,8 @@ LABEL org.opencontainers.image.source='https://github.com/mmguero/docker'
 LABEL org.opencontainers.image.title='oci.guero.org/ctfd'
 LABEL org.opencontainers.image.description='Dockerized CTFd'
 
-ARG DEFAULT_UID=1001
-ARG DEFAULT_GID=1001
+ARG DEFAULT_UID=1000
+ARG DEFAULT_GID=1000
 ENV DEFAULT_UID $DEFAULT_UID
 ENV DEFAULT_GID $DEFAULT_GID
 ENV PUSER "ctfd"

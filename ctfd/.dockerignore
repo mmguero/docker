@@ -1,7 +1,0 @@
-**/*.key
-**/*.pem
-**/*.crt
-**/.git*
-docker-compose*yml
-Dockerfile
-/data

@@ -1,5 +1,3 @@
-version: '3'
-
 x-process-variables: &process-variables
   # If you're using podman (which does the UID/GUID mapping for you)
   # change PUID/PGID to 0, uncomment PUSER_PRIV_DROP : 'false' and
@@ -8,40 +6,7 @@ x-process-variables: &process-variables
   PGID : 1000
   # PUSER_PRIV_DROP : 'false'
 
-x-auth-variables: &auth-variables
-  # Authentication is handled by CTFd, not nginx
-  NGINX_BASIC_AUTH : 'no_authentication'
-  # TLS is enabled
-  NGINX_SSL : 'true'
-
 services:
-  nginx:
-    image: oci.guero.org/nginx-ldap:latest
-    container_name: nginx
-    hostname: nginx
-    restart: unless-stopped
-    environment:
-      << : *process-variables
-      << : *auth-variables
-    depends_on:
-      - ctfd
-    networks:
-      - default
-    ports:
-      - "0.0.0.0:443:443"
-      - "0.0.0.0:80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ca-trust:/etc/nginx/ca-trust:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-      - ./nginx/certs/dhparam.pem:/etc/nginx/dhparam/dhparam.pem:ro
-    healthcheck:
-      test: ["CMD", "curl", "--insecure", "--silent", "https://localhost:443"]
-      interval: 30s
-      timeout: 15s
-      retries: 3
-      start_period: 120s
-
   ctfd:
     image: oci.guero.org/ctfd:latest
     container_name: ctfd
@@ -56,7 +21,7 @@ services:
       LOG_FOLDER : '/var/log/CTFd'
       ACCESS_LOG : '-'
       ERROR_LOG : '-'
-      REVERSE_PROXY : 'true'
+      REVERSE_PROXY : 'false'
       SECRET_KEY : 'Mistake_After_Childhood_Roar'
     volumes:
       - ./data/CTFd/logs:/var/log/CTFd:rw
@@ -65,8 +30,8 @@ services:
       - db
     networks:
       - default
-    # ports:
-    #   - "127.0.0.1:8000:8000"
+    ports:
+      - "127.0.0.1:8000:8000"
 
   db:
     image: oci.guero.org/mariadb:latest
@@ -80,10 +45,10 @@ services:
       MYSQL_PASSWORD : 'Correct_Horse_Battery_Staple'
       MYSQL_DATABASE : 'ctfd'
     volumes:
-      - ./data/mysql:/var/lib/mysql:rw
+      - ./data/mariadb:/var/lib/mysql:rw
     networks:
       - default
-    command: [mysqld, --user=mysql, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+    command: [mariadbd, --user=mysql, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
     image: oci.guero.org/redis:latest
@@ -108,5 +73,7 @@ services:
       start_period: 45s
 
 networks:
-    default:
-      external: false
+  default:
+    external: false
+
+

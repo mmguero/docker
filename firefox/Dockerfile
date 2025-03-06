@@ -76,7 +76,7 @@ ADD entrypoint.sh /usr/local/bin/firefox.sh
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     apt-get install --no-install-recommends -y -q \
-      bzip2 \
+      xz-utils \
       ca-certificates \
       curl \
       ffmpeg \
@@ -90,7 +90,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       pulseaudio-utils && \
     mkdir -p /opt/firefox && \
       cd /opt && \
-      curl -ksSL "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjvf - -C ./firefox --strip-components 1 && \
+      curl -ksSL "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xJvf - -C ./firefox --strip-components 1 && \
       mkdir -p /etc/firefox && \
       echo 'pref("browser.tabs.remote.autostart", false);' >> /etc/firefox/syspref.js && \
     env DEBIAN_FRONTEND=noninteractive apt-get -q -y --purge remove curl && \

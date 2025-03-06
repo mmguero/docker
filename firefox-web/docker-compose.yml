@@ -1,4 +1,3 @@
-version: '3'
 services:
   firefox:
     # see https://github.com/jlesage/docker-firefox

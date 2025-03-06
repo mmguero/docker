@@ -1,9 +1,8 @@
-version: '3'
-
 services:
 
   calibre:
-    image: linuxserver/calibre-web:latest
+    image: lscr.io/linuxserver/calibre-web:latest
+    # platform: linux/arm64/v8
     build:
       context: .
       dockerfile: Dockerfile
@@ -18,7 +17,11 @@ services:
     volumes:
       - ./config:/config:rw
       - ./data:/books:rw
+      # - /etc/ssl/certs:/etc/ssl/certs:ro
+      - ./scripts:/custom-cont-init.d:ro
     restart: unless-stopped
+    # ports:
+    #   - 127.0.0.1:8083:8083
     networks:
       - proxy
     labels:
@@ -30,6 +33,6 @@ services:
 
 networks:
   proxy:
-    external:
-      name: traefik-proxy
+    name: traefik-proxy
+    external: true
 
