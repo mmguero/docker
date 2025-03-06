@@ -1,4 +1,3 @@
-version: '3'
 services:
   ms:
     image: metasploitframework/metasploit-framework:latest
@@ -20,7 +19,7 @@ services:
     tty: true
 
   db:
-    image: postgres:10-alpine
+    image: postgres:17-alpine
     volumes:
       - pg_data:/var/lib/postgresql/data
     environment:

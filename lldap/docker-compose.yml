@@ -1,5 +1,3 @@
-version: "3"
-
 # LDAPTLS_REQCERT=never ldapsearch -LLL -H "ldaps://localhost:6360" -D "uid=admin,ou=people,dc=example,dc=org" -w 'xxxxxxxxxxxxxxxx' -b "dc=example,dc=org"
 # docker compose exec lldap /bootstrap/bootstrap.sh
 

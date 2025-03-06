@@ -50,4 +50,4 @@ $ENGINE run -d --rm \
   --device /dev/input \
   --name libreoffice-$(date -u +%s) \
   woahbase/alpine-libreoffice:latest \
-  --nologo "$@"
+  "$@"
