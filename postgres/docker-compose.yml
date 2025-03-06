@@ -1,0 +1,31 @@
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oci.guero.org/postgres:17-alpine
+    env_file:
+      - .env
+    volumes:
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./data
+      target: /var/lib/postgresql/data
+    networks:
+    - default
+    # ports:
+    #   - "127.0.0.1:5432:5432"
+    expose:
+      - 5432
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+
+networks:
+  default:
+    external: false
