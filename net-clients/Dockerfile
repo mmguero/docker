@@ -12,11 +12,13 @@ RUN apk add --no-cache \
         bash \
         bat \
         busybox-extras \
+        ca-certificates \
         croc \
         curl \
         file \
         git \
         iproute2 \
+        jc \
         jo \
         jq \
         moreutils \

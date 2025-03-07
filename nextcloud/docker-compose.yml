@@ -3,7 +3,7 @@ version: '3'
 services:
 
   postgres:
-    image: postgres:12
+    image: oci.guero.org/postgres:latest
     container_name: nextcloud-postgres
     hostname: postgres
     environment:
