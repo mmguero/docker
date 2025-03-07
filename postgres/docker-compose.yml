@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: oci.guero.org/postgres:17-alpine
+    # userns_mode: keep-id
     env_file:
       - .env
     volumes:
