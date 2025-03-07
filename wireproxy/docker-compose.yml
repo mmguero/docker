@@ -1,5 +1,3 @@
-version: '3.7'
-
 x-process-variables: &process-variables
   # docker containers will run processes as unprivileged user with UID:GID
   PUID : 1000

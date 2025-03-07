@@ -1,5 +1,3 @@
-* **Name:** ICS Incident Response - 5version: "3.3"
-
 services:
 
   traefik:

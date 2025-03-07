@@ -1,5 +1,3 @@
-version: '3.7'
-
 volumes:
   opt-splunk-etc:
   opt-splunk-var:
@@ -8,7 +6,7 @@ services:
   splunkenterprise:
     hostname: splunkenterprise
     container_name: splunkenterprise
-    image: store/splunk/splunk:7.3
+    image: store/splunk/splunk:9.4
     expose:
       - 1514
       - 8000

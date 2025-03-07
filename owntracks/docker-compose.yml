@@ -15,40 +15,6 @@ services:
       - ./config:/config:rw
       - ./store:/store:rw
 
-  nginx:
-    image: oci.guero.org/nginx-ldap:latest
-    container_name: nginx
-    hostname: nginx
-    restart: "no"
-    environment:
-      PUID : 1000
-      PGID : 1000
-      NGINX_BASIC_AUTH : 'true'
-      NGINX_SSL : 'true'
-      NGINX_LDAP_TLS_STUNNEL : 'false'
-      NGINX_LDAP_TLS_STUNNEL_CHECK_HOST : ''
-      NGINX_LDAP_TLS_STUNNEL_CHECK_IP : ''
-      NGINX_LDAP_TLS_STUNNEL_VERIFY_LEVEL : 2
-    depends_on:
-      - owntracks
-    networks:
-      - default
-    ports:
-      - "0.0.0.0:443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/nginx_ldap.conf:/etc/nginx/nginx_ldap.conf:ro
-      - ./nginx/htpasswd:/etc/nginx/htpasswd:ro
-      - ./nginx/ca-trust:/etc/nginx/ca-trust:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-      - ./nginx/certs/dhparam.pem:/etc/nginx/dhparam/dhparam.pem:ro
-    healthcheck:
-      test: ["CMD", "curl", "--insecure", "--silent", "https://localhost:443"]
-      interval: 30s
-      timeout: 15s
-      retries: 3
-      start_period: 120s
-
 networks:
   default:
     external: false

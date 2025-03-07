@@ -1,4 +1,4 @@
-FROM golang:1.22 as build
+FROM golang:1 as build
 
 RUN mkdir -p /usr/src && \
     cd /usr/src && \
@@ -6,7 +6,7 @@ RUN mkdir -p /usr/src && \
     cd ./wireproxy && \
     make
 
-FROM debian:11-slim AS runtime
+FROM debian:12-slim AS runtime
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'

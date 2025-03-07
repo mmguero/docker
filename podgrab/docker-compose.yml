@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   podgrab:
     image: akhilrex/podgrab:latest
@@ -28,5 +26,5 @@ services:
 
 networks:
   podgrab:
-    #external:
+    external: false
     #  name: traefik-proxy

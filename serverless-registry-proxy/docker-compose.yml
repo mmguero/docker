@@ -1,5 +1,3 @@
-version: "3.9"
-
 # Serverless reverse proxy for exposing container registries (GCR, Docker Hub, Artifact Registry etc) on custom domains.
 # https://github.com/ahmetb/serverless-registry-proxy
 # https://cloud.google.com/blog/topics/developers-practitioners/hack-your-own-custom-domains-container-registry
