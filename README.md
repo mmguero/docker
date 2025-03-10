@@ -26,6 +26,8 @@
 
 ![gitea-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-build-push-ghcr/badge.svg)
 
+![keycloak-build-push-ghcr](https://github.com/mmguero/docker/workflows/keycloak-build-push-ghcr/badge.svg)
+
 ![lossless-cut-build-push-ghcr](https://github.com/mmguero/docker/workflows/lossless-cut-build-push-ghcr/badge.svg)
 
 ![mariadb-build-push-ghcr](https://github.com/mmguero/docker/workflows/mariadb-build-push-ghcr/badge.svg)
@@ -35,6 +37,10 @@
 ![mattermost-build-push-ghcr](https://github.com/mmguero/docker/workflows/mattermost-build-push-ghcr/badge.svg)
 
 ![mimic3-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-build-push-ghcr/badge.svg)
+
+![mimic3-gpu-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-gpu-build-push-ghcr/badge.svg)
+
+![musescore-web-build-push-ghcr](https://github.com/mmguero/docker/workflows/musescore-web-build-push-ghcr/badge.svg)
 
 ![net-clients-build-push-ghcr](https://github.com/mmguero/docker/workflows/net-clients-build-push-ghcr/badge.svg)
 

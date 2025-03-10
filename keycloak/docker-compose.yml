@@ -1,0 +1,52 @@
+services:
+
+  postgres:
+    restart: unless-stopped
+    # userns_mode: keep-id
+    image: oci.guero.org/postgres:latest
+    container_name: keycloak-postgres
+    hostname: postgres
+    env_file: .env
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data
+        target: /var/lib/postgresql/data
+    networks:
+      - proxy
+    expose:
+      - 5432
+
+  keycloak:
+    restart: unless-stopped
+    # userns_mode: keep-id
+    image: oci.guero.org/keycloak:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keycloak
+    hostname: keycloak
+    env_file: .env
+    links:
+      - postgres
+    networks:
+      - proxy
+    expose:
+      - 8080
+    # ports:
+    # - 127.0.0.1:8080:8080/tcp
+    labels:
+      traefik.enable : true
+      traefik.http.routers.keycloak.rule : "Host(`keycloak.example.org`)"
+      traefik.http.routers.keycloak.entrypoints : "websecure"
+      traefik.http.routers.keycloak.tls.certresolver : "myresolver"
+      traefik.http.services.keycloak.loadbalancer.server.port : 8080
+
+networks:
+  proxy:
+    external: true
+    name: traefik-proxy
+
