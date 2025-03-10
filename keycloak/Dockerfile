@@ -73,6 +73,7 @@ VOLUME ["/var/local/ca-trust"]
 
 ENTRYPOINT ["/usr/bin/tini", \
             "--", \
+            "/bin/bash", \
             "/usr/local/bin/docker-uid-gid-setup.sh", \
             "/usr/local/bin/docker-entrypoint.sh", \
             "/opt/keycloak/bin/kc.sh"]
