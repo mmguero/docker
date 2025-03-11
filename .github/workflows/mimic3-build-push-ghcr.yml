@@ -52,6 +52,11 @@ jobs:
         run: echo "archtag=$([[ "${{ matrix.platform }}" == 'linux/amd64' ]] && echo '' || ( echo -n '-' ; echo "${{ matrix.platform }}" | cut -d '/' -f 2) )" >> $GITHUB_OUTPUT
         id: arch_tag_suffix
       -
+        name: Generate target arch build arg
+        shell: bash
+        run: echo "archarg=$(echo "${{ matrix.platform }}" | cut -d '/' -f 2 )" >> $GITHUB_OUTPUT
+        id: arch_build_arg
+      -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -72,6 +77,8 @@ jobs:
           file: ./mimic3/Dockerfile
           build-args: |
             TARGETPLATFORM=${{ matrix.platform }}
+            TARGETARCH=${{ steps.arch_build_arg.outputs.archarg }}
+            TARGETVARIANT=
           push: true
           provenance: false
           platforms: ${{ matrix.platform }}

@@ -72,6 +72,7 @@ jobs:
           file: ./debian/Dockerfile
           build-args: |
             TARGETPLATFORM=${{ matrix.platform }}
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
           platforms: ${{ matrix.platform }}
