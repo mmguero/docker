@@ -42,10 +42,10 @@ RUN  apt-get update -yqq && \
   pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
     mkdir -p /var/log/supervisor && \
   cd /tmp && \
-  curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.tar\.gz)" | tar -xzf - croc && \
+  curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.tar\.gz)" | tar -xzf - croc && \
     chmod 755 ./croc && \
     mv ./croc /usr/bin && \
-  curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')bit\.deb)" && \
+  curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.deb)" && \
     dpkg -i /tmp/hostyoself.deb && \
   sed -i 's/\$/$WIREPROXY_/g' /etc/wireproxy/config.env && \
   apt-get clean && \
