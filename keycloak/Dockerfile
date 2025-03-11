@@ -41,6 +41,7 @@ ENV PUID $DEFAULT_UID
 ENV PUSER "keycloak"
 ENV PGROUP "keycloak"
 ENV PUSER_PRIV_DROP true
+ENV PUSER_CA_TRUST "/var/local/ca-trust"
 # This is to handle an issue when running with rootless podman and
 #   "userns_mode: keep-id". It seems that anything defined as a VOLUME
 #   in the Dockerfile is getting set with an ownership of 999:999.

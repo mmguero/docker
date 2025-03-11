@@ -38,6 +38,13 @@ services:
       - 8080
     # ports:
     # - 127.0.0.1:8080:8080/tcp
+    volumes:
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./ca-trust
+      target: /var/local/ca-trust
+      read_only: true
     labels:
       traefik.enable : true
       traefik.http.routers.keycloak.rule : "Host(`keycloak.example.org`)"
