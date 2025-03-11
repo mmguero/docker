@@ -45,7 +45,12 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Checkout
+        id: repo-checkout
         uses: actions/checkout@v4
+        with:
+          repository: ahmetb/serverless-registry-proxy
+          submodules: recursive
+          path: ./serverless-registry-proxy
       -
         name: Generate arch tag suffix
         shell: bash
