@@ -34,8 +34,6 @@
 
 ![mastodon-build-push-ghcr](https://github.com/mmguero/docker/workflows/mastodon-build-push-ghcr/badge.svg)
 
-![mattermost-build-push-ghcr](https://github.com/mmguero/docker/workflows/mattermost-build-push-ghcr/badge.svg)
-
 ![mimic3-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-build-push-ghcr/badge.svg)
 
 ![mimic3-gpu-build-push-ghcr](https://github.com/mmguero/docker/workflows/mimic3-gpu-build-push-ghcr/badge.svg)
