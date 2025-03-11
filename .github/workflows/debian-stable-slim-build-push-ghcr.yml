@@ -17,68 +17,76 @@ on:
   schedule:
     - cron: '0 12 15 * *'
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/debian
-  IMAGE_TAG: latest
-  IMAGE_ARCH: amd64,arm64
-  REPO_CONTEXT: ./debian
-  REPO_CONTAINERFILE: ./debian/Dockerfile
-
 jobs:
-  buildah:
-    runs-on: ubuntu-latest
+  docker:
+    runs-on: ${{ matrix.os }}
     permissions:
       actions: write
       packages: write
       contents: read
       security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: amd64
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            platform: linux/arm64
     steps:
       -
         name: Cancel previous run in progress
-        id: cancel-previous-runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           ignore_sha: true
           all_but_latest: true
           access_token: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Checkout
-        id: repo-checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       -
-        name: Set up QEMU
-        id: setup-qemu
-        uses: docker/setup-qemu-action@v2
+        name: Generate arch tag suffix
+        shell: bash
+        run: echo "archtag=$([[ "${{ matrix.platform }}" == 'linux/amd64' ]] && echo '' || ( echo -n '-' ; echo "${{ matrix.platform }}" | cut -d '/' -f 2) )" >> $GITHUB_OUTPUT
+        id: arch_tag_suffix
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:master
       -
         name: Log in to registry
-        id: registry-login
-        uses: redhat-actions/podman-login@v1
+        uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
-        name: Build
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
+        name: Build and push
+        uses: docker/build-push-action@v6
         with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAG }}
-          context: ${{ env.REPO_CONTEXT }}
-          containerfiles: ${{ env.REPO_CONTAINERFILE }}
+          context: ./debian
+          file: ./debian/Dockerfile
           build-args: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          archs: ${{ env.IMAGE_ARCH }}
+            TARGETPLATFORM=${{ matrix.platform }}
+          push: true
+          provenance: false
+          platforms: ${{ matrix.platform }}
+          tags: ghcr.io/${{ github.repository_owner }}/debian:latest${{ steps.arch_tag_suffix.outputs.archtag }}
       -
         name: Run Trivy vulnerability scanner
+        if: ${{ matrix.platform == 'linux/amd64' }}
         id: trivy-scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.29.0
         env:
           TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db
         with:
           scan-type: 'image'
-          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          scanners: 'vuln'
+          image-ref: ghcr.io/${{ github.repository_owner }}/debian:latest${{ steps.arch_tag_suffix.outputs.archtag }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
@@ -88,15 +96,7 @@ jobs:
           exit-code: '0'
       -
         name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
+        if: ${{ matrix.platform == 'linux/amd64' }}
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-      -
-        name: Push
-        id: push-to-ghcr
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ${{ env.REGISTRY }}
