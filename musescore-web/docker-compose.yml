@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: musescore
     hostname: musescore
-    restart: "no"
+    restart: unless-stopped
     environment:
       USER_ID : 1000
       GROUP_ID : 1000
@@ -25,27 +25,22 @@ services:
         target: /musescore-files
 
   musescore-files:
-    image: docker.io/pldubouilh/gossa:latest
-    container_name: musescore-files
+    image: oci.guero.org/gossa:latest
+    restart: unless-stopped
     hostname: musescore-files
-    restart: "no"
-    user: "1000:1000"
-    # userns_mode: "keep-id"
-    # x-podman:
-    #   in_pod: false
-    cap_drop:
-      - ALL
-    cap_add:
-      - SETGID
-      - SETUID
-    read_only: true
-    environment:
-      # READONLY : true
-      PREFIX : /files/
-      UID : 1000
-      GID : 1000
     networks:
       - default
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOST=0.0.0.0
+      - PORT=8001
+      - PREFIX=/
+      - FOLLOW_SYMLINKS=false
+      - SKIP_HIDDEN_FILES=true
+      - DATADIR=/shared
+      - READONLY=false
+      - VERBOSE=false
     volumes:
       - type: bind
         bind:

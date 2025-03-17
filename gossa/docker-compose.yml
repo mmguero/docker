@@ -1,0 +1,42 @@
+services:
+  gossa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oci.guero.org/gossa:latest
+    restart: unless-stopped
+    stdin_open: false
+    tty: true
+    hostname: gossa
+    networks:
+      - default
+    ports:
+      - 127.0.0.1:8001:8001
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOST=0.0.0.0
+      - PORT=8001
+      - PREFIX=/files/
+      - FOLLOW_SYMLINKS=false
+      - SKIP_HIDDEN_FILES=true
+      - DATADIR=/shared
+      - READONLY=false
+      - VERBOSE=false
+    volumes:
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./upload
+        target: /shared
+    labels:
+      traefik.enable: false
+      # traefik.http.routers.gossa.rule: Host(`gossa.example.org`)
+      # traefik.http.routers.gossa.entrypoints: websecure
+      # traefik.http.routers.gossa.tls.certresolver: myresolver
+      # traefik.http.services.gossa.loadbalancer.server.port: 443
+
+networks:
+  proxy:
+    external: false
+    # name: traefik-proxy
