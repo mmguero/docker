@@ -22,6 +22,8 @@
 
 ![forgejo-build-push-ghcr](https://github.com/mmguero/docker/workflows/forgejo-build-push-ghcr/badge.svg)
 
+![gossa-build-push-ghcr](https://github.com/mmguero/docker/workflows/gossa-build-push-ghcr/badge.svg)
+
 ![gimp-build-push-ghcr](https://github.com/mmguero/docker/workflows/gimp-build-push-ghcr/badge.svg)
 
 ![gitea-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-build-push-ghcr/badge.svg)
