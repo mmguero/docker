@@ -53,61 +53,6 @@ services:
         source: ./files
         target: /shared
 
-  nginx:
-    image: oci.guero.org/nginx-ldap:latest
-    container_name: nginx
-    hostname: nginx
-    restart: "no"
-    environment:
-      PUID : 1000
-      PGID : 1000
-      NGINX_BASIC_AUTH : 'true'
-      NGINX_SSL : 'false'
-    depends_on:
-      - musescore
-      - musescore-files
-    networks:
-      - default
-    ports:
-      - "127.0.0.1:5800:443"
-    volumes:
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/nginx.conf
-        target: /etc/nginx/nginx.conf
-        read_only: true
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/nginx_ldap.conf
-        target: /etc/nginx/nginx_ldap.conf
-        read_only: true
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/htpasswd
-        target: /etc/nginx/htpasswd
-        read_only: true
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/ca-trust
-        target: /etc/nginx/ca-trust
-        read_only: true
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/certs
-        target: /etc/nginx/certs
-        read_only: true
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./nginx/certs/dhparam.pem
-        target: /etc/nginx/dhparam/dhparam.pem
-        read_only: true
-
 networks:
   default:
     external: false
