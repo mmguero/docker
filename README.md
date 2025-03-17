@@ -78,7 +78,7 @@
 
 [espejo](https://github.com/mmguero/espejo) ![espejo-build-push-ghcr](https://github.com/mmguero/espejo/workflows/espejo-build-push-ghcr/badge.svg)
 
-[goStatic](https://github.com/mmguero/gostatic) ![gostatic-build-push-ghcr](https://github.com/mmguero/gostatic/workflows/gostatic-build-push-ghcr/badge.svg)
+[goStatic](https://github.com/mmguero-dev/goStatic) ![gostatic-build-push-ghcr](https://github.com/mmguero-dev/gostatic/workflows/gostatic-build-push-ghcr/badge.svg)
 
 [mirotalk](https://github.com/mmguero/mirotalk) ![mirotalk-build-push-ghcr](https://github.com/mmguero/mirotalk/workflows/mirotalk-build-push-ghcr/badge.svg)
 
