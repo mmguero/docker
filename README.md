@@ -88,6 +88,6 @@
 
 [montag](https://github.com/mmguero/montag) ![montag-build-push-ghcr](https://github.com/mmguero/montag/workflows/montag-build-push-ghcr/badge.svg)
 
-[openresty-loaded](https://github.com/mmguero/openresty-loaded) ![openresty-loaded-build-push-ghcr](https://github.com/mmguero/openresty-loaded/workflows/openresty-loaded-build-push-ghcr/badge.svg)
+[openresty-cyoa](https://github.com/mmguero/openresty-cyoa) ![openresty-cyoa-build-push-ghcr](https://github.com/mmguero/openresty-cyoa/workflows/openresty-cyoa-build-push-ghcr/badge.svg)
 
 [zeek-docker](https://github.com/mmguero/zeek-docker) ![zeek-build-push-latest-ghcr](https://github.com/mmguero/zeek-docker/workflows/zeek-build-push-latest-ghcr/badge.svg)
