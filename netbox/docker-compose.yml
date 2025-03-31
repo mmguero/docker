@@ -1,0 +1,122 @@
+services:
+  postgres:
+    image: ghcr.io/mmguero-dev/malcolm/postgresql:main
+    restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+    - default
+    env_file:
+    - ./config/process.env
+    - ./config/postgres.env
+    volumes:
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./postgres
+      target: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+  redis:
+    image: ghcr.io/mmguero-dev/malcolm/redis:main
+    restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+    - default
+    env_file:
+    - ./config/process.env
+    - ./config/redis.env
+    command:
+    - sh
+    - -c
+    - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD
+    volumes:
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./redis
+      target: /data
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+  redis-cache:
+    image: ghcr.io/mmguero-dev/malcolm/redis:main
+    restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+    - default
+    env_file:
+    - ./config/process.env
+    - ./config/redis.env
+    command:
+    - sh
+    - -c
+    - redis-server --requirepass $$REDIS_PASSWORD
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+  netbox:
+    image: ghcr.io/mmguero-dev/malcolm/netbox:main
+    restart: "no"
+    stdin_open: false
+    tty: true
+    networks:
+    - default
+    env_file:
+    - ./config/process.env
+    - ./config/netbox.env
+    - ./config/netbox-secret.env
+    - ./config/postgres.env
+    - ./config/redis.env
+    depends_on:
+    - postgres
+    - redis
+    - redis-cache
+    volumes:
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./netbox/media
+      target: /opt/netbox/netbox/media
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./netbox/preload
+      target: /opt/netbox-preload/configmap
+      read_only: true
+    - type: bind
+      bind:
+        create_host_path: false
+      source: ./netbox/custom-plugins
+      target: /opt/netbox-custom-plugins
+      read_only: true
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+    labels:
+      traefik.enable : false
+      # traefik.http.routers.netbox.rule : "Host(`netbox.example.org`)"
+      # traefik.http.routers.netbox.entrypoints : "websecure"
+      # traefik.http.routers.netbox.tls.certresolver : "myresolver"
+      # traefik.http.services.netbox.loadbalancer.server.port : 8080
+      # traefik.http.middlewares.testHeader.headers.customrequestheaders.X-Remote-Auth : "johndoe"
+
+networks:
+  default:
+    external: true
+    name: traefik-proxy
