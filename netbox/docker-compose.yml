@@ -117,5 +117,5 @@ services:
 
 networks:
   default:
-    external: true
+    external: false
     # name: traefik-proxy
