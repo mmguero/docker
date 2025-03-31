@@ -114,7 +114,6 @@ services:
       # traefik.http.routers.netbox.entrypoints : "websecure"
       # traefik.http.routers.netbox.tls.certresolver : "myresolver"
       # traefik.http.services.netbox.loadbalancer.server.port : 8080
-      # traefik.http.middlewares.testHeader.headers.customrequestheaders.X-Remote-Auth : "johndoe"
 
 networks:
   default:
