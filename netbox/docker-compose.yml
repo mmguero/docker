@@ -94,7 +94,7 @@ services:
       bind:
         create_host_path: false
       source: ./netbox/preload
-      target: /opt/netbox-preload/configmap
+      target: /opt/netbox-preload
       read_only: true
     - type: bind
       bind:
@@ -117,5 +117,5 @@ services:
 
 networks:
   default:
-    external: false
+    external: true
     # name: traefik-proxy
