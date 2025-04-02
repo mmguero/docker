@@ -1,5 +1,5 @@
 services:
-  postgres:
+  netbox-postgres:
     image: ghcr.io/mmguero-dev/malcolm/postgresql:main
     restart: "no"
     stdin_open: false
@@ -21,7 +21,7 @@ services:
       timeout: 15s
       retries: 3
       start_period: 45s
-  redis:
+  netbox-redis:
     image: ghcr.io/mmguero-dev/malcolm/redis:main
     restart: "no"
     stdin_open: false
@@ -47,7 +47,7 @@ services:
       timeout: 15s
       retries: 3
       start_period: 45s
-  redis-cache:
+  netbox-redis-cache:
     image: ghcr.io/mmguero-dev/malcolm/redis:main
     restart: "no"
     stdin_open: false
@@ -67,7 +67,7 @@ services:
       timeout: 15s
       retries: 3
       start_period: 45s
-  netbox:
+  netbox-core:
     image: ghcr.io/mmguero-dev/malcolm/netbox:main
     restart: "no"
     stdin_open: false
@@ -81,9 +81,9 @@ services:
     - ./config/postgres.env
     - ./config/redis.env
     depends_on:
-    - postgres
-    - redis
-    - redis-cache
+    - netbox-postgres
+    - netbox-redis
+    - netbox-redis-cache
     volumes:
     - type: bind
       bind:
@@ -118,4 +118,3 @@ services:
 networks:
   default:
     external: false
-    # name: traefik-proxy
