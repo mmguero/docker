@@ -1,4 +1,4 @@
-FROM opensearchproject/opensearch-dashboards:2.18.0
+FROM opensearchproject/opensearch-dashboards:3.0.0
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
@@ -15,7 +15,7 @@ ENV TINI_URL https://github.com/krallin/tini/releases/download/${TINI_VERSION}/t
 
 ENV ECS_RELEASES_URL "https://api.github.com/repos/elastic/ecs/releases/latest"
 
-ENV OSD_TRANSFORM_VIS_VERSION 2.18.0
+ENV OSD_TRANSFORM_VIS_VERSION 3.0.0
 
 USER root
 
