@@ -11,6 +11,8 @@ services:
       USER_ID : 1000
       GROUP_ID : 1000
       WEB_AUDIO : 1
+      WEB_FILE_MANAGER : 1
+      WEB_FILE_MANAGER_ALLOWED_PATHS : /musescore-files
       WEB_AUTHENTICATION : 0
       SECURE_CONNECTION : 0
       VNC_LISTENING_PORT : -1
@@ -23,30 +25,6 @@ services:
           create_host_path: false
         source: ./files
         target: /musescore-files
-
-  musescore-files:
-    image: oci.guero.org/gossa:latest
-    restart: unless-stopped
-    hostname: musescore-files
-    networks:
-      - default
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - HOST=0.0.0.0
-      - PORT=8001
-      - PREFIX=/
-      - FOLLOW_SYMLINKS=false
-      - SKIP_HIDDEN_FILES=true
-      - DATADIR=/shared
-      - READONLY=false
-      - VERBOSE=false
-    volumes:
-      - type: bind
-        bind:
-          create_host_path: false
-        source: ./files
-        target: /shared
 
 networks:
   default:
