@@ -7,7 +7,7 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.file.filename=/traefik-tls.toml"
+      - "--providers.file.directory=/dynamic-conf"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
@@ -28,7 +28,7 @@ services:
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       - "./certs:/etc/ssl/certs:ro"
-      - "./traefik-tls.toml:/traefik-tls.toml:ro"
+      - "./dynamic-conf:/dynamic-conf:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
 
