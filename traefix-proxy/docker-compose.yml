@@ -42,6 +42,7 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`whoami.example.org`)"
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+      - "traefik.http.services.whoami.loadbalancer.serversTransport=upload@file"
     restart: unless-stopped
 
 networks:
