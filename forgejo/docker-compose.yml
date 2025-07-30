@@ -48,10 +48,10 @@ services:
   db:
     container_name: forgejo-db
     restart: unless-stopped
-    image: lscr.io/linuxserver/mariadb:latest
+    image: oci.guero.org/postgres:latest
     env_file: .env
     volumes:
-      - ./forgejo/db:/config:rw
+      - ./forgejo/db:/var/lib/postgresql/data:rw
     networks:
       - forgejo
 
