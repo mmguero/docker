@@ -2,6 +2,7 @@ services:
 
   postgres:
     restart: unless-stopped
+    # for podman:
     # userns_mode: keep-id
     image: oci.guero.org/postgres:latest
     container_name: keycloak-postgres
@@ -16,12 +17,13 @@ services:
         source: ./data
         target: /var/lib/postgresql/data
     networks:
-      - proxy
+      - default
     expose:
       - 5432
 
   keycloak:
     restart: unless-stopped
+    # for podman:
     # userns_mode: keep-id
     image: oci.guero.org/keycloak:latest
     build:
@@ -33,11 +35,11 @@ services:
     links:
       - postgres
     networks:
-      - proxy
+      - default
     expose:
       - 8080
-    # ports:
-    # - 127.0.0.1:8080:8080/tcp
+    ports:
+      - 127.0.0.1:8080:8080/tcp
     volumes:
     - type: bind
       bind:
@@ -50,16 +52,16 @@ services:
     #     create_host_path: false
     #   source: ./export
     #   target: /opt/keycloak/export
-    # command: ["export", "--dir", "/opt/keycloak/export", "--users", "same_file"]
+    # command: ["/opt/keycloak/bin/kc.sh", "export", "--dir", "/opt/keycloak/export", "--users", "same_file"]
     labels:
-      traefik.enable : true
-      traefik.http.routers.keycloak.rule : "Host(`keycloak.example.org`)"
-      traefik.http.routers.keycloak.entrypoints : "websecure"
-      traefik.http.routers.keycloak.tls.certresolver : "myresolver"
-      traefik.http.services.keycloak.loadbalancer.server.port : 8080
+      traefik.enable : false
+      # traefik.http.routers.keycloak.rule : "Host(`keycloak.example.org`)"
+      # traefik.http.routers.keycloak.entrypoints : "websecure"
+      # traefik.http.routers.keycloak.tls.certresolver : "myresolver"
+      # traefik.http.services.keycloak.loadbalancer.server.port : 8080
 
 networks:
-  proxy:
-    external: true
-    name: traefik-proxy
+  default:
+    external: false
+    # name: traefik-proxy
 

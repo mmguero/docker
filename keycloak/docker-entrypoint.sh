@@ -8,6 +8,8 @@ export KC_DB_USERNAME="${POSTGRES_KEYCLOAK_USER:-keycloak}"
 export KC_DB_PASSWORD="${POSTGRES_KEYCLOAK_PASSWORD:-}"
 export KC_DB_URL="jdbc:postgresql://${POSTGRES_HOST}:${PGPORT}/${POSTGRES_KEYCLOAK_DB}"
 export KC_DB=postgres
+[[ -n "${KC_BOOTSTRAP_ADMIN_USERNAME:-}" ]] && export KC_BOOTSTRAP_ADMIN_USERNAME || unset KC_BOOTSTRAP_ADMIN_USERNAME
+[[ -n "${KC_BOOTSTRAP_ADMIN_PASSWORD:-}" ]] && export KC_BOOTSTRAP_ADMIN_PASSWORD || unset KC_BOOTSTRAP_ADMIN_PASSWORD
 
 until PGPASSWORD="${KC_DB_PASSWORD}" pg_isready -U "${KC_DB_USERNAME}" \
                                                 -h "${POSTGRES_HOST}" -p ${PGPORT} >/dev/null 2>&1; do
@@ -22,5 +24,8 @@ until PGPASSWORD="${KC_DB_PASSWORD}" psql -U "${KC_DB_USERNAME}" \
   sleep 5
 done
 echo "PostgreSQL is up and ready at ${KC_DB_URL}!"
+
+[[ -x /usr/local/bin/realm-setup.sh ]] && \
+  ( setsid bash -c '/usr/local/bin/realm-setup.sh >/dev/null 2>&1 </dev/null &' ) >/dev/null 2>&1 </dev/null
 
 exec "$@"
