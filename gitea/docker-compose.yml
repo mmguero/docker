@@ -4,56 +4,66 @@ services:
   server:
     container_name: gitea
     restart: unless-stopped
-    #
-    # docker:
-    # image: docker.io/gitea/gitea:latest-rootless
-    #   OR
-    # image: docker.io/gitea/gitea:latest
-    #   (may need to manually chown .ssh directory upon startup?)
-    #
-    # podman (rootless):
-    image: oci.guero.org/gitea:root
-    #
+    # for podman:
+    # userns_mode: keep-id
+    image: docker.gitea.com/gitea:latest-rootless
     build:
       context: .
       dockerfile: Dockerfile
-    #
     env_file: .env
     volumes:
-      #
-      # docker (latest-rootless):
-      # - ./gitea/git:/var/lib/gitea:rw
-      # - ./gitea/conf:/etc/gitea:rw
-      #
-      # docker (latest):
-      # - ./gitea/git:/data/git:rw
-      # - ./gitea/conf:/data/gitea/conf:rw
-      # - ./gitea/log:/data/gitea/log:rw
-      #
-      # podman:
-      - ./gitea/git:/data/git:rw
-      - ./gitea/conf:/data/gitea/conf:rw
-      - ./gitea/log:/data/gitea/log:rw
-      #
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data/git
+        target: /var/lib/gitea
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data/config
+        target: /etc/gitea
+      - type: bind
+        bind:
+          create_host_path: false
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+      - type: bind
+        bind:
+          create_host_path: false
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
     networks:
       - gitea
     ports:
       - "127.0.0.1:3000:3000"
-      # - "127.0.0.1:2222:2222"
+      - "127.0.0.1:2222:2222"
 
   ################################################################################
   db:
     container_name: gitea-db
     restart: unless-stopped
-    image: lscr.io/linuxserver/mariadb:latest
+    # for podman:
+    # userns_mode: keep-id
+    image: oci.guero.org/postgres:latest
     env_file: .env
     volumes:
-      - ./gitea/db:/config:rw
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data/db
+        target: /var/lib/postgresql/data
     networks:
       - gitea
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
 
 networks:
   gitea:
     external: false
+    # name:
