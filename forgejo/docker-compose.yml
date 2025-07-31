@@ -4,56 +4,59 @@ services:
   server:
     container_name: forgejo
     restart: unless-stopped
-    #
-    # docker:
-    # image: codeberg.org/forgejo/forgejo:1.18.0-rc1-1-rootless
-    #   (doesn't exist yet? https://codeberg.org/forgejo/-/packages)
-    #   OR
-    # image: codeberg.org/forgejo/forgejo:1.18.0-rc1-1
-    #   (may need to manually chown .ssh directory upon startup?)
-    #
-    # podman (rootless):
-    image: oci.guero.org/forgejo:root
-    #
+    # for podman:
+    # userns_mode: keep-id
+    image: codeberg.org/forgejo/forgejo:12-rootless
     build:
       context: .
       dockerfile: Dockerfile
-    #
     env_file: .env
     volumes:
-      #
-      # docker (latest-rootless):
-      # - ./forgejo/git:/var/lib/gitea:rw
-      # - ./forgejo/conf:/etc/gitea:rw
-      #
-      # docker (latest):
-      # - ./forgejo/git:/data/git:rw
-      # - ./forgejo/conf:/data/gitea/conf:rw
-      # - ./forgejo/log:/data/gitea/log:rw
-      #
-      # podman:
-      - ./forgejo/git:/data/git:rw
-      - ./forgejo/conf:/data/gitea/conf:rw
-      - ./forgejo/log:/data/gitea/log:rw
-      #
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data/git
+        target: /var/lib/gitea
+      - type: bind
+        bind:
+          create_host_path: false
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+      - type: bind
+        bind:
+          create_host_path: false
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
     networks:
       - forgejo
     ports:
       - "127.0.0.1:3000:3000"
-      # - "127.0.0.1:2222:2222"
+      - "127.0.0.1:2222:2222"
 
   ################################################################################
   db:
     container_name: forgejo-db
     restart: unless-stopped
+    # for podman:
+    # userns_mode: keep-id
     image: oci.guero.org/postgres:latest
     env_file: .env
     volumes:
-      - ./forgejo/db:/var/lib/postgresql/data:rw
+      - type: bind
+        bind:
+          create_host_path: false
+        source: ./data/db
+        target: /var/lib/postgresql/data
     networks:
       - forgejo
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/container_health.sh"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
 
 networks:
   forgejo:

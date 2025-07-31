@@ -39,8 +39,7 @@ RUN apk update --no-cache && \
     chmod 00775 /var/lib/postgresql /var/lib/postgresql/data /run/postgresql && \
     sed -i 's/\(if.*id[[:space:]]-u.*\);/\1 \&\& [ "${PUSER_PRIV_DROP:-true}" != "false" ];/' /usr/local/bin/docker-entrypoint.sh
 
-
-ENTRYPOINT ["/sbin/tini", "--", "/usr/bin/docker-uid-gid-setup.sh"]
+USER root
 
 ENTRYPOINT ["/sbin/tini", \
             "--", \
