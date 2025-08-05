@@ -4,15 +4,20 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
-      - "--api.insecure=true"
+      - "--api=false"
+      # - "--entrypoints.dashboard.address=:9090"
+      # - "--api.dashboard=true"
+      # - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/dynamic-conf"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.websecure.http.tls.options=default@file"
       # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
@@ -20,11 +25,13 @@ services:
       # - "--certificatesresolvers.myresolver.acme.caserver=https://ca.example.org:9000/acme/acme/directory"
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - 0.0.0.0:80:80
-      - 0.0.0.0:443:443
-    networks:
-      - proxy
+      - "--providers.docker.network=traefik-proxy"
+    network_mode: host
+    # ports:
+    #   - 0.0.0.0:80:80
+    #   - 0.0.0.0:443:443
+    # networks:
+    #   - proxy
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       - "./certs:/etc/ssl/certs:ro"
@@ -47,6 +54,6 @@ services:
 
 networks:
   proxy:
-    external:
-      name: traefik-proxy
+    external: true
+    name: traefik-proxy
 
