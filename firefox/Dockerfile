@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -69,7 +69,7 @@ ENV PGROUP "firefox"
 ENV PUSER_PRIV_DROP true
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 ADD local.conf /etc/fonts/local.conf
 ADD entrypoint.sh /usr/local/bin/firefox.sh
 

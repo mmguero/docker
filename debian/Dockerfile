@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG DEFAULT_UID=1000
 ARG DEFAULT_GID=1000
@@ -12,14 +12,14 @@ ENV PUSER_PRIV_DROP true
 ARG GITHUB_TOKEN
 
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 COPY --chmod=755 external_tools_install.sh /usr/local/bin/
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \
     apt-get install -q -y --no-install-recommends \
         fasttrack-archive-keyring && \
-    echo "deb https://fasttrack.debian.net/debian/ bookworm-fasttrack main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb https://fasttrack.debian.net/debian/ trixie-fasttrack main contrib non-free" >> /etc/apt/sources.list && \
     apt-get -y -q --no-install-recommends upgrade && \
     apt-get install -q -y --no-install-recommends \
         autossh \

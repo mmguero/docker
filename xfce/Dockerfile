@@ -24,7 +24,7 @@
 #
 # Look at x11docker --help for further options.
 
-FROM debian:bookworm as base
+FROM debian:trixie as base
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
@@ -114,10 +114,10 @@ LABEL org.opencontainers.image.description='Dockerized XFCE with my own special 
 
 # liberally steal some package lists and config scripts from my live USB image setup one of my other repos
 #   https://github.com/mmguero/deblive/
-ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/bookworm/config"
+ARG PACKAGE_CATEGORY_URL_PREFIX="https://raw.githubusercontent.com/mmguero/deblive/master/trixie/config"
 ARG GITHUB_TOKEN
 
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \

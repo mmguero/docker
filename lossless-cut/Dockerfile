@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 # https://github.com/mifi/lossless-cut
 # x11docker --pulseaudio --gpu oci.guero.org/lossless-cut:latest
@@ -22,7 +22,7 @@ ENV PGID $PGID
 ENV PUSER "cutter"
 ENV PGROUP "cutter"
 
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \

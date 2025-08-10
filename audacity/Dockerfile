@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 # x11docker --alsa $(find /dev/snd/ -type c | sed 's/^/--share /') oci.guero.org/audacity
 
@@ -21,7 +21,7 @@ ENV PGID $PGID
 ENV PUSER "audacity"
 ENV PGROUP "audacity"
 
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
     apt-get -q update && \

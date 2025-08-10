@@ -7,7 +7,7 @@
 # -v /dev/shm:/dev/shm \
 # signal
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV SIGNAL_USER signaler
 
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-bookworm-sources.list /etc/apt/sources.list
+ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/debian-trixie-sources.list /etc/apt/sources.list
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       apt-get -q update && \
