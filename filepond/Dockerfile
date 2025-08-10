@@ -14,7 +14,7 @@ RUN apt-get -q update && \
       filepond-plugin-file-rename \
       @jcubic/tagger
 
-FROM debian:13-slim AS runtime
+FROM debian:trixie-slim AS runtime
 
 LABEL maintainer="mero.mero.guero@gmail.com"
 LABEL org.opencontainers.image.authors='mero.mero.guero@gmail.com'
