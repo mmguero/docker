@@ -1,4 +1,4 @@
-FROM debian:13-slim AS npmget
+FROM debian:trixie-slim AS npmget
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
