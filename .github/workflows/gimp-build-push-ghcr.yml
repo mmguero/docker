@@ -68,8 +68,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./forgejo
-          file: ./forgejo/Dockerfile
+          context: ./gimp
+          file: ./gimp/Dockerfile
           build-args: |
             TARGETPLATFORM=${{ matrix.platform }}
           push: true
