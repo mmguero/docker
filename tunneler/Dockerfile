@@ -72,8 +72,8 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
       chown root:$PGROUP /var/log/supervisor && \
     chown root:$PGROUP /bin/nc.openbsd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /bin/nc.openbsd && \
-    chown root:$PGROUP /usr/bin/socat && \
-      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/socat && \
+    chown root:$PGROUP /usr/bin/socat1 && \
+      setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/bin/socat1 && \
     chown root:$PGROUP /usr/sbin/tcpd && \
       setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip CAP_NET_BIND_SERVICE+eip' /usr/sbin/tcpd && \
     chown root:$PGROUP /usr/bin/openssl && \
