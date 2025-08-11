@@ -31,15 +31,13 @@ RUN apt-get -q update && \
       curl \
       gimp \
       gimp-data-extras \
-      gimp-gmic \
-      gimp-plugin-registry \
       gimp-texturize \
       gmic \
       gnome-icon-theme \
       gtk2-engines-pixbuf \
       iso-codes \
       libgl1-mesa-dri \
-      libgl1-mesa-glx \
+      libgl1 \
       libgmic1 && \
     cd /tmp && \
       mkdir ./photogimp && \
@@ -56,17 +54,14 @@ RUN apt-get -q update && \
       mkdir -p /home/${PUSER}/.config/GIMP \
                /home/${PUSER}/.fonts \
                /home/${PUSER}/Documents \
-               /usr/lib/gimp/2.0/plug-ins \
-               /usr/share/gimp/2.0/scripts && \
-      mv /tmp/photogimp/.var/app/org.gimp.GIMP/config/GIMP/2.10 /home/${PUSER}/.config/GIMP/ && \
+               /usr/lib/gimp/3.0/plug-ins \
+               /usr/share/gimp/3.0/scripts && \
+      mv /tmp/photogimp/.config/GIMP/3.0 /home/${PUSER}/.config/GIMP/ && \
         for FOLDER in brushes filters fonts gradients plug-ins scripts splashes tool-options; do \
-          mkdir -p /home/${PUSER}/.config/GIMP/2.10/$FOLDER; \
+          mkdir -p /home/${PUSER}/.config/GIMP/3.0/$FOLDER; \
         done && \
-        sed -i "s/\(resolution [[:digit:]][[:digit:]]*\))/\1.0)/g" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
-        sed -i "s/\(radius [[:digit:]][[:digit:]]*\))/\1.0)/g" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
-        sed -i "/toolbox-group-menu-mode/d" /home/${PUSER}/.config/GIMP/2.10/gimprc && \
-      mv /tmp/insta/plug-ins/*.py /usr/lib/gimp/2.0/plug-ins/ && \
-      mv /tmp/molpop/*.py /usr/lib/gimp/2.0/plug-ins/ && \
+      mv /tmp/insta/plug-ins/*.py /usr/lib/gimp/3.0/plug-ins/ && \
+      mv /tmp/molpop/*.py /usr/lib/gimp/3.0/plug-ins/ && \
       chown -R ${DEFAULT_UID}:${DEFAULT_GID} /home/${PUSER} && \
     apt-get -q -y --purge remove curl && \
       apt-get -q -y autoremove && \

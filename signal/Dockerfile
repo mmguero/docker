@@ -34,8 +34,8 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
         libgtk-3-0 \
         libx11-xcb1 \
         libxkbfile1 && \
-  bash -c "curl -sSL https://updates.signal.org/desktop/apt/keys.asc | apt-key add -" && \
-    echo "deb https://updates.signal.org/desktop/apt xenial main" >> /etc/apt/sources.list && \
+  curl -fsSL -o /usr/share/keyrings/signal-desktop-keyring.gpg https://updates.signal.org/desktop/apt/keys.asc && \
+    echo "deb [signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt noble main" >> /etc/apt/sources.list && \
   apt-get -q update && \
   apt-get install -q -y --no-install-recommends signal-desktop && \
   apt-get clean && \

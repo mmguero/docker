@@ -85,7 +85,7 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources && \
       hicolor-icon-theme \
       libdbus-glib-1-2 \
       libgl1-mesa-dri \
-      libgl1-mesa-glx \
+      libgl1 \
       libgtk-3-0 \
       pulseaudio-utils && \
     mkdir -p /opt/firefox && \
