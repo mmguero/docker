@@ -75,7 +75,7 @@ jobs:
           push: true
           provenance: false
           platforms: ${{ matrix.platform }}
-          tags: ghcr.io/${{ github.repository_owner }}/forgejo:latest${{ steps.arch_tag_suffix.outputs.archtag }}
+          tags: ghcr.io/${{ github.repository_owner }}/gimp:latest${{ steps.arch_tag_suffix.outputs.archtag }}
       -
         name: Run Trivy vulnerability scanner
         if: ${{ matrix.platform == 'linux/amd64' }}
@@ -86,7 +86,7 @@ jobs:
         with:
           scan-type: 'image'
           scanners: 'vuln'
-          image-ref: ghcr.io/${{ github.repository_owner }}/forgejo:latest${{ steps.arch_tag_suffix.outputs.archtag }}
+          image-ref: ghcr.io/${{ github.repository_owner }}/gimp:latest${{ steps.arch_tag_suffix.outputs.archtag }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'HIGH,CRITICAL'
