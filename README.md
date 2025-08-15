@@ -20,13 +20,9 @@
 
 ![firefox-build-push-ghcr](https://github.com/mmguero/docker/workflows/firefox-build-push-ghcr/badge.svg)
 
-![forgejo-build-push-ghcr](https://github.com/mmguero/docker/workflows/forgejo-build-push-ghcr/badge.svg)
-
 ![gossa-build-push-ghcr](https://github.com/mmguero/docker/workflows/gossa-build-push-ghcr/badge.svg)
 
 ![gimp-build-push-ghcr](https://github.com/mmguero/docker/workflows/gimp-build-push-ghcr/badge.svg)
-
-![gitea-build-push-ghcr](https://github.com/mmguero/docker/workflows/gitea-build-push-ghcr/badge.svg)
 
 ![keycloak-build-push-ghcr](https://github.com/mmguero/docker/workflows/keycloak-build-push-ghcr/badge.svg)
 
@@ -57,8 +53,6 @@
 ![redis-build-push-ghcr](https://github.com/mmguero/docker/workflows/redis-build-push-ghcr/badge.svg)
 
 ![serverless-registry-proxy-build-push-ghcr](https://github.com/mmguero/docker/workflows/serverless-registry-proxy-build-push-ghcr/badge.svg)
-
-![signal-build-push-ghcr](https://github.com/mmguero/docker/workflows/signal-build-push-ghcr/badge.svg)
 
 ![stunnel-build-push-ghcr](https://github.com/mmguero/docker/workflows/stunnel-build-push-ghcr/badge.svg)
 
