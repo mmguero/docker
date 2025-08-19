@@ -19,13 +19,19 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.websecure.http.tls.options=default@file"
-      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      # - "--certificatesresolvers.myresolver.acme.caserver=https://ca.example.org:9000/acme/acme/directory"
-      - "--certificatesresolvers.myresolver.acme.email=user@example.org"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.mydns.acme.dnschallenge=true"
+      - "--certificatesresolvers.mydns.acme.dnschallenge.provider=namesilo"
+      - "--certificatesresolvers.mydns.acme.email=user@example.org"
+      - "--certificatesresolvers.mydns.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.mydns.acme.dnschallenge.propagation.delayBeforeChecks=120s"
       - "--providers.docker.network=traefik-proxy"
+    # env_file: .env
+    environment:
+      LEGO_EXPERIMENTAL_CNAME_SUPPORT: true
+      NAMESILO_API_KEY: ''
+      NAMESILO_PROPAGATION_TIMEOUT: 1500
+      NAMESILO_POLLING_INTERVAL: 120
+      NAMESILO_TTL: 3600
     network_mode: host
     # ports:
     #   - 0.0.0.0:80:80
@@ -34,7 +40,7 @@ services:
     #   - proxy
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
-      - "./certs:/etc/ssl/certs:ro"
+      # - "./certs:/etc/ssl/certs:ro"
       - "./dynamic-conf:/dynamic-conf:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
@@ -48,7 +54,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.example.org`)"
       - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.tls.certresolver=mydns"
       - "traefik.http.services.whoami.loadbalancer.serversTransport=upload@file"
     restart: unless-stopped
 
