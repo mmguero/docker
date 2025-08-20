@@ -4,6 +4,7 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
+      - "--log.level=INFO"
       - "--api=false"
       # - "--entrypoints.dashboard.address=:9090"
       # - "--api.dashboard=true"
@@ -19,19 +20,22 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.websecure.http.tls.options=default@file"
-      - "--certificatesresolvers.mydns.acme.dnschallenge=true"
-      - "--certificatesresolvers.mydns.acme.dnschallenge.provider=namesilo"
-      - "--certificatesresolvers.mydns.acme.email=user@example.org"
-      - "--certificatesresolvers.mydns.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.mydns.acme.dnschallenge.propagation.delayBeforeChecks=120s"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=dynu"
+      - "--certificatesresolvers.myresolver.acme.email=user@example.org"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      # - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=192.168.10.1,192.168.11.1"
+      # - "--certificatesresolvers.myresolver.acme.dnschallenge.propagation.delayBeforeChecks=30s"
+      # - "--certificatesresolvers.myresolver.acme.dnschallenge.propagation.disableanschecks=true"
       - "--providers.docker.network=traefik-proxy"
     # env_file: .env
     environment:
       LEGO_EXPERIMENTAL_CNAME_SUPPORT: true
-      NAMESILO_API_KEY: ''
-      NAMESILO_PROPAGATION_TIMEOUT: 1500
-      NAMESILO_POLLING_INTERVAL: 120
-      NAMESILO_TTL: 3600
+      DYNU_API_KEY: ''
+      DYNU_HTTP_TIMEOUT: 30
+      DYNU_PROPAGATION_TIMEOUT: 600
+      DYNU_POLLING_INTERVAL: 60
+      DYNU_TTL: 180
     network_mode: host
     # ports:
     #   - 0.0.0.0:80:80
@@ -55,7 +59,7 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`whoami.example.org`)"
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls=true"
-      - "traefik.http.routers.whoami.tls.certresolver=mydns"
+      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
       - "traefik.http.services.whoami.loadbalancer.serversTransport=upload@file"
     restart: unless-stopped
 

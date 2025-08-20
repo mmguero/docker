@@ -4,6 +4,7 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
+      - "--log.level=INFO"
       - "--api=false"
       # - "--entrypoints.dashboard.address=:9090"
       # - "--api.dashboard=true"
