@@ -1,13 +1,32 @@
-# https://smallstep.com/docs/tutorials/docker-tls-certificate-authority
-
 services:
+  # db:
+  #   image: yobasystems/alpine-mariadb:latest
+  #   container_name: step-db
+  #   expose:
+  #     - 3306
+  #   restart: always
+  #   environment:
+  #     - MYSQL_DATABASE=step
+  #     - MYSQL_USER=step
+  #     - MYSQL_PASSWORD=xxxxxxxxxxxxx
+  #     - MYSQL_ROOT_PASSWORD=yyyyyyyyyyy
+  #   volumes:
+  #     - ./db:/var/lib/mysql
   ca:
     image: smallstep/step-ca:latest
-    user: root
+    container_name: step-ca
     ports:
       - "0.0.0.0:9000:9000"
+    restart: always
     volumes:
       - ./step:/home/step:rw
       - ./secrets.txt:/home/step/secrets/password:ro
-    restart: always
 
+# after containers are started, edit ./step/config/ca.json:
+#  "db": {
+#    "type": "mysql",
+#    "dataSource": "step:xxxxxxxxxxxxx@tcp(db:3306)/",
+#    "database": "step",
+#    "badgerFileLoadingMode": ""
+#  }
+# then: docker-compose restart ca

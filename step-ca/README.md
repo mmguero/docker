@@ -3,11 +3,21 @@
 * enter a directory where you want `step-ca` to live
 * `mkdir -p step/{certs,config,db,secrets,templates}`
 * ensure you've got the `docker-compose.yml` from this repository in your directory
+* if you want to use the MariaDB backend, uncomment that service
 * put what will be serve as the root CA password in `secrets.txt` and your provisioner pasword in `provisioner.txt`
 * `chmod 600 secrets.txt provisioner.txt`
 * `docker run --rm -it -u 0 -v $(pwd)/step:/home/step -v $(pwd)/secrets.txt:/secrets.txt:ro -v $(pwd)/provisioner.txt:/provisioner.txt:ro smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/secrets.txt --provisioner-password-file=/provisioner.txt`
     - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
+* if you want to use the MariaDB backend, edit ``./step/config/ca.json`:
+  ```
+  "db": {
+    "type": "mysql",
+    "dataSource": "step:xxxxxxxxxxxxx@tcp(db:3306)/",
+    "database": "step",
+    "badgerFileLoadingMode": ""
+  }
+  ```
 * `docker-compose up -d ; sleep 10 ; docker-compose logs`
 * `docker-compose exec -u 0 ca sh`
     - `step ca provisioner add acme --type ACME`
