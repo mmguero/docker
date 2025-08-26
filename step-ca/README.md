@@ -9,7 +9,7 @@
 * `docker run --rm -it -u 0 -v $(pwd)/step:/home/step -v $(pwd)/secrets.txt:/secrets.txt:ro -v $(pwd)/provisioner.txt:/provisioner.txt:ro smallstep/step-ca sh`
     - `step ca init --ssh --name=mypki --dns=step.example.org --address=:9000 --provisioner=myjwk --password-file=/secrets.txt --provisioner-password-file=/provisioner.txt`
     - make note of provisioner fingerprint `xxxxxxxxxx` to use for bootstrapping clients
-* if you want to use the MariaDB backend, edit ``./step/config/ca.json`:
+* if you want to use the MariaDB backend, edit `./step/config/ca.json`:
   ```
   "db": {
     "type": "mysql",
