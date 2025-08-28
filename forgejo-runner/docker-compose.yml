@@ -24,6 +24,7 @@ services:
     environment:
       DOCKER_HOST: tcp://docker-in-docker:2376
       # SSL_CERT_FILE: /custom-ca.crt
+    working_dir: /data
     volumes:
       - ./data:/data
       # - ./ca/ca.crt:/custom-ca.crt:ro
@@ -49,16 +50,19 @@ services:
     platform: linux/amd64
     links:
       - docker-in-docker
+    env_file: .env
     environment:
       DOCKER_HOST: tcp://docker:2376
       DOCKER_CERT_PATH: /certs/client
       DOCKER_TLS_VERIFY: "1"
       # SSL_CERT_FILE: /custom-ca.crt
+    working_dir: /data
     volumes:
       - ./data:/data
       - docker_certs:/certs
       # - ./ca/ca.crt:/custom-ca.crt:ro
     restart: 'unless-stopped'
+    user: "${PUID}:${PGID}"
     command: >-
       bash -c '
       while : ; do test -w .runner && forgejo-runner --config config.yml daemon ; sleep 1 ; done
