@@ -1,0 +1,65 @@
+volumes:
+  docker_certs:
+
+services:
+
+  docker-in-docker:
+    image: docker:dind
+    platform: linux/amd64
+    hostname: docker
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+      DOCKER_HOST: docker-in-docker
+    volumes:
+      - docker_certs:/certs
+    restart: unless-stopped
+
+  runner-register:
+    image: code.forgejo.org/forgejo/runner:9
+    platform: linux/amd64
+    links:
+      - docker-in-docker
+    env_file: .env
+    environment:
+      DOCKER_HOST: tcp://docker-in-docker:2376
+      # SSL_CERT_FILE: /custom-ca.crt
+    volumes:
+      - ./data:/data
+      # - ./ca/ca.crt:/custom-ca.crt:ro
+    user: 0:0
+    command: >-
+      bash -ec '
+      while : ; do
+        forgejo-runner create-runner-file --connect --instance "${FORGEJO_INSTANCE}" --name "${RUNNER_NAME}" --secret "${FORGEJO_SECRET}" && break ;
+        sleep 1 ;
+      done ;
+      sed -i -e "s|\"labels\": null|\"labels\": [\"ubuntu-22.04:docker://catthehacker/ubuntu:act-22.04\",\"ubuntu-24.04:docker://catthehacker/ubuntu:act-24.04\",\"ubuntu:docker://catthehacker/ubuntu:act-24.04\",\"ubuntu-full-22.04:docker://catthehacker/ubuntu:full-22.04\",\"ubuntu-full-24.04:docker://catthehacker/ubuntu:full-24.04\",\"ubuntu-full:docker://catthehacker/ubuntu:full-24.04\",\"debian:docker://node:22-trixie\",\"debian-slim:docker://node:22-trixie-slim\"]|" .runner ;
+      forgejo-runner generate-config > config.yml ;
+      sed -i -e "s|  level: info|  level: debug|" config.yml ;
+      sed -i -e "s|network: .*|network: host|" config.yml ;
+      sed -i -e "s|^  envs:$$|  envs:\n    DOCKER_HOST: tcp://docker:2376\n    DOCKER_TLS_VERIFY: 1\n    DOCKER_CERT_PATH: /certs/client|" config.yml ;
+      sed -i -e "s|^  options:|  options: -v /certs/client:/certs/client|" config.yml ;
+      sed -i -e "s|  valid_volumes: \[\]$$|  valid_volumes:\n    - /certs/client|" config.yml ;
+      chown -R 1000:1000 /data
+      '
+
+  runner-daemon:
+    image: code.forgejo.org/forgejo/runner:9
+    platform: linux/amd64
+    links:
+      - docker-in-docker
+    environment:
+      DOCKER_HOST: tcp://docker:2376
+      DOCKER_CERT_PATH: /certs/client
+      DOCKER_TLS_VERIFY: "1"
+      # SSL_CERT_FILE: /custom-ca.crt
+    volumes:
+      - ./data:/data
+      - docker_certs:/certs
+      # - ./ca/ca.crt:/custom-ca.crt:ro
+    restart: 'unless-stopped'
+    command: >-
+      bash -c '
+      while : ; do test -w .runner && forgejo-runner --config config.yml daemon ; sleep 1 ; done
+      '
