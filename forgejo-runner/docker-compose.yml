@@ -41,7 +41,7 @@ services:
       sed -i -e "s|^  envs:$$|  envs:\n    DOCKER_HOST: tcp://docker:2376\n    DOCKER_TLS_VERIFY: 1\n    DOCKER_CERT_PATH: /certs/client|" config.yml ;
       sed -i -e "s|^  options:|  options: -v /certs/client:/certs/client|" config.yml ;
       sed -i -e "s|  valid_volumes: \[\]$$|  valid_volumes:\n    - /certs/client|" config.yml ;
-      chown -R 1000:1000 /data
+      chown -R ${PUID}:${PGID} /data
       '
 
   runner-daemon:
