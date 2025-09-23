@@ -34,6 +34,9 @@ services:
       HOSTYOSELF_AUTOSTART : 'false'
       HOSTYOSELF_PORT : 8010
       HOSTYOSELF_URL : 'https://hostyoself.example.org'
+      HOSTYOSELF_GOOGLE_SITE_VER_ID : ''
+      HOSTYOSELF_UMAMI_URL : ''
+      HOSTYOSELF_UMAMI_ID : ''
     ports:
       - "0.0.0.0:4001:4001/tcp"
       - "0.0.0.0:8010:8010/tcp"

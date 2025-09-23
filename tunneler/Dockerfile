@@ -1,3 +1,13 @@
+FROM golang:1 as build
+
+RUN go install github.com/go-bindata/go-bindata/go-bindata@latest && \
+    mkdir -p /usr/src && \
+    cd /usr/src && \
+    git clone --recurse-submodules --shallow-submodules --single-branch --depth 1 https://github.com/mmguero/hostyoself && \
+    cd ./hostyoself && \
+    go generate -v -x && \
+    go build -v
+
 FROM debian:trixie-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
@@ -45,12 +55,11 @@ RUN  apt-get update -yqq && \
   curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.tar\.gz)" | tar -xzf - croc && \
     chmod 755 ./croc && \
     mv ./croc /usr/bin && \
-  curl -sSL -o /tmp/hostyoself.deb "$(curl -sSL https://api.github.com/repos/schollz/hostyoself/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.deb)" && \
-    dpkg -i /tmp/hostyoself.deb && \
   sed -i 's/\$/$WIREPROXY_/g' /etc/wireproxy/config.env && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+COPY --from=build /usr/src/hostyoself/hostyoself /usr/bin/hostyoself
 ADD supervisord.conf /etc/supervisord.conf
 ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
@@ -114,9 +123,15 @@ ENV CROC_PASS $CROC_PASS
 ARG HOSTYOSELF_AUTOSTART=false
 ARG HOSTYOSELF_PORT=8010
 ARG HOSTYOSELF_URL="https://hostyoself.example.org"
+ARG HOSTYOSELF_GOOGLE_SITE_VER_ID=
+ARG HOSTYOSELF_UMAMI_URL=
+ARG HOSTYOSELF_UMAMI_ID=
 ENV HOSTYOSELF_AUTOSTART $HOSTYOSELF_AUTOSTART
 ENV HOSTYOSELF_PORT $HOSTYOSELF_PORT
 ENV HOSTYOSELF_URL $HOSTYOSELF_URL
+ENV HOSTYOSELF_GOOGLE_SITE_VER_ID $HOSTYOSELF_GOOGLE_SITE_VER_ID
+ENV HOSTYOSELF_UMAMI_URL $HOSTYOSELF_UMAMI_URL
+ENV HOSTYOSELF_UMAMI_ID $HOSTYOSELF_UMAMI_ID
 
 ARG WIREPROXY_AUTOSTART=false
 ENV WIREPROXY_AUTOSTART $WIREPROXY_AUTOSTART
