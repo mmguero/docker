@@ -3,7 +3,7 @@ FROM golang:1 as build
 RUN go install github.com/go-bindata/go-bindata/go-bindata@latest && \
     mkdir -p /usr/src && \
     cd /usr/src && \
-    git clone --recurse-submodules --shallow-submodules --single-branch --depth 1 https://github.com/mmguero/hostyoself && \
+    git clone --recurse-submodules --shallow-submodules --single-branch --branch bare --depth 1 https://github.com/mmguero/hostyoself && \
     cd ./hostyoself && \
     go generate -v -x && \
     go build -v
