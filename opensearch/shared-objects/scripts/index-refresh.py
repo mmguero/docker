@@ -128,7 +128,7 @@ def main():
         exit(2)
 
     if args.opensearchUrl:
-        if tmpUrlArray := mmguero.LoadStrIfJson(args.opensearchUrl):
+        if tmpUrlArray := mmguero.load_str_if_json(args.opensearchUrl):
             if isinstance(tmpUrlArray, list):
                 args.opensearchUrl = tmpUrlArray[0]
     else:
@@ -145,7 +145,7 @@ def main():
     else:
         sys.tracebacklimit = 0
 
-    opensearchCreds = mmguero.ParseCurlFile(args.opensearchCurlRcFile)
+    opensearchCreds = mmguero.parse_curl_file(args.opensearchCurlRcFile)
     xsrfHeader = "osd-xsrf"
 
     opensearchReqHttpAuth = (
@@ -214,13 +214,13 @@ def main():
                 getTemplateResponseJson = getTemplateResponse.json()
                 if 'index_templates' in getTemplateResponseJson:
                     for template in getTemplateResponseJson['index_templates']:
-                        templateFields = mmguero.DeepGet(
+                        templateFields = mmguero.deep_get(
                             template, ['index_template', 'template', 'mappings', 'properties'], default={}
                         )
 
                         # also include fields from component templates into templateFields before processing
                         # https://opensearch.org/docs/latest/opensearch/index-templates/#composable-index-templates
-                        composedOfList = mmguero.DeepGet(template, ['index_template', 'composed_of'], default=[])
+                        composedOfList = mmguero.deep_get(template, ['index_template', 'composed_of'], default=[])
 
                         for componentName in composedOfList:
                             getComponentResponse = requests.get(
@@ -232,7 +232,7 @@ def main():
                             getComponentResponseJson = getComponentResponse.json()
                             if 'component_templates' in getComponentResponseJson:
                                 for component in getComponentResponseJson['component_templates']:
-                                    properties = mmguero.DeepGet(
+                                    properties = mmguero.deep_get(
                                         component,
                                         ['component_template', 'template', 'mappings', 'properties'],
                                         default=None,
@@ -295,7 +295,7 @@ def main():
         getResponse.raise_for_status()
         try:
             fieldFormatMap = json.loads(
-                mmguero.DeepGet(getResponse.json(), ['attributes', 'fieldFormatMap'], default="{}")
+                mmguero.deep_get(getResponse.json(), ['attributes', 'fieldFormatMap'], default="{}")
             )
         except Exception as e:
             fieldFormatMap = {}
