@@ -1,0 +1,23 @@
+services:
+  open-webui:
+    image: open-webui:nonroot
+    container_name: open-webui
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/backend/data
+    networks:
+      - proxy
+    # environment:
+    #   WEBUI_URL: "https://webui.example.org"
+    labels:
+      traefik.enable: false
+      # traefik.http.routers.webui.rule: Host(`webui.example.org`)
+      # traefik.http.routers.webui.entrypoints: websecure
+      # traefik.http.routers.webui.tls.certresolver: myresolver
+      # traefik.http.routers.webui.service: webui
+      # traefik.http.services.webui.loadbalancer.server.port: '8080'
+
+networks:
+  proxy:
+    external: true
+    name: traefik-proxy
