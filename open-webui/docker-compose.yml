@@ -1,5 +1,8 @@
 services:
   open-webui:
+    # git clone https://github.com/open-webui/open-webui && \
+    #  cd ./open-webui && \
+    #  docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) --tag=open-webui:nonroot .
     image: open-webui:nonroot
     container_name: open-webui
     restart: unless-stopped
