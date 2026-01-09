@@ -8,10 +8,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./data:/app/backend/data
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
     networks:
       - proxy
-    # environment:
-    #   WEBUI_URL: "https://webui.example.org"
+    environment:
+      # WEBUI_URL: "https://webui.example.org"
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+      SSL_CERT_FILE: "/etc/ssl/certs/ca-certificates.crt"
     labels:
       traefik.enable: false
       # traefik.http.routers.webui.rule: Host(`webui.example.org`)
