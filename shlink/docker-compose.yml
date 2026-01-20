@@ -1,0 +1,47 @@
+services:
+  shlink:
+    image: "shlinkio/shlink:stable"
+    container_name: "shlink"
+    networks:
+      - default
+    links:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shlink.rule=Host(`url.example.org`)"
+      - "traefik.http.routers.shlink.entrypoints=websecure"
+      - "traefik.http.routers.shlink.tls.certresolver=myresolver"
+      - "traefik.http.services.shlink.loadbalancer.server.port=8080"
+    restart: unless-stopped
+    env_file: ./config.env
+
+  shlink_web_client:
+    image: "shlinkio/shlink-web-client:stable"
+    container_name: "shlink_web_client"
+    networks:
+      - default
+    user: 1000:1000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shlink_webui.rule=Host(`shlink.example.org`)"
+      - "traefik.http.routers.shlink_webui.entrypoints=websecure"
+      - "traefik.http.routers.shlink_webui.tls.certresolver=myresolver"
+      - "traefik.http.services.shlink_webui.loadbalancer.server.port=8080"
+    restart: unless-stopped
+
+  db:
+    image: oci.example.org/mariadb:latest
+    container_name: shlink-db
+    restart: unless-stopped
+    env_file: ./config.env
+    volumes:
+      - ./data:/var/lib/mysql:rw
+    networks:
+      - default
+    command: [mariadbd, --user=mysql, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+
+networks:
+  default:
+    external: true
+    name: traefik-proxy
+

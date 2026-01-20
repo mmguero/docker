@@ -212,6 +212,7 @@ services:
       - SERVER_SSL_ENABLED=true
       - SERVER_SSL_KEY=config/certs/kibana/kibana.key
       - SERVER_SSL_CERTIFICATE=config/certs/kibana/kibana.crt
+      - SERVER_MAXPAYLOAD=2097152
     mem_limit: ${MEM_LIMIT}
     healthcheck:
       test:

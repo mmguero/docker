@@ -1,0 +1,25 @@
+services:
+  paste:
+    image: "privatebin/fs:stable"
+    container_name: "paste"
+    user: "1000:1000"
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paste.rule=Host(`paste.example.org`)"
+      - "traefik.http.routers.paste.entrypoints=websecure"
+      - "traefik.http.routers.paste.tls.certresolver=myresolver"
+      - "traefik.http.services.paste.loadbalancer.server.port=8080"
+    restart: unless-stopped
+    volumes:
+      - "./data:/srv/data:rw"
+      - "./conf.php:/srv/cfg/conf.php:ro"
+    environment:
+      - TZ=America/Denver
+      - PHP_TZ=America/Denver
+
+networks:
+  proxy:
+    external: true
+    name: traefik-proxy
