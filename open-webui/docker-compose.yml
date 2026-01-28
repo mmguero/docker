@@ -1,27 +1,33 @@
 services:
+
   open-webui:
-    # git clone https://github.com/open-webui/open-webui && \
-    #  cd ./open-webui && \
-    #  docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) --tag=open-webui:nonroot .
     image: open-webui:nonroot
     container_name: open-webui
     restart: unless-stopped
     volumes:
       - ./data:/app/backend/data
-      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - /etc/ssl/certs/ca-certificates.crt:/app/certs/ca-bundle.crt:ro
     networks:
       - proxy
     environment:
-      # WEBUI_URL: "https://webui.example.org"
-      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
-      SSL_CERT_FILE: "/etc/ssl/certs/ca-certificates.crt"
+      WEBUI_URL: "https://ai.example.org"
+      REQUESTS_CA_BUNDLE: "/app/certs/ca-bundle.crt"
     labels:
       traefik.enable: false
-      # traefik.http.routers.webui.rule: Host(`webui.example.org`)
-      # traefik.http.routers.webui.entrypoints: websecure
-      # traefik.http.routers.webui.tls.certresolver: myresolver
-      # traefik.http.routers.webui.service: webui
-      # traefik.http.services.webui.loadbalancer.server.port: '8080'
+      # traefik.http.routers.ai.rule: Host(`ai.example.org`)
+      # traefik.http.routers.ai.entrypoints: websecure
+      # traefik.http.routers.ai.tls.certresolver: myresolver
+      # traefik.http.routers.ai.service: ai
+      # traefik.http.services.ai.loadbalancer.server.port: '8080'
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml:ro
+    env_file: .env
+    networks:
+      - proxy
+    command: --config /app/config.yaml --port 4000
 
 networks:
   proxy:
