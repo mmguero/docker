@@ -1,18 +1,23 @@
+x-process-variables: &process-variables
+  PUID : 1000
+  PGID : 1000
+  # PUSER_PRIV_DROP : 'false'
+
 services:
   redis:
+    image: oci.guero.org/redis:latest
     container_name: searxng-redis
-    image: docker.io/valkey/valkey:8-alpine
-    command: valkey-server --save 30 1 --loglevel warning
     restart: unless-stopped
     networks:
       - proxy
+    environment:
+      << : *process-variables
+    command:
+      - sh
+      - -c
+      - redis-server
     volumes:
-      - valkey-data2:/data
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
+      - redis-data:/data
 
   searxng:
     container_name: searxng
@@ -26,16 +31,14 @@ services:
     environment:
       - SEARXNG_HOSTNAME=search.example.org
       - SEARXNG_BASE_URL=https://search.example.org/
+      - GRANIAN_HOST=0.0.0.0
+      - SEARXNG_BIND_ADDRESS=0.0.0.0
+      - SEARXNG_VALKEY_URL=redis://redis:6379/0
     labels:
       - "traefik.enable=false"
       # - "traefik.http.routers.searxng.rule=Host(`search.example.org`)"
       # - "traefik.http.routers.searxng.entrypoints=websecure"
       # - "traefik.http.routers.searxng.tls.certresolver=myresolver"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
 
 networks:
   proxy:
@@ -43,7 +46,5 @@ networks:
     name: traefik-proxy
 
 volumes:
-  caddy-data:
-  caddy-config:
-  valkey-data2:
+  redis-data:
   searxng-data:

@@ -1,0 +1,15 @@
+use_default_settings:
+  engines:
+    keep_only:
+      - bing 
+server:
+  secret_key: "changeme"
+  limiter: false
+  image_proxy: true
+search:
+  formats:
+    - html
+    - json
+engines:
+  - name: bing
+    disabled: false
