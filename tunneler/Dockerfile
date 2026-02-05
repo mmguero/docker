@@ -49,7 +49,7 @@ RUN  apt-get update -yqq && \
       tcpd \
       tree \
       && \
-  pip3 install --break-system-packages magic-wormhole-transit-relay supervisor && \
+  pip3 install --break-system-packages supervisor && \
     mkdir -p /var/log/supervisor && \
   cd /tmp && \
   curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.tar\.gz)" | tar -xzf - croc && \
@@ -103,12 +103,6 @@ RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
 ENV PATH="/usr/local/sbin:/usr/sbin:${PATH}"
 
 WORKDIR "/tmp"
-
-ARG WORMHOLE_AUTOSTART=false
-ENV WORMHOLE_AUTOSTART $WORMHOLE_AUTOSTART
-ARG WORMHOLE_PORT=4001
-ENV WORMHOLE_PORT $WORMHOLE_PORT
-EXPOSE $WORMHOLE_PORT
 
 ARG CROC_PORT_LOW=9009
 ARG CROC_PORT_HIGH=9013
