@@ -55,6 +55,8 @@ RUN  apt-get update -yqq && \
   curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.tar\.gz)" | tar -xzf - croc && \
     chmod 755 ./croc && \
     mv ./croc /usr/bin && \
+  curl -fsSL -o /usr/bin/fflo.com "https://github.com/nuwainfo/ffl/releases/latest/download/fflo.com" && \
+    chmod 644 /usr/bin/fflo.com && \
   sed -i 's/\$/$WIREPROXY_/g' /etc/wireproxy/config.env && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
