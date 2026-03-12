@@ -1,0 +1,17 @@
+name: docker-publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+  repository_dispatch:
+  schedule:
+    - cron: '0 12 15 * *'
+
+jobs:
+  docker:
+    uses: ./.github/workflows/docker-build-and-push.yml
+    with:
+      toolname: example

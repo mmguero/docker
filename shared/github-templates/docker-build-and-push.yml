@@ -1,0 +1,107 @@
+name: docker-build-and-push
+
+on:
+  workflow_call:
+    inputs:
+      toolname:
+        required: true
+        type: string
+      dockerfile:
+        required: false
+        type: string
+        default: Dockerfile
+      extra_build_args:
+        required: false
+        type: string
+
+jobs:
+  docker:
+    runs-on: ${{ matrix.os }}
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+    permissions:
+      actions: write
+      packages: write
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: amd64
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            platform: linux/arm64
+    steps:
+      -
+        name: Cancel previous run in progress
+        uses: styfle/cancel-workflow-action@0.13.1
+        with:
+          ignore_sha: true
+          all_but_latest: true
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Generate build timestamp
+        shell: bash
+        run: echo "btimestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+        id: generate_build_timestamp
+      -
+        name: Extract branch name
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" | sed "s/-build$//" >> $GITHUB_OUTPUT
+        id: extract_branch
+      -
+        name: Extract commit SHA
+        shell: bash
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: extract_commit_sha
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:master
+      -
+        name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ inputs.dockerfile }}
+          build-args: |
+            TARGETPLATFORM=${{ matrix.platform }}
+            BUILD_DATE=${{ steps.generate_build_timestamp.outputs.btimestamp }}
+            VCS_REVISION=${{ steps.extract_commit_sha.outputs.sha }}
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            ${{ inputs.extra_build_args || '' }}
+          push: true
+          provenance: false
+          platforms: ${{ matrix.platform }}
+          tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.toolname }}:${{ steps.extract_branch.outputs.branch }}-${{ matrix.arch }}
+  manifest:
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create multi-arch manifest
+        run: |
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository_owner }}/${{ inputs.toolname }}:${{ needs.docker.outputs.branch }} \
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.toolname }}:${{ needs.docker.outputs.branch }}-amd64 \
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.toolname }}:${{ needs.docker.outputs.branch }}-arm64
