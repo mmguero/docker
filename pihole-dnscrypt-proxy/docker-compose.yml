@@ -102,3 +102,5 @@ services:
     #   - "traefik.http.routers.doh.tls=true"
     #   - "traefik.http.routers.doh.tls.certresolver=myresolver"
     #   - "traefik.http.services.doh.loadbalancer.server.port=8053"
+    # if using doh-server, set this in firefox:
+    #    about:config → network.trr.allow-rfc1918 → true
