@@ -5,6 +5,9 @@ networks:
       config:
         - subnet: "172.18.0.0/24"
         # - subnet: "fd00::/64"
+  proxy:
+    external: true
+    name: traefik-proxy
 
 services:
   dnscrypt-proxy:
@@ -20,6 +23,8 @@ services:
     expose:
       - "53/udp"
       - "53/tcp"
+    # dns:
+    #   - 1.1.1.1
     volumes:
       # - "./dnscrypt-proxy/config/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml:ro"
       - "./dnscrypt-proxy/config/dnscrypt-proxy-ipv4-only.toml:/config/dnscrypt-proxy.toml:ro"
@@ -34,6 +39,7 @@ services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
+    shm_size: '1gb'
     networks:
       pihole_net:
         ipv4_address: "172.18.0.3"
@@ -42,16 +48,18 @@ services:
       # include any other IPs here as well (for VPN interfaces, etc.)
       - "53:53/tcp"
       - "53:53/udp"
+      # for admin interface, e.g., one or more of:
       # - "80:80/tcp"
       # - "443:443/tcp"
+      # - "127.0.0.1:5380:80/tcp"
     environment:
       TZ: 'America/Denver'
       WEBPASSWORD: 'password'
       DNS1: "172.18.0.2#53"
       DNS2: "no"
-      # DNS_FQDN_REQUIRED: 'false'
-      # DNS_BOGUS_PRIV: 'false'
-      # ServerIP: '192.168.0.216'
+      DNSMASQ_USER: "root"
+      PIHOLE_UID: '0'
+      REV_SERVER: 'false'
       DNSMASQ_LISTENING: 'all'
       DHCP_ACTIVE: 'false'
       RATE_LIMIT: '0/0'
@@ -62,6 +70,35 @@ services:
        - './pihole/var/log/:/var/log/pihole/'
     dns:
       - 1.1.1.1
+    cap_add:
+      - NET_BIND_SERVICE
+      - CAP_SYS_NICE
+      - NET_ADMIN
     restart: always
     depends_on:
       - dnscrypt-proxy
+
+  doh-server:
+    container_name: doh-server
+    image: satishweb/doh-server
+    networks:
+      pihole_net:
+        ipv4_address: "172.18.0.4"
+      proxy: {}
+    environment:
+      UPSTREAM_DNS_SERVER: "udp:172.18.0.3:53"
+      DOH_HTTP_PREFIX: "/dns-query"
+      DOH_SERVER_LISTEN: ":8053"
+      DOH_SERVER_TIMEOUT: "10"
+      DOH_SERVER_TRIES: "3"
+      DOH_SERVER_VERBOSE: "false"
+    restart: always
+    depends_on:
+      - pihole
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.doh.rule=Host(`dns.example.org`)"
+    #   - "traefik.http.routers.doh.entrypoints=websecure"
+    #   - "traefik.http.routers.doh.tls=true"
+    #   - "traefik.http.routers.doh.tls.certresolver=myresolver"
+    #   - "traefik.http.services.doh.loadbalancer.server.port=8053"
