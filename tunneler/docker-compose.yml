@@ -68,6 +68,10 @@ services:
       # Public hostname used for generated browser URLs.
       CROC_WEB_SITE : 'croc.example.org'
 
+      # for Umami analytics
+      CROC_WEB_UMAMI_URL : ''
+      CROC_WEB_UMAMI_ID : ''
+
       # Use the croc relay running in this same container.
       #
       # If this is used, CROC_AUTOSTART should normally also be true.

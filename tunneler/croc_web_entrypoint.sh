@@ -58,4 +58,6 @@ if [ -n "${CROC_WEB_STORE_DIR:-}" ]; then
   fi
 fi
 
-exec /usr/bin/croc-web "${ARGS[@]}" "$SITE"
+UMAMI_URL=${CROC_WEB_UMAMI_URL:-} \
+  UMAMI_WEBSITE_ID=${CROC_WEB_UMAMI_ID:-} \
+  exec /usr/bin/croc-web "${ARGS[@]}" "$SITE"
