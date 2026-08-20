@@ -1,5 +1,5 @@
 x-process-variables: &process-variables
-  # docker containers will run processes as unprivileged user with UID:GID
+  # Docker containers will run processes as an unprivileged user with UID:GID.
   PUID : 1000
   PGID : 1000
 
@@ -10,71 +10,196 @@ services:
       dockerfile: Dockerfile
       args:
         # Set to a version such as 11.2.4 to pin the croc/croc-web build.
-        # "latest" preserves the previous behavior of resolving the newest release.
+        # "latest" resolves the newest GitHub release at build time.
         CROC_VERSION: ${CROC_VERSION:-latest}
+
     image: oci.guero.org/tunneler:latest
     container_name: tunneler
+
     ulimits:
       memlock:
         soft: -1
         hard: -1
+
     stdin_open: false
     tty: true
+
     cap_add:
       - IPC_LOCK
       - NET_ADMIN
       - NET_RAW
       - SYS_ADMIN
       - NET_BIND_SERVICE
+
     environment:
       << : *process-variables
 
-      # Native croc relay. Leave false if this container should only run croc-web
-      # against a relay elsewhere.
+      #
+      # croc relay
+      #
+      # Enable this to run a native croc relay in this container.
+      #
+      # When CROC_PORT_NON_SEQUENTIAL=false, all ports from
+      # CROC_PORT_LOW through CROC_PORT_HIGH are used.
+      #
+      # When CROC_PORT_NON_SEQUENTIAL=true, only CROC_PORT_LOW
+      # and CROC_PORT_HIGH are used.
+      #
       CROC_PORT_LOW : 9009
       CROC_PORT_HIGH : 9013
       CROC_PORT_NON_SEQUENTIAL : 'false'
       CROC_PASS : ''
       CROC_AUTOSTART : 'false'
 
-      # croc-web. Set CROC_WEB_AUTOSTART=true to enable it.
-      # CROC_WEB_SITE is the public hostname used in generated browser URLs.
-      # This sample points croc-web at the relay in the same container. If the
-      # local relay is disabled, set CROC_WEB_RELAYS to your external relay(s),
-      # or set it to an empty string to use croc-web's public-relay defaults.
+      #
+      # croc-web
+      #
+      # Enable this to run the croc browser interface.
+      #
+      # croc-web is separate from the croc relay. It can use the relay
+      # running in this same container, an external self-hosted relay,
+      # or the public croc relay pool.
+      #
       CROC_WEB_AUTOSTART : 'false'
+
+      # HTTP/WebSocket listener used by browsers and reverse proxies.
       CROC_WEB_BIND : '0.0.0.0:9014'
-      CROC_WEB_SITE : 'files.example.org'
+
+      # Public hostname used for generated browser URLs.
+      CROC_WEB_SITE : 'croc.example.org'
+
+      # Use the croc relay running in this same container.
+      #
+      # If this is used, CROC_AUTOSTART should normally also be true.
       CROC_WEB_RELAYS : '127.0.0.1'
+
+      # To use croc-web with the public croc relay pool instead:
+      #
+      # CROC_WEB_RELAYS : ''
+      #
+      # To use another self-hosted relay:
+      #
+      # CROC_WEB_RELAYS : 'relay.example.org'
+      #
+      # Multiple relays may be specified as a comma-separated list.
+
+      # Leave empty to derive the allowed relay ports from
+      # CROC_PORT_LOW, CROC_PORT_HIGH, and CROC_PORT_NON_SEQUENTIAL.
+      #
+      # This may also be set explicitly, for example:
+      #
+      # CROC_WEB_PORTS : '9009,9010,9011,9012,9013'
+      #
       CROC_WEB_PORTS : ''
+
+      # Optional croc-web-specific relay password.
+      #
+      # When CROC_WEB_RELAYS is 127.0.0.1 or localhost and this value
+      # is empty, the croc-web entrypoint inherits CROC_PASS.
       CROC_WEB_PASS : ''
 
-      # Stored uploads are disabled by default. Uncomment this block and the
-      # croc_store volume below to enable encrypted temporary storage.
+      #
+      # croc-web stored transfers
+      #
+      # Stored uploads are disabled by default.
+      #
+      # Uncomment this block together with the croc_store volume below
+      # to enable encrypted temporary storage.
+      #
       # CROC_WEB_STORE_DIR : '/var/lib/croc/store'
       # CROC_WEB_STORE_MAX_TRANSFER : '1GiB'
       # CROC_WEB_STORE_QUOTA : '5GiB'
       # CROC_WEB_STORE_MIN_FREE : '512MiB'
       # CROC_WEB_STORE_MAX_EXPIRATION : '2w'
-      # Comma-separated CIDRs, only if a trusted reverse proxy sets X-Forwarded-For.
+      #
+      # Comma-separated CIDRs. Configure this only when a trusted
+      # reverse proxy supplies X-Forwarded-For.
+      #
       # CROC_WEB_STORE_TRUSTED_PROXIES : '172.16.0.0/12,10.0.0.0/8'
 
+      #
+      # hostyoself
+      #
       HOSTYOSELF_AUTOSTART : 'false'
       HOSTYOSELF_PORT : 8010
       HOSTYOSELF_URL : 'https://hostyoself.example.org'
       HOSTYOSELF_GOOGLE_SITE_VER_ID : ''
       HOSTYOSELF_UMAMI_URL : ''
       HOSTYOSELF_UMAMI_ID : ''
+
     ports:
-      - "0.0.0.0:4001:4001/tcp"
+      # hostyoself direct HTTP access.
+      #
+      # If hostyoself is only accessed through Traefik on the same
+      # Docker network, this host port mapping can be commented out.
       - "0.0.0.0:8010:8010/tcp"
+
+      # croc relay TCP ports.
+      #
+      # Keep these published when hosting a croc relay that clients
+      # need to reach directly.
       - "0.0.0.0:9009-9013:9009-9013/tcp"
+
+      # croc-web direct HTTP/WebSocket access.
+      #
+      # If croc-web is only accessed through Traefik on the same
+      # Docker network, this host port mapping can be commented out.
+      # Traefik will connect directly to port 9014 inside the container.
       - "0.0.0.0:9014:9014/tcp"
+
+    # Uncomment together with CROC_WEB_STORE_DIR above.
+    #
     # volumes:
-      # Uncomment with CROC_WEB_STORE_DIR above.
-      # - croc_store:/var/lib/croc/store
+    #   - croc_store:/var/lib/croc/store
+
     restart: unless-stopped
 
-# Uncomment when stored uploads are enabled.
+    networks:
+      - default
+
+    labels:
+      # Disabled for the standalone example.
+      #
+      # Set this to true and attach the container to your Traefik
+      # network to enable the example routes below.
+      - "traefik.enable=false"
+
+      #
+      # hostyoself
+      #
+      # - "traefik.http.routers.hostyoself.rule=Host(`hostyoself.example.org`)"
+      # - "traefik.http.routers.hostyoself.entrypoints=websecure"
+      # - "traefik.http.routers.hostyoself.tls=true"
+      # - "traefik.http.routers.hostyoself.tls.certresolver=myresolver"
+      # - "traefik.http.routers.hostyoself.service=hostyoself"
+      # - "traefik.http.services.hostyoself.loadbalancer.server.port=8010"
+
+      #
+      # croc-web
+      #
+      # A separate /ws router is not required. The same HTTP router
+      # handles both the web interface and WebSocket upgrade requests.
+      #
+      # - "traefik.http.routers.croc-web.rule=Host(`croc.example.org`)"
+      # - "traefik.http.routers.croc-web.entrypoints=websecure"
+      # - "traefik.http.routers.croc-web.tls=true"
+      # - "traefik.http.routers.croc-web.tls.certresolver=myresolver"
+      # - "traefik.http.routers.croc-web.service=croc-web"
+      # - "traefik.http.services.croc-web.loadbalancer.server.port=9014"
+
+
+# Uncomment when croc-web stored transfers are enabled.
+#
 # volumes:
 #   croc_store:
+
+
+networks:
+  default:
+    # By default Compose creates and manages this network.
+    #
+    # To use an existing Traefik network instead, uncomment both
+    # settings below and change the name if necessary.
+    #
+    # external: true
+    # name: traefik-proxy
