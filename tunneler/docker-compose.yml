@@ -8,6 +8,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Set to a version such as 11.2.4 to pin the croc/croc-web build.
+        # "latest" preserves the previous behavior of resolving the newest release.
+        CROC_VERSION: ${CROC_VERSION:-latest}
     image: oci.guero.org/tunneler:latest
     container_name: tunneler
     ulimits:
@@ -24,11 +28,37 @@ services:
       - NET_BIND_SERVICE
     environment:
       << : *process-variables
+
+      # Native croc relay. Leave false if this container should only run croc-web
+      # against a relay elsewhere.
       CROC_PORT_LOW : 9009
       CROC_PORT_HIGH : 9013
       CROC_PORT_NON_SEQUENTIAL : 'false'
       CROC_PASS : ''
       CROC_AUTOSTART : 'false'
+
+      # croc-web. Set CROC_WEB_AUTOSTART=true to enable it.
+      # CROC_WEB_SITE is the public hostname used in generated browser URLs.
+      # This sample points croc-web at the relay in the same container. If the
+      # local relay is disabled, set CROC_WEB_RELAYS to your external relay(s),
+      # or set it to an empty string to use croc-web's public-relay defaults.
+      CROC_WEB_AUTOSTART : 'false'
+      CROC_WEB_BIND : '0.0.0.0:9014'
+      CROC_WEB_SITE : 'files.example.org'
+      CROC_WEB_RELAYS : '127.0.0.1'
+      CROC_WEB_PORTS : ''
+      CROC_WEB_PASS : ''
+
+      # Stored uploads are disabled by default. Uncomment this block and the
+      # croc_store volume below to enable encrypted temporary storage.
+      # CROC_WEB_STORE_DIR : '/var/lib/croc/store'
+      # CROC_WEB_STORE_MAX_TRANSFER : '1GiB'
+      # CROC_WEB_STORE_QUOTA : '5GiB'
+      # CROC_WEB_STORE_MIN_FREE : '512MiB'
+      # CROC_WEB_STORE_MAX_EXPIRATION : '2w'
+      # Comma-separated CIDRs, only if a trusted reverse proxy sets X-Forwarded-For.
+      # CROC_WEB_STORE_TRUSTED_PROXIES : '172.16.0.0/12,10.0.0.0/8'
+
       HOSTYOSELF_AUTOSTART : 'false'
       HOSTYOSELF_PORT : 8010
       HOSTYOSELF_URL : 'https://hostyoself.example.org'
@@ -39,4 +69,12 @@ services:
       - "0.0.0.0:4001:4001/tcp"
       - "0.0.0.0:8010:8010/tcp"
       - "0.0.0.0:9009-9013:9009-9013/tcp"
+      - "0.0.0.0:9014:9014/tcp"
+    # volumes:
+      # Uncomment with CROC_WEB_STORE_DIR above.
+      # - croc_store:/var/lib/croc/store
     restart: unless-stopped
+
+# Uncomment when stored uploads are enabled.
+# volumes:
+#   croc_store:

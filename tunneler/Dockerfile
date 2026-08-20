@@ -8,6 +8,62 @@ RUN go install github.com/go-bindata/go-bindata/go-bindata@latest && \
     go generate -v -x && \
     go build -v
 
+# croc's release artifact names use different architecture labels for the CLI
+# and croc-web. croc-web is currently released as a binary for Linux amd64
+# only, so build it from the same tagged source when targeting Linux arm64.
+FROM --platform=$BUILDPLATFORM golang:1-bookworm AS croc-go-toolchain
+FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS croc-build
+
+ARG TARGETARCH
+ARG CROC_VERSION=latest
+
+COPY --from=croc-go-toolchain /usr/local/go /usr/local/go
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN apt-get update -yqq && \
+    apt-get install --no-install-recommends -yq ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN set -eux; \
+    ARCH="${TARGETARCH:-$(dpkg --print-architecture)}"; \
+    case "$ARCH" in \
+      amd64) CROC_ARCH='64bit' ;; \
+      arm64) CROC_ARCH='ARM64' ;; \
+      *) echo "unsupported croc architecture: $ARCH" >&2; exit 1 ;; \
+    esac; \
+    if [ "$CROC_VERSION" = 'latest' ]; then \
+      CROC_TAG="$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/schollz/croc/releases/latest | sed 's#^.*/##')"; \
+    else \
+      CROC_TAG="v${CROC_VERSION#v}"; \
+    fi; \
+    CROC_RELEASE_VERSION="${CROC_TAG#v}"; \
+    CROC_RELEASE_BASE="https://github.com/schollz/croc/releases/download/${CROC_TAG}"; \
+    mkdir -p /out; \
+    CROC_ASSET="croc_v${CROC_RELEASE_VERSION}_Linux-${CROC_ARCH}.tar.gz"; \
+    echo "installing ${CROC_ASSET} for ${ARCH}"; \
+    curl -fsSL "${CROC_RELEASE_BASE}/${CROC_ASSET}" -o /tmp/croc.tar.gz; \
+    tar -xzf /tmp/croc.tar.gz -C /out croc; \
+    if [ "$ARCH" = 'amd64' ]; then \
+      CROC_WEB_ASSET="croc-web_v${CROC_RELEASE_VERSION}_Linux-amd64.tar.gz"; \
+      echo "installing ${CROC_WEB_ASSET}"; \
+      curl -fsSL "${CROC_RELEASE_BASE}/${CROC_WEB_ASSET}" -o /tmp/croc-web.tar.gz; \
+      tar -xzf /tmp/croc-web.tar.gz -C /out croc-web; \
+    else \
+      echo "building croc-web ${CROC_TAG} from source for ${ARCH}"; \
+      mkdir -p /usr/src/croc; \
+      curl -fsSL "https://codeload.github.com/schollz/croc/tar.gz/refs/tags/${CROC_TAG}" -o /tmp/croc-src.tar.gz; \
+      tar -xzf /tmp/croc-src.tar.gz --strip-components=1 -C /usr/src/croc; \
+      cd /usr/src/croc/web; \
+      npm ci; \
+      npm run embed; \
+      cd /usr/src/croc; \
+      CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" go build \
+        -buildvcs=false -trimpath -tags netgo,osusergo \
+        -ldflags='-s -w -buildid=' \
+        -o /out/croc-web ./cmd/croc-web; \
+    fi; \
+    chmod 755 /out/croc /out/croc-web
+
 FROM debian:trixie-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
@@ -52,19 +108,19 @@ RUN  apt-get update -yqq && \
   pip3 install --break-system-packages supervisor && \
     mkdir -p /var/log/supervisor && \
   cd /tmp && \
-  curl -fsSL "$(curl -sSL https://api.github.com/repos/schollz/croc/releases/latest | jq -r '.assets[].browser_download_url' | grep Linux-$(uname -m | sed 's/x86_64/64bit/;s/i[3-6]86/32bit/;s/aarch/ARM/')\.tar\.gz)" | tar -xzf - croc && \
-    chmod 755 ./croc && \
-    mv ./croc /usr/bin && \
   curl -fsSL -o /usr/bin/fflo.com "https://github.com/nuwainfo/ffl/releases/latest/download/fflo.com" && \
     chmod 644 /usr/bin/fflo.com && \
   sed -i 's/\$/$WIREPROXY_/g' /etc/wireproxy/config.env && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+COPY --from=croc-build --chmod=755 /out/croc /usr/bin/croc
+COPY --from=croc-build --chmod=755 /out/croc-web /usr/bin/croc-web
 COPY --from=build /usr/src/hostyoself/hostyoself /usr/bin/hostyoself
 ADD supervisord.conf /etc/supervisord.conf
-ADD https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
-ADD croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
+ADD --chmod=755 https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
+ADD --chmod=755 croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
+ADD --chmod=755 croc_web_entrypoint.sh /usr/local/bin/croc_web_entrypoint.sh
 ADD bash_support_functions.sh /etc/profile.d/
 
 ARG DEFAULT_UID=1000
@@ -75,10 +131,10 @@ ENV PUSER "tunneler"
 ENV PGROUP "tunneler"
 ENV PUSER_PRIV_DROP true
 
-RUN chmod 755 /usr/local/bin/docker-uid-gid-setup.sh && \
-    groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
+RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
       usermod -a -G tty ${PUSER} && \
+    install -d -m 0700 -o ${PUSER} -g ${PGROUP} /var/lib/croc/store && \
     chmod 775 /var/log/supervisor && \
       chown root:$PGROUP /var/log/supervisor && \
     chown root:$PGROUP /bin/nc.openbsd && \
@@ -115,6 +171,32 @@ ARG CROC_AUTOSTART=false
 ENV CROC_AUTOSTART $CROC_AUTOSTART
 ARG CROC_PASS=
 ENV CROC_PASS $CROC_PASS
+
+ARG CROC_WEB_AUTOSTART=false
+ENV CROC_WEB_AUTOSTART $CROC_WEB_AUTOSTART
+ARG CROC_WEB_BIND=0.0.0.0:9014
+ENV CROC_WEB_BIND $CROC_WEB_BIND
+ARG CROC_WEB_SITE=localhost:9014
+ENV CROC_WEB_SITE $CROC_WEB_SITE
+ARG CROC_WEB_RELAYS=
+ENV CROC_WEB_RELAYS $CROC_WEB_RELAYS
+ARG CROC_WEB_PORTS=
+ENV CROC_WEB_PORTS $CROC_WEB_PORTS
+ARG CROC_WEB_PASS=
+ENV CROC_WEB_PASS $CROC_WEB_PASS
+ARG CROC_WEB_STORE_DIR=
+ENV CROC_WEB_STORE_DIR $CROC_WEB_STORE_DIR
+ARG CROC_WEB_STORE_MAX_TRANSFER=1GiB
+ENV CROC_WEB_STORE_MAX_TRANSFER $CROC_WEB_STORE_MAX_TRANSFER
+ARG CROC_WEB_STORE_QUOTA=5GiB
+ENV CROC_WEB_STORE_QUOTA $CROC_WEB_STORE_QUOTA
+ARG CROC_WEB_STORE_MIN_FREE=512MiB
+ENV CROC_WEB_STORE_MIN_FREE $CROC_WEB_STORE_MIN_FREE
+ARG CROC_WEB_STORE_MAX_EXPIRATION=1w
+ENV CROC_WEB_STORE_MAX_EXPIRATION $CROC_WEB_STORE_MAX_EXPIRATION
+ARG CROC_WEB_STORE_TRUSTED_PROXIES=
+ENV CROC_WEB_STORE_TRUSTED_PROXIES $CROC_WEB_STORE_TRUSTED_PROXIES
+EXPOSE 9014
 
 ARG HOSTYOSELF_AUTOSTART=false
 ARG HOSTYOSELF_PORT=8010
