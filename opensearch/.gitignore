@@ -1,6 +1,0 @@
-# development
-.envrc
-.direnv
-
-# authentication
-.creds.curlrc
