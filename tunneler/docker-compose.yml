@@ -12,6 +12,8 @@ services:
         # Set to a version such as 11.2.4 to pin the croc/croc-web build.
         # "latest" resolves the newest GitHub release at build time.
         CROC_VERSION: ${CROC_VERSION:-latest}
+        # Set to a version such as 2.16.1 to pin the sish build.
+        SISH_VERSION: ${SISH_VERSION:-latest}
 
     image: oci.guero.org/tunneler:latest
     container_name: tunneler
@@ -131,6 +133,50 @@ services:
       HOSTYOSELF_UMAMI_URL : ''
       HOSTYOSELF_UMAMI_ID : ''
 
+      #
+      # sish (self-hosted tunnel relay for ffl / FastFileLink)
+      #
+      # ffl clients run "ssh -p SISH_SSH_PORT -R 80:localhost:PORT SISH_DOMAIN".
+      # sish assigns each share a random subdomain of SISH_DOMAIN and
+      # proxies HTTP for that subdomain back down the SSH connection.
+      #
+      # sish listens for plain HTTP on SISH_HTTP_PORT. Traefik terminates
+      # TLS for *.SISH_DOMAIN and forwards to that port.
+      #
+      # DNS needs both of these pointing at this host:
+      #   tun.example.org     A  <host IP>
+      #   *.tun.example.org   A  <host IP>
+      #
+      SISH_AUTOSTART : 'false'
+      SISH_DOMAIN : 'tun.example.org'
+
+      # SSH entrypoint clients connect to. Published directly below,
+      # since SSH can't be routed by hostname through Traefik.
+      SISH_SSH_PORT : 2222
+
+      # Plain HTTP listener for Traefik.
+      SISH_HTTP_PORT : 9015
+
+      # Advertise https:// URLs on port 443 even though sish itself
+      # only speaks HTTP. ffl's url_pattern matches the https:// line.
+      SISH_PROXY_SSL_TERMINATION : 'true'
+      SISH_HTTPS_PORT_OVERRIDE : 443
+
+      # Random per-share subdomains. sish's own default length is 3,
+      # which is easy to guess for a file-sharing link.
+      SISH_RANDOM_SUBDOMAINS : 'true'
+      SISH_RANDOM_SUBDOMAIN_LENGTH : 12
+
+      # Read/write inactivity timeout on proxied connections.
+      SISH_IDLE_TIMEOUT : '120s'
+
+      # Where requests for the bare SISH_DOMAIN go. Empty disables
+      # the redirect.
+      SISH_REDIRECT_ROOT_LOCATION : ''
+
+      # Extra sish flags, passed through verbatim.
+      SISH_EXTRA_ARGS : ''
+
     ports:
       # hostyoself direct HTTP access.
       #
@@ -151,10 +197,33 @@ services:
       # Traefik will connect directly to port 9014 inside the container.
       - "0.0.0.0:9014:9014/tcp"
 
-    # Uncomment together with CROC_WEB_STORE_DIR above.
-    #
-    # volumes:
-    #   - croc_store:/var/lib/croc/store
+      # sish SSH entrypoint for ffl clients.
+      #
+      # This one has to stay published. If port 22 on the host is free
+      # (sshd moved elsewhere), "0.0.0.0:22:2222/tcp" lets clients on
+      # networks that block 2222 connect without -p.
+      - "0.0.0.0:2222:2222/tcp"
+
+      # sish direct HTTP access, for testing without Traefik.
+      #
+      # - "0.0.0.0:9015:9015/tcp"
+
+    volumes:
+      # sish SSH host key. Keep it persistent so clients don't get a
+      # host key mismatch after the container is recreated.
+      - sish_keys:/var/lib/sish/keys
+
+      # Authorized public keys for people allowed to open tunnels,
+      # one or more keys per file (authorized_keys format). sish
+      # watches this directory and reloads on change.
+      #
+      #   curl -fsSL https://github.com/<user>.keys > ./sish/pubkeys/<user>
+      #
+      - ./sish/pubkeys:/var/lib/sish/pubkeys:ro
+
+      # Uncomment together with CROC_WEB_STORE_DIR above.
+      #
+      # - croc_store:/var/lib/croc/store
 
     restart: unless-stopped
 
@@ -191,11 +260,52 @@ services:
       # - "traefik.http.routers.croc-web.service=croc-web"
       # - "traefik.http.services.croc-web.loadbalancer.server.port=9014"
 
+      #
+      # sish (ffl tunnels)
+      #
+      # One router catches every per-share subdomain of tun.example.org.
+      # The certificate has to be a wildcard, and Let's Encrypt only
+      # issues wildcards over the DNS-01 challenge, so this router uses
+      # a separate certresolver (mydnsresolver) configured with
+      # acme.dnschallenge. An httpchallenge resolver can't issue it.
+      #
+      # Add an explicit *.tun.example.org DNS record even if *.example.org
+      # exists. The _acme-challenge.tun.example.org TXT record created
+      # during issuance makes tun.example.org "exist" in DNS, and then
+      # *.example.org stops answering for names under it.
+      #
+      # The rule is single-quoted so YAML leaves the backslashes alone,
+      # and $$ is Compose's escape for a literal $.
+      #
+      # Traefik v3 syntax shown. On Traefik v2 the rule is:
+      #   HostRegexp(`{subdomain:[a-z0-9-]+}.tun.example.org`)
+      #
+      # - 'traefik.http.routers.ffl-sish.rule=HostRegexp(`^[a-z0-9-]+\.tun\.example\.org$$`)'
+      # - "traefik.http.routers.ffl-sish.entrypoints=websecure"
+      # - "traefik.http.routers.ffl-sish.tls=true"
+      # - "traefik.http.routers.ffl-sish.tls.certresolver=mydnsresolver"
+      # - "traefik.http.routers.ffl-sish.tls.domains[0].main=tun.example.org"
+      # - "traefik.http.routers.ffl-sish.tls.domains[0].sans=*.tun.example.org"
+      # - "traefik.http.routers.ffl-sish.service=ffl-sish"
+      # - "traefik.http.services.ffl-sish.loadbalancer.server.port=9015"
 
-# Uncomment when croc-web stored transfers are enabled.
-#
-# volumes:
-#   croc_store:
+      # SSH over TLS
+      # - "traefik.tcp.routers.ffl-sish-ssh.rule=HostSNI(`tun.example.org`)"
+      # - "traefik.tcp.routers.ffl-sish-ssh.entrypoints=websecure"
+      # - "traefik.tcp.routers.ffl-sish-ssh.tls=true"
+      # - "traefik.tcp.routers.ffl-sish-ssh.tls.certresolver=mydnsresolver"
+      # - "traefik.tcp.routers.ffl-sish-ssh.tls.domains[0].main=tun.example.org"
+      # - "traefik.tcp.routers.ffl-sish-ssh.tls.domains[0].sans=*.tun.example.org"
+      # - "traefik.tcp.routers.ffl-sish-ssh.service=ffl-sish-ssh"
+      # - "traefik.tcp.services.ffl-sish-ssh.loadbalancer.server.port=2222"
+
+
+volumes:
+  sish_keys:
+
+  # Uncomment when croc-web stored transfers are enabled.
+  #
+  # croc_store:
 
 
 networks:

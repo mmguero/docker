@@ -64,6 +64,30 @@ RUN set -eux; \
     fi; \
     chmod 755 /out/croc /out/croc-web
 
+# sish is the SSH tunnel relay used as a self-hosted ffl tunnel provider.
+# Pure Go, so cross-compile on the build platform like croc-web.
+FROM --platform=$BUILDPLATFORM golang:1-bookworm AS sish-build
+
+ARG TARGETARCH
+ARG SISH_VERSION=latest
+
+RUN set -eux; \
+    ARCH="${TARGETARCH:-$(dpkg --print-architecture)}"; \
+    if [ "$SISH_VERSION" = 'latest' ]; then \
+      SISH_TAG="$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/antoniomika/sish/releases/latest | sed 's#^.*/##')"; \
+    else \
+      SISH_TAG="v${SISH_VERSION#v}"; \
+    fi; \
+    echo "building sish ${SISH_TAG} for ${ARCH}"; \
+    git clone --depth 1 --branch "${SISH_TAG}" https://github.com/antoniomika/sish /usr/src/sish; \
+    cd /usr/src/sish; \
+    mkdir -p /out; \
+    CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" go build \
+      -buildvcs=false -trimpath \
+      -ldflags='-s -w' \
+      -o /out/sish .; \
+    chmod 755 /out/sish
+
 FROM debian:trixie-slim
 
 LABEL maintainer="mero.mero.guero@gmail.com"
@@ -95,6 +119,7 @@ RUN  apt-get update -yqq && \
       netcat-openbsd \
       netsniff-ng \
       openbsd-inetd \
+      openssh-client \
       openssl \
       procps \
       pv \
@@ -117,10 +142,12 @@ RUN  apt-get update -yqq && \
 COPY --from=croc-build --chmod=755 /out/croc /usr/bin/croc
 COPY --from=croc-build --chmod=755 /out/croc-web /usr/bin/croc-web
 COPY --from=build /usr/src/hostyoself/hostyoself /usr/bin/hostyoself
+COPY --from=sish-build --chmod=755 /out/sish /usr/bin/sish
 ADD supervisord.conf /etc/supervisord.conf
 ADD --chmod=755 https://raw.githubusercontent.com/mmguero/docker/master/shared/docker-uid-gid-setup.sh /usr/local/bin/docker-uid-gid-setup.sh
 ADD --chmod=755 croc_relay_entrypoint.sh /usr/local/bin/croc_relay_entrypoint.sh
 ADD --chmod=755 croc_web_entrypoint.sh /usr/local/bin/croc_web_entrypoint.sh
+ADD --chmod=755 sish_entrypoint.sh /usr/local/bin/sish_entrypoint.sh
 ADD bash_support_functions.sh /etc/profile.d/
 
 ARG DEFAULT_UID=1000
@@ -135,6 +162,8 @@ RUN groupadd --gid ${DEFAULT_GID} ${PGROUP} && \
       useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
       usermod -a -G tty ${PUSER} && \
     install -d -m 0700 -o ${PUSER} -g ${PGROUP} /var/lib/croc/store && \
+    install -d -m 0700 -o ${PUSER} -g ${PGROUP} /var/lib/sish/keys && \
+    install -d -m 0755 -o ${PUSER} -g ${PGROUP} /var/lib/sish/pubkeys && \
     chmod 775 /var/log/supervisor && \
       chown root:$PGROUP /var/log/supervisor && \
     chown root:$PGROUP /bin/nc.openbsd && \
@@ -214,6 +243,38 @@ ENV HOSTYOSELF_URL $HOSTYOSELF_URL
 ENV HOSTYOSELF_GOOGLE_SITE_VER_ID $HOSTYOSELF_GOOGLE_SITE_VER_ID
 ENV HOSTYOSELF_UMAMI_URL $HOSTYOSELF_UMAMI_URL
 ENV HOSTYOSELF_UMAMI_ID $HOSTYOSELF_UMAMI_ID
+
+ARG SISH_AUTOSTART=false
+ARG SISH_DOMAIN=
+ARG SISH_SSH_PORT=2222
+ARG SISH_HTTP_PORT=9015
+ARG SISH_KEYS_DIR=/var/lib/sish/keys
+ARG SISH_PUBKEYS_DIR=/var/lib/sish/pubkeys
+ARG SISH_RANDOM_SUBDOMAINS=true
+ARG SISH_RANDOM_SUBDOMAIN_LENGTH=12
+ARG SISH_IDLE_TIMEOUT=120s
+ARG SISH_PROXY_SSL_TERMINATION=true
+ARG SISH_HTTPS_PORT_OVERRIDE=443
+ARG SISH_HTTP_PORT_OVERRIDE=80
+ARG SISH_REDIRECT_ROOT_LOCATION=
+ARG SISH_PRIVATE_KEY_PASSPHRASE=
+ARG SISH_EXTRA_ARGS=
+ENV SISH_AUTOSTART $SISH_AUTOSTART
+ENV SISH_DOMAIN $SISH_DOMAIN
+ENV SISH_SSH_PORT $SISH_SSH_PORT
+ENV SISH_HTTP_PORT $SISH_HTTP_PORT
+ENV SISH_KEYS_DIR $SISH_KEYS_DIR
+ENV SISH_PUBKEYS_DIR $SISH_PUBKEYS_DIR
+ENV SISH_RANDOM_SUBDOMAINS $SISH_RANDOM_SUBDOMAINS
+ENV SISH_RANDOM_SUBDOMAIN_LENGTH $SISH_RANDOM_SUBDOMAIN_LENGTH
+ENV SISH_IDLE_TIMEOUT $SISH_IDLE_TIMEOUT
+ENV SISH_PROXY_SSL_TERMINATION $SISH_PROXY_SSL_TERMINATION
+ENV SISH_HTTPS_PORT_OVERRIDE $SISH_HTTPS_PORT_OVERRIDE
+ENV SISH_HTTP_PORT_OVERRIDE $SISH_HTTP_PORT_OVERRIDE
+ENV SISH_REDIRECT_ROOT_LOCATION $SISH_REDIRECT_ROOT_LOCATION
+ENV SISH_PRIVATE_KEY_PASSPHRASE $SISH_PRIVATE_KEY_PASSPHRASE
+ENV SISH_EXTRA_ARGS $SISH_EXTRA_ARGS
+EXPOSE $SISH_SSH_PORT $SISH_HTTP_PORT
 
 ARG WIREPROXY_AUTOSTART=false
 ENV WIREPROXY_AUTOSTART $WIREPROXY_AUTOSTART
