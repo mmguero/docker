@@ -13,26 +13,47 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file.directory=/dynamic-conf"
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.forwardedHeaders.trustedIPs=0.0.0.0/0"
+      # - "--entrypoints.web.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.forwardedHeaders.trustedIPs=0.0.0.0/0"
+      # - "--entrypoints.websecure.forwardedHeaders.trustedIPs=0.0.0.0/0"
       - "--entrypoints.websecure.http.tls.options=default@file"
+
+      # ### HTTP / TLS resolver ######################################################################
       # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      # - "--certificatesresolvers.myresolver.acme.caserver=https://ca.example.org:9000/acme/acme/directory"
       - "--certificatesresolvers.myresolver.acme.email=user@example.org"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--providers.docker.network=traefik-proxy"
+
+      # ### DNS resolver #############################################################################
+      # - "--certificatesresolvers.mydnsresolver.acme.dnschallenge=true"
+      # - "--certificatesresolvers.mydnsresolver.acme.dnschallenge.provider=namesilo"
+      # - "--certificatesresolvers.mydnsresolver.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
+      # - "--certificatesresolvers.mydnsresolver.acme.email=user@example.org"
+      # - "--certificatesresolvers.mydnsresolver.acme.storage=/letsencrypt/acme-dns.json"
+      #
+      # ### Examples #################################################################################
+      # to use a custom CA server (for the HTTP resolver):
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://ca.example.org:9000/acme/acme/directory"
+      # to use the LE staging server (not production, for the DNS resolver):
+      # - "--certificatesresolvers.mydnsresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
     network_mode: host
     # ports:
     #   - 0.0.0.0:80:80
     #   - 0.0.0.0:443:443
     # networks:
     #   - proxy
+
+    # uncomment with appropriate DNS .env file
+    # env_file:
+    #   - ./traefik-dns.env
+    #   - ./dynu-dns.env
+
     volumes:
       - "./letsencrypt:/letsencrypt:rw"
       # - "./certs:/etc/ssl/certs:ro"
@@ -58,4 +79,3 @@ networks:
   proxy:
     external: true
     name: traefik-proxy
-

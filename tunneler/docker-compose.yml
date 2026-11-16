@@ -298,6 +298,32 @@ services:
       # - "traefik.tcp.routers.ffl-sish-ssh.tls.domains[0].sans=*.tun.example.org"
       # - "traefik.tcp.routers.ffl-sish-ssh.service=ffl-sish-ssh"
       # - "traefik.tcp.services.ffl-sish-ssh.loadbalancer.server.port=2222"
+      #
+      # in client ~/.ssh/config:
+      #     Host tun.example.org
+      #       ProxyCommand openssl s_client -quiet -verify_return_error -servername %h -connect %h:443
+      #       IdentityFile ~/.ssh/id_rsa
+      #       IdentitiesOnly yes
+      # in client ~/.fastfilelink/tunnels.json in "tunnels": {...}
+      #     "example": {
+      #       "name": "example.org sish",
+      #       "binary": "ssh",
+      #       "args": [
+      #         "-o", "BatchMode=yes",
+      #         "-o", "StrictHostKeyChecking=accept-new",
+      #         "-o", "ExitOnForwardFailure=yes",
+      #         "-o", "ServerAliveInterval=30",
+      #         "-R", "80:localhost:{port}",
+      #         "tun.example.org"
+      #       ],
+      #       "url_pattern": "https://[^\\s/]+\\.tun\\.example\\.org",
+      #       "timeout": 60,
+      #       "enabled": true
+      #     },
+      # in client ~/.fastfilelink/tunnels.json in "settings": {...}
+      #     "preferred_tunnel": "example",
+      #     "fallback_order": [
+      #       "example",
 
 
 volumes:
