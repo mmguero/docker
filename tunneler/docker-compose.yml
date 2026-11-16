@@ -199,9 +199,9 @@ services:
 
       # sish SSH entrypoint for ffl clients.
       #
-      # This one has to stay published. If port 22 on the host is free
-      # (sshd moved elsewhere), "0.0.0.0:22:2222/tcp" lets clients on
-      # networks that block 2222 connect without -p.
+      # This one has to stay published unless using SSH over TLS with Traefik below.
+      # If port 22 on the host is free (sshd moved elsewhere),
+      # "0.0.0.0:22:2222/tcp" lets clients on networks that block 2222 connect without -p.
       - "0.0.0.0:2222:2222/tcp"
 
       # sish direct HTTP access, for testing without Traefik.
