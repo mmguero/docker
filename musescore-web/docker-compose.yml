@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        MUSESCORE_VERSION : 4.7.7
+        MUSESCORE_BUILD : 261109195
     container_name: musescore
     hostname: musescore
     restart: unless-stopped
